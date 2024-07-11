@@ -1,0 +1,38 @@
+.banner-carousel {
+  width: 100%;
+  margin: 0 ;
+  padding: 0;
+  overflow: hidden;
+}
+
+.banner-slide {
+  position: relative;
+}
+
+.banner-image {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+/* Customize Slick Slider Dots */
+.slick-dots {
+  bottom: 20px;
+}
+
+.slick-dots li button:before {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.slick-dots li.slick-active button:before {
+  color: white;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .banner-image {
+    height: 200px;
+    object-fit: cover;
+  }
+}

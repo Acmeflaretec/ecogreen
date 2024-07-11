@@ -1,0 +1,93 @@
+/* SingleOrder.css */
+.progress-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
+}
+
+.progress-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  flex: 1;
+}
+
+.progress-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #f0f0f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #999;
+  font-size: 22px;
+  z-index: 2;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.progress-icon.active {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.progress-label {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #666;
+  text-align: center;
+  font-weight: 500;
+}
+
+.progress-line {
+  position: absolute;
+  top: 25px;
+  left: calc(50% + 25px);
+  right: calc(-50% + 25px);
+  height: 3px;
+  background-color: #f0f0f0;
+  z-index: 1;
+}
+
+.progress-line.active {
+  background-color: #4CAF50;
+}
+
+.item-image {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+@media (max-width: 768px) {
+  .progress-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .progress-step {
+    flex-direction: row;
+    width: 100%;
+    margin-bottom: 15px;
+  }
+
+  .progress-icon {
+    margin-right: 15px;
+  }
+
+  .progress-label {
+    margin-top: 0;
+    text-align: left;
+  }
+
+  .progress-line {
+    top: 50px;
+    left: 25px;
+    width: 3px;
+    height: calc(100% - 50px);
+  }
+}

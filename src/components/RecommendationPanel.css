@@ -1,0 +1,16 @@
+.categories-section {
+  padding: 20px;
+}
+
+.category-item {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.category-name {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-top: 10px;
+  color: #333;
+}
+
