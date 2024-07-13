@@ -9,7 +9,7 @@ function RecommendationPanel({ videoImage, title, deals }) {
         <Col lg={6}>
           <div className="video-recommendation">
             <div className="video-preview" >
-              <Image src={videoImage} alt="Video Preview" fluid style={{ height: "500px", width:'100%', objectFit:'cover'}} />
+              <Image src={videoImage} alt="Video Preview" fluid  />
             </div>
           </div>
         </Col>

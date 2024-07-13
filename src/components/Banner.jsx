@@ -51,7 +51,7 @@ function Banner() {
                 src={slide.image} 
                 alt={slide.alt}
                 className="banner-image"
-                style={{height:'70vh',objectFit:'cover'}}
+                style={{height:'60vh',objectFit:'cover'}}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
