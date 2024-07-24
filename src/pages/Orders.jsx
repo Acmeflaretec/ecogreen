@@ -8,14 +8,15 @@ import MiddleNav from '../components/MiddleNav';
 const orderData = [
   {
     id: 1,
-    name: 'ECO-FRIENDLY COTTON BUDS',
-    price: 999,
+    name: 'Wireless Bluetooth Headphones',
+    price: 2999,
     status: 'Order Placed',
     statusDetails: 'Your order has been placed',
-    image: 'https://img.freepik.com/premium-photo/heap-bamboo-cotton-swabs-buds-top-view-beige-surface-copy-space_224798-1095.jpg?w=996',
+    image: 'https://example.com/bluetooth-headphones.jpg',
     orderDate: '2024-07-20',
     estimatedDelivery: '2024-07-27',
-  },
+  }
+  
   // Add more order objects as needed
 ];
 

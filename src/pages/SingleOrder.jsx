@@ -1,3 +1,4 @@
+// SingleOrder.js
 import React, { useEffect, useState, useMemo } from 'react';
 import { Card, Col, Container, Row, Table, Spinner, Alert, Badge } from 'react-bootstrap';
 import { FaBox, FaShippingFast, FaTruck, FaCheckCircle, FaMapMarkerAlt, FaCalendarAlt, FaFileInvoiceDollar } from 'react-icons/fa';
@@ -18,7 +19,54 @@ function SingleOrder() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // ... (fetchOrderData function remains the same)
+    const fetchOrderData = async () => {
+      try {
+        // Simulating API call
+        const response = await new Promise(resolve => 
+          setTimeout(() => resolve({
+            status: 'out_for_delivery',
+            orderDetails: {
+              orderId: '12345678',
+              items: [
+                {
+                  name: 'Wireless Bluetooth Headphones',
+                  quantity: 2,
+                  price: 2999,
+                  imageUrl: 'https://example.com/bluetooth-headphones.jpg',
+                  category: 'Headphones',
+                },
+                {
+                  name: 'Smart Home Hub',
+                  quantity: 1,
+                  price: 7999,
+                  imageUrl: 'https://example.com/smart-home-hub.jpg',
+                  category: 'Smart Home',
+                },
+              ]
+              ,
+              shippingAddress: {
+                name: 'John Doe',
+                address: '123 Main St, Anytown USA',
+                city: 'New York',
+                state: 'NY',
+                zip: '10001',
+              },
+              total: 2597,
+              shippingCost: 100,
+              tax: 260,
+              grandTotal: 2957,
+            },
+          }), 1000)
+        );
+        setOrderData(response);
+      } catch (err) {
+        setError('Failed to fetch order data. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrderData();
   }, []);
 
   const currentStatusIndex = useMemo(() => {
