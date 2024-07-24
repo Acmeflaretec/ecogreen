@@ -1,40 +1,24 @@
-:root {
-  --dark-green: #2c7a51;
-  --green: #3c9d64;
-  --light-green: #d4edda;
-}
-
 .review-section {
-  font-family: 'Arial', sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.text-dark-green {
-  color: var(--dark-green) !important;
+.rating-summary-card,
+.customer-reviews-card {
+  transition: box-shadow 0.3s ease-in-out;
 }
 
-.text-green {
-  color: var(--green) !important;
-}
-
-.text-light-green {
-  color: var(--light-green) !important;
-}
-
-.bg-green {
-  background-color: var(--green) !important;
+.rating-summary-card:hover,
+.customer-reviews-card:hover {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
 }
 
 .star-rating {
-  font-size: 1.2rem;
-}
-
-.rating-summary-card .star-rating {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
 }
 
 .rating-bar-container {
   height: 8px;
-  background-color: var(--light-green);
+  background-color: #e9ecef;
   border-radius: 4px;
   overflow: hidden;
 }
@@ -42,53 +26,23 @@
 .rating-bar {
   height: 100%;
   border-radius: 4px;
+  transition: width 0.3s ease-in-out;
 }
 
 .rating-percentage {
-  min-width: 40px;
+  min-width: 36px;
   text-align: right;
 }
 
-.card {
-  border-radius: 10px;
+.star-rating-input {
+  font-size: 1.5rem;
+  cursor: pointer;
 }
 
-.btn-outline-success {
-  color: var(--green);
-  border-color: var(--green);
+.star-rating-input .fa-star {
+  transition: color 0.2s ease-in-out;
 }
 
-.btn-outline-success:hover,
-.btn-outline-success:focus {
-  background-color: var(--green);
-  color: white;
-}
-
-.btn-success {
-  background-color: var(--green);
-  border-color: var(--green);
-}
-
-.btn-success:hover,
-.btn-success:focus {
-  background-color: var(--dark-green);
-  border-color: var(--dark-green);
-}
-
-.modal-content {
-  border-radius: 10px;
-}
-
-.modal-header {
-  background-color: var(--light-green);
-  border-bottom: none;
-}
-
-.modal-footer {
-  border-top: none;
-}
-
-.form-control:focus {
-  border-color: var(--green);
-  box-shadow: 0 0 0 0.2rem rgba(60, 157, 100, 0.25);
+.star-rating-input .fa-star:hover {
+  color: #ffc107 !important;
 }

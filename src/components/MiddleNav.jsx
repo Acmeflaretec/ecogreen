@@ -35,8 +35,8 @@ function MiddleNav() {
                 <i className="fas fa-user text-white"></i>
               </button>
               <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                <li><Link className="dropdown-item" to="/">Profile</Link></li>
-                <li><Link className="dropdown-item" to="/">Wishlist</Link></li>
+                <li><Link className="dropdown-item" to="/profile">Profile</Link></li>
+                <li><Link className="dropdown-item" to="/allproducts">Allproducts</Link></li>
                 <li><button className="dropdown-item" onClick={handleLogout}>Logout</button></li>
               </ul>
             </div>

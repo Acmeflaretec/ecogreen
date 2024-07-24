@@ -1,111 +1,143 @@
 import React, { useState } from 'react';
-import { Button, Col, Container, Image, Row, Carousel } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-import Footer from '../components/Footer';
+import { Container, Row, Col, Button, Image, Tabs, Tab, Form } from 'react-bootstrap';
+import { FaShoppingCart, FaBolt, FaHeart, FaShare, FaStar, FaCheck, FaTruck, FaShieldAlt } from 'react-icons/fa';
 import MiddleNav from '../components/MiddleNav';
-import Review from '../components/Review';
+import Footer from '../components/Footer';
 import './Product.css';
+import Review from '../components/Review';
 
-function Product() {
-  const [selectedImage, setSelectedImage] = useState(0);
+const Product = () => {
+  const [mainImage, setMainImage] = useState(0);
+  const [quantity, setQuantity] = useState(1);
 
   const product = {
-    name: 'BAMBOO TOOTHBRUSH ',
-    mrp: 1200,
-    price: 700,
+    name: 'Wireless Earbuds Pro',
+    brand: 'TechSound',
+    price: 2999,
+    originalPrice: 4999,
+    discount: 40,
+    rating: 4.5,
+    reviewCount: 1567,
     images: [
-      'https://img.freepik.com/free-photo/natural-bamboo-toothbrush-design-resource_53876-105932.jpg?w=996&t=st=1720515056~exp=1720515656~hmac=5a142d30dc6a4466bc0b8b33a0e1abdffe50e4e63cc70ffe4f71fbe6a261c224',
-      'https://img.freepik.com/premium-photo/bamboo-toothbrushes-are-eco-friendly-with-copy-space-white-background-zero-waste-free-plastic-top-view_103882-216.jpg?w=996',
-      'https://img.freepik.com/premium-photo/bamboo-toothbrushes-palm-leaf_87742-11370.jpg?w=826',
-      "https://img.freepik.com/premium-photo/eco-friendly-toothbrushes-bamboo-plant_144962-12953.jpg?w=996"
+      'https://img.freepik.com/free-photo/wireless-earbuds-with-neon-cyberpunk-style-lighting_23-2151074301.jpg?ga=GA1.1.1794837574.1691059421&semt=ais_user',
+      'https://img.freepik.com/free-photo/levitating-product-display-with-headphones_23-2149670637.jpg?ga=GA1.1.1794837574.1691059421&semt=ais_user'
     ],
-    benefits: [
-      "BPA-free bristles",
-      "A sleek, natural look and feel",
-      "100% Bamboo handle",
-      "Compostable brush handle",
-      "Biodegradable packaging"
+    highlights: [
+      'Superior sound quality with deep bass',
+      'Noise-cancelling technology',
+      'Up to 24 hours of battery life',
+      'Water-resistant design',
+      'Touch controls for easy operation'
     ],
-    description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique molestias consequuntur commodi cupiditate inventore ipsum sit deleniti. Quod nulla rerum dolor quidem accusamus ea repellat, ratione enim tenetur sint perferendis?"
-  };
-
-  const handleThumbnailClick = (index) => {
-    setSelectedImage(index);
+    description: "Experience the ultimate sound quality with our Wireless Earbuds Pro. Featuring advanced noise-cancelling technology, these earbuds ensure you enjoy your music without any distractions. With up to 24 hours of battery life, they are perfect for long listening sessions. The touch controls provide easy access to your music and calls, and the water-resistant design makes them suitable for all conditions.",
+    specifications: {
+      "Battery Life": "Up to 24 hours",
+      "Connectivity": "Bluetooth 5.0",
+      "Water Resistance": "IPX5",
+      "Charging Time": "1.5 hours",
+      "Color": "Black",
+      "Included Accessories": "Charging case, USB-C cable, Ear tips (S, M, L)",
+      "Warranty": "1 year",
+    }
   };
 
   return (
     <>
       <MiddleNav />
-      <Container className="product-details-container my-5">
-        <Row>
-          {/* Image Gallery */}
-          <Col lg={6} className="mb-4">
-            <Carousel interval={null} slide={false}>
-              {product.images.map((image, index) => (
-                <Carousel.Item key={index}>
-                  <Image
-                    src={image}
-                    alt={`Thumbnail ${index}`}
-                    fluid
-                    className="carousel-image"
-                    onClick={() => handleThumbnailClick(index)}
-                  />
-                </Carousel.Item>
+      <Container fluid className="product-container">
+        <Row className="product-main">
+          <Col lg={5} md={6} xs={12} className="product-gallery">
+            <div className="main-image-container">
+              <Image src={product.images[mainImage]} fluid className="main-image" />
+            </div>
+            <div className="thumbnails-container">
+              {product.images.map((img, index) => (
+                <div 
+                  key={index}
+                  className={`thumbnail ${mainImage === index ? 'active' : ''}`}
+                  onClick={() => setMainImage(index)}
+                  style={{backgroundImage: `url(${img})`}}
+                />
               ))}
-            </Carousel>
+            </div>
           </Col>
-
-          {/* Product Info */}
-          <Col lg={6}>
-            <div className="product-info">
-              <h1 className="product-name">{product.name}</h1>
-              <div className="product-price">
-                <span className="text-muted mrp">MRP: ₹{product.mrp}</span>
-                <span className="h3 fw-bold">₹{product.price}</span>
-                <span className="text-success discount">({((product.mrp - product.price) / product.mrp * 100).toFixed(0)}% OFF)</span>
-              </div>
-              <p className="text-muted small mb-4">Inclusive of all taxes</p>
-
-              <div className="product-benefits mb-4">
-                <h5 className="mb-3">Key Benefits:</h5>
-                <ul className="list-unstyled">
-                  {product.benefits.map((benefit, index) => (
-                    <li key={index} className="mb-2">
-                      <i className="fas fa-check-circle text-success me-2"></i>
-                      {benefit}
-                    </li>
+          <Col lg={7} md={6} xs={12} className="product-details">
+            <h1 className="product-title">{product.name}</h1>
+            <p className="product-brand">by <span>{product.brand}</span></p>
+            <div className="rating-container">
+              <span className="rating">{product.rating}</span>
+              {[...Array(5)].map((_, i) => (
+                <FaStar key={i} className={i < Math.floor(product.rating) ? 'star filled' : 'star'} />
+              ))}
+              <span className="review-count">({product.reviewCount} reviews)</span>
+            </div>
+            <div className="pricing-container">
+              <span className="current-price">₹{product.price}</span>
+              <span className="original-price">₹{product.originalPrice}</span>
+              <span className="discount">{product.discount}% off</span>
+            </div>
+            <div className="highlights-container">
+              <h3>Highlights</h3>
+              <ul>
+                {product.highlights.map((highlight, index) => (
+                  <li key={index}><FaCheck className="highlight-icon" /> {highlight}</li>
+                ))}
+              </ul>
+            </div>
+            <div className="purchase-container">
+              <Form.Group className="quantity-selector">
+                <Form.Label>Quantity:</Form.Label>
+                <Form.Control as="select" value={quantity} onChange={(e) => setQuantity(e.target.value)}>
+                  {[1, 2, 3, 4, 5].map(num => (
+                    <option key={num} value={num}>{num}</option>
                   ))}
-                </ul>
-              </div>
-
-              <div className="d-grid gap-2">
-                <Link to="/checkout" className="btn btn-success btn-lg">Buy Now</Link>
-                <Button variant="outline-success" size="lg">Add to Cart</Button>
-              </div>
+                </Form.Control>
+              </Form.Group>
+              <Button variant="warning" className="add-to-cart-btn">
+                <FaShoppingCart /> Add to Cart
+              </Button>
+              <Button variant="danger" className="buy-now-btn">
+                <FaBolt /> Buy Now
+              </Button>
+            </div>
+            <div className="additional-actions">
+              <Button variant="link"><FaHeart /> Add to Wishlist</Button>
+              <Button variant="link"><FaShare /> Share</Button>
+            </div>
+            <div className="delivery-info">
+              <p><FaTruck /> Free Delivery</p>
+              <p><FaShieldAlt /> 30-Day Return Policy</p>
             </div>
           </Col>
         </Row>
-
-        {/* Product Description */}
-        <Row className="mt-5">
+        <Row className="product-details-tabs">
           <Col>
-            <div className="product-description">
-              <h2 className="mb-3">Product Description</h2>
-              <p>{product.description}</p>
-            </div>
+            <Tabs defaultActiveKey="description" id="product-info-tabs">
+              <Tab eventKey="description" title="Description">
+                <p>{product.description}</p>
+              </Tab>
+              <Tab eventKey="specifications" title="Specifications">
+                <table className="specs-table">
+                  <tbody>
+                    {Object.entries(product.specifications).map(([key, value]) => (
+                      <tr key={key}>
+                        <th>{key}</th>
+                        <td>{value}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </Tab>
+            </Tabs>
           </Col>
         </Row>
-
-        {/* Reviews */}
-        <Row className="mt-5">
-          <Col>
-            <Review />
-          </Col>
+        <Row>
+          <Review />
         </Row>
       </Container>
       <Footer />
     </>
   );
-}
+};
 
 export default Product;

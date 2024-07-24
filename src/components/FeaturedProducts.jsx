@@ -35,7 +35,7 @@ function FeaturedProducts({ data, title }) {
   };
 
   const ProductCard = ({ product }) => (
-    <Link to={'/'}>
+    <Link to={'/product'}>
       <div className="product-card mb-5">
         <img src={product.image} alt={product.name} className="product-image" />
         <h3 className="product-name">{product.name}</h3>

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button, Card, Col, Form, Modal, Row } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Review.css';
+import { FaStar, FaUserCircle } from 'react-icons/fa';
 
 function Review() {
   const [showReviewModal, setShowReviewModal] = useState(false);
@@ -11,6 +12,7 @@ function Review() {
     review: '',
   });
   const [showAllReviews, setShowAllReviews] = useState(false);
+
 
   const [reviews, setReviews] = useState([
     {
@@ -73,7 +75,7 @@ function Review() {
       date: new Date().toISOString().split('T')[0],
     };
 
-    setReviews([...reviews, newReviewData]);
+    setReviews([newReviewData, ...reviews]);
     setNewReview({ name: '', rating: 0, review: '' });
     handleCloseReviewModal();
   };
@@ -95,93 +97,93 @@ function Review() {
 
   return (
     <div className="review-section my-5">
-    <h2 className="text-center mb-4 fw-bold text-dark-green">Customer Reviews</h2>
-    <Row className="g-4">
-      <Col lg={4}>
-        <Card className="rating-summary-card h-100 border-0 shadow-sm">
-          <Card.Body>
-            <Card.Title className="fw-bold mb-4 text-dark-green">Ratings Overview</Card.Title>
-            <div className="text-center mb-4">
-              <h1 className="display-4 fw-bold text-dark-green">{averageRating}</h1>
-              <div className="star-rating mb-2">
-                {[...Array(5)].map((_, index) => (
-                  <i
-                    key={index}
-                    className={`fas fa-star ${index < Math.floor(averageRating) ? 'text-green' : 'text-light-green'}`}
-                  />
+      <h2 className="text-center mb-4 fw-bold text-primary">Customer Reviews</h2>
+      <Row className="g-4">
+        <Col lg={4}>
+          <Card className="rating-summary-card h-100 border-0 shadow">
+            <Card.Body>
+              <Card.Title className="fw-bold mb-4 text-primary">Ratings Overview</Card.Title>
+              <div className="text-center mb-4">
+                <h1 className="display-4 fw-bold text-primary">{averageRating}</h1>
+                <div className="star-rating mb-2">
+                  {[...Array(5)].map((_, index) => (
+                    <FaStar
+                      key={index}
+                      className={index < Math.floor(averageRating) ? 'text-warning' : 'text-muted'}
+                    />
+                  ))}
+                </div>
+                <p className="text-muted">{totalReviews} ratings</p>
+              </div>
+              <div className="rating-bars">
+                {[5, 4, 3, 2, 1].map((rating) => (
+                  <div key={rating} className="d-flex align-items-center mb-3">
+                    <span className="text-muted me-2">{rating}</span>
+                    <div className="rating-bar-container flex-grow-1 mx-2">
+                      <div 
+                        className="rating-bar bg-primary"
+                        style={{width: `${(ratingCounts[rating - 1] / totalReviews) * 100}%`}}
+                      ></div>
+                    </div>
+                    <span className="text-muted ms-2 rating-percentage">
+                      {((ratingCounts[rating - 1] / totalReviews) * 100).toFixed(0)}%
+                    </span>
+                  </div>
                 ))}
               </div>
-              <p className="text-muted">{totalReviews} ratings</p>
-            </div>
-            <div className="rating-bars">
-              {[5, 4, 3, 2, 1].map((rating) => (
-                <div key={rating} className="d-flex align-items-center mb-3">
-                  <span className="text-muted me-2">{rating}</span>
-                  <div className="rating-bar-container flex-grow-1 mx-2">
-                    <div 
-                      className="rating-bar bg-green"
-                      style={{width: `${(ratingCounts[rating - 1] / totalReviews) * 100}%`}}
-                    ></div>
+              <div className="mt-4">
+                <h5 className="fw-bold text-primary mb-2">Review this product</h5>
+                <p className="text-muted">Share your thoughts with other customers</p>
+                <Button
+                  variant="outline-primary"
+                  className="w-100 py-2 mt-2"
+                  onClick={handleOpenReviewModal}
+                >
+                  Write a Review
+                </Button>
+              </div>
+            </Card.Body>
+          </Card>
+        </Col>
+        <Col lg={8}>
+          <Card className="border-0 shadow">
+            <Card.Body>
+              <Card.Title className="fw-bold text-primary mb-4">Customer Reviews</Card.Title>
+              {displayedReviews.map((review) => (
+                <div key={review.id} className="mb-4 pb-4 border-bottom">
+                  <div className="d-flex justify-content-between align-items-center mb-2">
+                    <div className="d-flex align-items-center">
+                      <FaUserCircle className="text-primary me-2" size={24} />
+                      <span className="fw-bold text-primary">{review.name}</span>
+                    </div>
+                    <small className="text-muted">{review.date}</small>
                   </div>
-                  <span className="text-muted ms-2 rating-percentage">
-                    {((ratingCounts[rating - 1] / totalReviews) * 100).toFixed(0)}%
-                  </span>
-                </div>
-              ))}
-            </div>
-            <div className="mt-4">
-              <h5 className="fw-bold text-dark-green mb-2">Review this product</h5>
-              <p className="text-muted">Share your thoughts with other customers</p>
-              <Button
-                variant="outline-success"
-                className="w-100 py-2 mt-2"
-                onClick={handleOpenReviewModal}
-              >
-                Write a Review
-              </Button>
-            </div>
-          </Card.Body>
-        </Card>
-      </Col>
-      <Col lg={8}>
-        <Card className="border-0 shadow-sm">
-          <Card.Body>
-            <Card.Title className="fw-bold text-dark-green mb-4">Customer Reviews</Card.Title>
-            {displayedReviews.map((review) => (
-              <div key={review.id} className="mb-4 pb-4 border-bottom">
-                <div className="d-flex justify-content-between align-items-center mb-2">
-                  <div className="star-rating">
+                  <div className="star-rating mb-2">
                     {[...Array(5)].map((_, index) => (
-                      <i
+                      <FaStar
                         key={index}
-                        className={`fas fa-star ${index < review.rating ? 'text-green' : 'text-light-green'}`}
+                        className={index < review.rating ? 'text-warning' : 'text-muted'}
                       />
                     ))}
                   </div>
-                  <div className="text-muted">
-                    <span className="fw-bold me-2">{review.name}</span>
-                    <small>{review.date}</small>
-                  </div>
+                  <p className="mb-0 text-secondary">{review.review}</p>
                 </div>
-                <p className="mb-0 text-secondary">{review.review}</p>
-              </div>
-            ))}
-            {!showAllReviews && (
-              <div className="text-center mt-4">
-                <Button variant="outline-success" onClick={handleReadMore}>
-                  Load More Reviews
-                </Button>
-              </div>
-            )}
-          </Card.Body>
-        </Card>
-      </Col>
-    </Row>
-
+              ))}
+              {!showAllReviews && (
+                <div className="text-center mt-4">
+                  <Button variant="outline-primary" onClick={handleReadMore}>
+                    Load More Reviews
+                  </Button>
+                </div>
+              )}
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
 
       <Modal show={showReviewModal} onHide={handleCloseReviewModal}>
         <Modal.Header closeButton>
-          <Modal.Title>Write a Review</Modal.Title>
+          <Modal.Title className="text-primary">Write a Review</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
@@ -197,19 +199,16 @@ function Review() {
             </Form.Group>
             <Form.Group controlId="formRating" className="mt-3">
               <Form.Label>Rating</Form.Label>
-              <Form.Control
-                as="select"
-                name="rating"
-                value={newReview.rating}
-                onChange={handleReviewChange}
-              >
-                <option value={0}>Select rating</option>
-                <option value={1}>1 star</option>
-                <option value={2}>2 stars</option>
-                <option value={3}>3 stars</option>
-                <option value={4}>4 stars</option>
-                <option value={5}>5 stars</option>
-              </Form.Control>
+              <div className="star-rating-input">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <FaStar
+                    key={star}
+                    className={star <= newReview.rating ? 'text-warning' : 'text-muted'}
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => setNewReview({ ...newReview, rating: star })}
+                  />
+                ))}
+              </div>
             </Form.Group>
             <Form.Group controlId="formReview" className="mt-3">
               <Form.Label>Review</Form.Label>
