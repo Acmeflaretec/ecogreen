@@ -374,14 +374,16 @@ const Allproducts = () => {
         </Link>
         <Card.Footer className="bg-white border-top-0 p-4">
           <div className="d-flex justify-content-between">
-            <Button 
-              variant="outline-primary" 
-              size="sm" 
-              className="flex-grow-1 me-2"
-              onClick={() => addToWishlist(item.id)}
-            >
-              <FaHeart /> Wishlist
-            </Button>
+            <Link to={'/wishlist'}>
+              <Button 
+                variant="outline-primary" 
+                size="sm" 
+                className="flex-grow-1 me-2"
+                onClick={() => addToWishlist(item.id)}
+              >
+                <FaHeart /> Wishlist
+              </Button>
+            </Link>
             <Button 
               variant="primary" 
               size="sm" 
