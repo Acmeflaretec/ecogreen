@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { FaRegTrashAlt, FaLock, FaPlus } from 'react-icons/fa';
+import React, { useState, useEffect } from 'react';
+import { FaRegTrashAlt, FaLock, FaPlus, FaCreditCard, FaMoneyBillWave } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { Modal, Button, Form } from 'react-bootstrap';
@@ -19,7 +19,6 @@ const Checkout = () => {
     pincode: '',
     phone: ''
   });
-
   const [products, setProducts] = useState([
     {
       id: 1,
@@ -30,10 +29,23 @@ const Checkout = () => {
     }
   ]);
 
+  useEffect(() => {
+    // Simulate fetching addresses from an API
+    const fetchAddresses = async () => {
+      // Simulated API call
+      const response = await new Promise(resolve => setTimeout(() => resolve([
+        { id: 1, name: 'John Doe', street: '123 Main St', city: 'Anytown', state: 'State', pincode: '12345', phone: '555-1234' },
+        { id: 2, name: 'Jane Smith', street: '456 Oak Ave', city: 'Othertown', state: 'State', pincode: '67890', phone: '555-5678' }
+      ]), 1000));
+      setAddresses(response);
+    };
+    fetchAddresses();
+  }, []);
+
   const handleQuantityChange = (id, newQuantity) => {
     setProducts(prevProducts =>
       prevProducts.map(product =>
-        product.id === id ? { ...product, quantity: newQuantity } : product
+        product.id === id ? { ...product, quantity: Math.max(1, newQuantity) } : product
       )
     );
   };
@@ -57,8 +69,8 @@ const Checkout = () => {
 
   const placeOrder = () => {
     Swal.fire({
-      title: 'Success',
-      text: 'Your order has been placed!',
+      title: 'Order Placed Successfully',
+      text: 'Thank you for your purchase!',
       icon: 'success',
       showConfirmButton: false,
       timer: 3000
@@ -79,6 +91,166 @@ const Checkout = () => {
     setNewAddress({ name: '', street: '', city: '', state: '', pincode: '', phone: '' });
   };
 
+  const renderProgressBar = () => (
+    <div className="progress mb-4" style={{height: "8px"}}>
+      <div 
+        className="progress-bar bg-success" 
+        role="progressbar" 
+        style={{ width: `${(currentStep / 3) * 100}%` }} 
+        aria-valuenow={(currentStep / 3) * 100} 
+        aria-valuemin="0" 
+        aria-valuemax="100"
+      ></div>
+    </div>
+  );
+
+  const renderAddressSection = () => (
+    <section className="card shadow-sm mb-4">
+      <div className="card-header bg-white border-bottom">
+        <h5 className="mb-0 text-success">1. Shipping Address</h5>
+      </div>
+      <div className="card-body">
+        {addresses.length === 0 ? (
+          <div className="text-center py-5">
+            <FaPlus className="text-muted mb-3" size={48} />
+            <h5 className="mb-3">No addresses found</h5>
+            <button className="btn btn-success" onClick={() => setShowAddressModal(true)}>
+              Add New Address
+            </button>
+          </div>
+        ) : (
+          <div className="row g-3">
+            {addresses.map(address => (
+              <div key={address.id} className="col-md-6">
+                <div className={`border rounded p-3 h-100 ${selectedAddress === address ? 'border-success' : ''}`}>
+                  <p className="mb-1"><strong>{address.name}</strong></p>
+                  <p className="mb-1">{address.street}</p>
+                  <p className="mb-1">{address.city}, {address.state} {address.pincode}</p>
+                  <p className="mb-3">Phone: {address.phone}</p>
+                  <button 
+                    className={`btn ${selectedAddress === address ? 'btn-success' : 'btn-outline-success'} w-100`}
+                    onClick={() => setSelectedAddress(address)}
+                  >
+                    {selectedAddress === address ? 'Selected' : 'Select This Address'}
+                  </button>
+                </div>
+              </div>
+            ))}
+            <div className="col-md-6">
+              <div className="border rounded p-3 h-100 d-flex align-items-center justify-content-center">
+                <button className="btn btn-outline-success" onClick={() => setShowAddressModal(true)}>
+                  <FaPlus className="me-2" />
+                  Add New Address
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        {selectedAddress && (
+          <div className="mt-4 text-end">
+            <button className="btn btn-success" onClick={() => setCurrentStep(2)}>Continue to Review</button>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+
+  const renderReviewSection = () => (
+    <section className="card shadow-sm mb-4">
+      <div className="card-header bg-white border-bottom">
+        <h5 className="mb-0 text-success">2. Review Items and Shipping</h5>
+      </div>
+      <div className="card-body">
+        {products.map(product => (
+          <div key={product.id} className="row mb-4 align-items-center">
+            <div className="col-md-3">
+              <img src={product.image} alt={product.name} className="img-fluid rounded" />
+            </div>
+            <div className="col-md-6">
+              <h6 className="fw-bold mb-1">{product.name}</h6>
+              <div className="d-flex align-items-center">
+                <span className="fw-bold me-2">₹{product.price}</span>
+                <span className="text-muted text-decoration-line-through small me-2">₹999</span>
+                <span className="bg-success-subtle text-success px-2 py-1 rounded-pill">70% off</span>
+              </div>
+            </div>
+            <div className="col-md-3">
+              <div className="input-group">
+                <button className="btn btn-outline-secondary" type="button" onClick={() => handleQuantityChange(product.id, product.quantity - 1)} disabled={product.quantity === 1}>-</button>
+                <input type="text" className="form-control text-center" value={product.quantity} readOnly />
+                <button className="btn btn-outline-secondary" type="button" onClick={() => handleQuantityChange(product.id, product.quantity + 1)}>+</button>
+              </div>
+              <button className="btn btn-link text-danger mt-2" onClick={() => removeProduct(product.id)}>
+                <FaRegTrashAlt /> Remove
+              </button>
+            </div>
+          </div>
+        ))}
+        <div className="d-flex justify-content-between mt-4">
+          <button className="btn btn-outline-secondary" onClick={() => setCurrentStep(1)}>Back</button>
+          <button className="btn btn-success" onClick={() => setCurrentStep(3)}>Continue to Payment</button>
+        </div>
+      </div>
+    </section>
+  );
+
+  const renderPaymentSection = () => (
+    <section className="card shadow-sm mb-4">
+      <div className="card-header bg-white border-bottom">
+        <h5 className="mb-0 text-success">3. Payment Options</h5>
+      </div>
+      <div className="card-body">
+        <div className="form-check mb-3 p-3 border rounded">
+          <input className="form-check-input" type="radio" name="paymentOption" id="razorpayOption" value="razorpay" checked={paymentOption === 'razorpay'} onChange={() => setPaymentOption('razorpay')} />
+          <label className="form-check-label" htmlFor="razorpayOption">
+            <FaCreditCard className="me-2 text-success" />
+            <span className="fw-bold d-block mb-1">Online Payment</span>
+            <span className="text-muted small">Pay securely with your credit/debit card or net banking</span>
+          </label>
+        </div>
+        <div className="form-check mb-3 p-3 border rounded">
+          <input className="form-check-input" type="radio" name="paymentOption" id="codOption" value="cod" checked={paymentOption === 'cod'} onChange={() => setPaymentOption('cod')} />
+          <label className="form-check-label" htmlFor="codOption">
+            <FaMoneyBillWave className="me-2 text-success" />
+            <span className="fw-bold d-block mb-1">Cash on Delivery</span>
+            <span className="text-muted small">Pay when your order is delivered</span>
+          </label>
+        </div>
+        <div className="d-flex justify-content-between mt-4">
+          <button className="btn btn-outline-secondary" onClick={() => setCurrentStep(2)}>Back</button>
+          <button className="btn btn-success" onClick={placeOrder}>Place Your Order</button>
+        </div>
+      </div>
+    </section>
+  );
+
+  const renderOrderSummary = () => (
+    <div className="card shadow-sm">
+      <div className="card-header bg-white border-bottom">
+        <h5 className="mb-0 text-success">Order Summary</h5>
+      </div>
+      <div className="card-body">
+        <div className="d-flex justify-content-between mb-2">
+          <span>Subtotal:</span>
+          <span>₹{calculateSubtotal().toFixed(2)}</span>
+        </div>
+        <div className="d-flex justify-content-between mb-2">
+          <span>Delivery Fee:</span>
+          <span>₹100.00</span>
+        </div>
+        <div className="d-flex justify-content-between mb-2">
+          <span>Tax:</span>
+          <span>₹{(0.1 * calculateSubtotal()).toFixed(2)}</span>
+        </div>
+        <hr />
+        <div className="d-flex justify-content-between fw-bold">
+          <span>Total:</span>
+          <span>₹{calculateTotalPrice().toFixed(2)}</span>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="bg-light min-vh-100">
       <header className="bg-white shadow-sm">
@@ -87,7 +259,6 @@ const Checkout = () => {
             <Link to="/" className="text-decoration-none">
               <img src="logo.png" className="img-fluid" width={120} alt="Logo" />
             </Link>
-            
             <div className="text-success">
               <FaLock className="me-2" />
               <span className="fw-bold">Secure Checkout</span>
@@ -97,164 +268,15 @@ const Checkout = () => {
       </header>
 
       <main className="container my-5">
+        {renderProgressBar()}
         <div className="row g-5">
           <div className="col-lg-8">
-            {/* <div className="progress mb-4" style={{height: "8px"}}>
-              <div 
-                className="progress-bar bg-success" 
-                role="progressbar" 
-                style={{ width: `${(currentStep / 3) * 100}%` }} 
-                aria-valuenow={(currentStep / 3) * 100} 
-                aria-valuemin="0" 
-                aria-valuemax="100"
-              ></div>
-            </div> */}
-
-            {currentStep === 1 && (
-              <section className="card shadow-sm mb-4">
-                <div className="card-header bg-white border-bottom">
-                  <h5 className="mb-0 text-success">1. Shipping Address</h5>
-                </div>
-                <div className="card-body">
-                  {addresses.length === 0 ? (
-                    <div className="text-center py-5">
-                      <FaPlus className="text-muted mb-3" size={48} />
-                      <h5 className="mb-3">No addresses found</h5>
-                      <button className="btn btn-success" onClick={() => setShowAddressModal(true)}>
-                        Add New Address
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="row g-3">
-                      {addresses.map(address => (
-                        <div key={address.id} className="col-md-6">
-                          <div className={`border rounded p-3 h-100 ${selectedAddress === address ? 'border-success' : ''}`}>
-                            <p className="mb-1"><strong>{address.name}</strong></p>
-                            <p className="mb-1">{address.street}</p>
-                            <p className="mb-1">{address.city}, {address.state} {address.pincode}</p>
-                            <p className="mb-3">Phone: {address.phone}</p>
-                            <button 
-                              className={`btn ${selectedAddress === address ? 'btn-success' : 'btn-outline-success'} w-100`}
-                              onClick={() => setSelectedAddress(address)}
-                            >
-                              {selectedAddress === address ? 'Selected' : 'Select This Address'}
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                      <div className="col-md-6">
-                        <div className="border rounded p-3 h-100 d-flex align-items-center justify-content-center">
-                          <button className="btn btn-outline-success" onClick={() => setShowAddressModal(true)}>
-                            <FaPlus className="me-2" />
-                            Add New Address
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                  {selectedAddress && (
-                    <div className="mt-4 text-end">
-                      <button className="btn btn-success" onClick={() => setCurrentStep(2)}>Continue to Review</button>
-                    </div>
-                  )}
-                </div>
-              </section>
-            )}
-
-            {currentStep === 2 && (
-              <section className="card shadow-sm mb-4">
-                <div className="card-header bg-white border-bottom">
-                  <h5 className="mb-0 text-success">2. Review Items and Shipping</h5>
-                </div>
-                <div className="card-body">
-                  {products.map(product => (
-                    <div key={product.id} className="row mb-4 align-items-center">
-                      <div className="col-md-3">
-                        <img src={product.image} alt={product.name} className="img-fluid rounded" />
-                      </div>
-                      <div className="col-md-6">
-                        <h6 className="fw-bold mb-1">{product.name}</h6>
-                        {/* <p className="text-muted small mb-2">Microgreen</p> */}
-                        <div className="d-flex align-items-center">
-                          <span className="fw-bold me-2">₹{product.price}</span>
-                          <span className="text-muted text-decoration-line-through small me-2">₹999</span>
-                          <span className="bg-success-subtle text-success px-2 py-1 rounded-pill">70% off</span>
-                        </div>
-                      </div>
-                      <div className="col-md-3">
-                        <div className="input-group">
-                          <button className="btn btn-outline-secondary" type="button" onClick={() => handleQuantityChange(product.id, product.quantity - 1)} disabled={product.quantity === 1}>-</button>
-                          <input type="text" className="form-control text-center" value={product.quantity} readOnly />
-                          <button className="btn btn-outline-secondary" type="button" onClick={() => handleQuantityChange(product.id, product.quantity + 1)}>+</button>
-                        </div>
-                        <button className="btn btn-link text-danger mt-2" onClick={() => removeProduct(product.id)}>
-                          <FaRegTrashAlt /> Remove
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                  <div className="d-flex justify-content-between mt-4">
-                    <button className="btn btn-outline-secondary" onClick={() => setCurrentStep(1)}>Back</button>
-                    <button className="btn btn-success" onClick={() => setCurrentStep(3)}>Continue to Payment</button>
-                  </div>
-                </div>
-              </section>
-            )}
-
-            {currentStep === 3 && (
-              <section className="card shadow-sm mb-4">
-                <div className="card-header bg-white border-bottom">
-                  <h5 className="mb-0 text-success">3. Payment Options</h5>
-                </div>
-                <div className="card-body">
-                  <div className="form-check mb-3 p-3 border rounded">
-                    <input className="form-check-input" type="radio" name="paymentOption" id="razorpayOption" value="razorpay" checked={paymentOption === 'razorpay'} onChange={() => setPaymentOption('razorpay')} />
-                    <label className="form-check-label" htmlFor="razorpayOption">
-                      <span className="fw-bold d-block mb-1">Online Payment</span>
-                      <span className="text-muted small">Pay securely with your credit/debit card or net banking</span>
-                    </label>
-                  </div>
-                  <div className="form-check mb-3 p-3 border rounded">
-                    <input className="form-check-input" type="radio" name="paymentOption" id="codOption" value="cod" checked={paymentOption === 'cod'} onChange={() => setPaymentOption('cod')} />
-                    <label className="form-check-label" htmlFor="codOption">
-                      <span className="fw-bold d-block mb-1">Cash on Delivery</span>
-                      <span className="text-muted small">Pay when your order is delivered</span>
-                    </label>
-                  </div>
-                  <div className="d-flex justify-content-between mt-4">
-                    <button className="btn btn-outline-secondary" onClick={() => setCurrentStep(2)}>Back</button>
-                    <button className="btn btn-success" onClick={placeOrder}>Place Your Order</button>
-                  </div>
-                </div>
-              </section>
-            )}
+            {currentStep === 1 && renderAddressSection()}
+            {currentStep === 2 && renderReviewSection()}
+            {currentStep === 3 && renderPaymentSection()}
           </div>
-
           <div className="col-lg-4">
-            <div className="card shadow-sm">
-              <div className="card-header bg-white border-bottom">
-                <h5 className="mb-0 text-success">Order Summary</h5>
-              </div>
-              <div className="card-body">
-                <div className="d-flex justify-content-between mb-2">
-                  <span>Subtotal:</span>
-                  <span>₹{calculateSubtotal().toFixed(2)}</span>
-                </div>
-                <div className="d-flex justify-content-between mb-2">
-                  <span>Delivery Fee:</span>
-                  <span>₹100.00</span>
-                </div>
-                <div className="d-flex justify-content-between mb-2">
-                  <span>Tax:</span>
-                  <span>₹{(0.1 * calculateSubtotal()).toFixed(2)}</span>
-                </div>
-                <hr />
-                <div className="d-flex justify-content-between fw-bold">
-                  <span>Total:</span>
-                  <span>₹{calculateTotalPrice().toFixed(2)}</span>
-                </div>
-              </div>
-            </div>
+            {renderOrderSummary()}
           </div>
         </div>
       </main>

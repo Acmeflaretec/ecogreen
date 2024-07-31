@@ -25,7 +25,7 @@ function MiddleNav() {
           <button className="btn btn-outline-success" type="submit">Search</button>
         </form>
         <div className="nav-actions ms-auto">
-          <Link to="/" className="nav-icon-link" title="Cart">
+          <Link to="/cart" className="nav-icon-link" title="Cart">
             <i className="fas fa-shopping-cart"></i>
             {cartItemCount > 0 && <span className="badge">{cartItemCount}</span>}
           </Link>

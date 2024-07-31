@@ -5,6 +5,7 @@ import MiddleNav from '../components/MiddleNav';
 import Footer from '../components/Footer';
 import './Product.css';
 import Review from '../components/Review';
+import { Link } from 'react-router-dom';
 
 const Product = () => {
   const [mainImage, setMainImage] = useState(0);
@@ -101,7 +102,7 @@ const Product = () => {
               </Button>
             </div>
             <div className="additional-actions">
-              <Button variant="link"><FaHeart /> Add to Wishlist</Button>
+              <Link to={'/wishlist'}><Button variant="link"><FaHeart /> Add to Wishlist</Button></Link>
               <Button variant="link"><FaShare /> Share</Button>
             </div>
             <div className="delivery-info">
