@@ -6,6 +6,7 @@ import Badge from "components/Badge";
 import { useGetCategory } from "queries/ProductQuery";
 import Table from "examples/Tables/Table";
 import { Icon } from "@mui/material";
+import { Link } from "react-router-dom";
 
 function Category({ image, name, desc }) {
   return (
@@ -51,9 +52,11 @@ const TableData = () => {
       </Typography>
     ),
     action: (
-      <Icon sx={{ cursor: "pointer", fontWeight: "bold" }} fontSize="small">
-        more_vert
-      </Icon>
+      <Link to={`/category/editCategory/${item?._id}`}>
+        <Icon sx={{ cursor: "pointer", fontWeight: "bold" }} fontSize="small">
+          more_vert
+        </Icon>
+      </Link>
     ),
   }))
   return isLoading ? <Typography fontSize={14} sx={{ paddingX: 5 }}>loading...</Typography> : <Table columns={columns} rows={rows} />

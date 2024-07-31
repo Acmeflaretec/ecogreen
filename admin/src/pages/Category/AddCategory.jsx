@@ -4,8 +4,10 @@ import PageLayout from 'layouts/PageLayout';
 import { useAddCategory } from "queries/ProductQuery";
 import toast from "react-hot-toast";
 import Input from "components/Input";
+import { useNavigate } from "react-router-dom";
 
 const AddCategory = () => {
+  const navigate = useNavigate()
   const [data, setData] = useState({})
   const fileInputRef = React.useRef(null);
   const handleFileSelect = () => {
@@ -43,6 +45,7 @@ const AddCategory = () => {
       addCategory(formData)
         .then((res) => {
           toast.success(res?.message ?? "category added");
+          navigate('/category')
         })
         .catch((err) => {
           toast.error(err?.message ?? "Something went wrong");

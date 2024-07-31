@@ -2,10 +2,10 @@ import { useState, useEffect, useMemo } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-import Sidenav from "examples/Sidenav";
+import Sidenav from "examples/Sidenav";    
 import theme from "assets/theme";
 import themeRTL from "assets/theme/theme-rtl";
-import themeDark from "assets/theme-dark";
+import themeDark from "assets/theme-dark";   
 import themeDarkRTL from "assets/theme-dark/theme-rtl";
 import rtlPlugin from "stylis-plugin-rtl";
 import { CacheProvider } from "@emotion/react";
@@ -21,6 +21,7 @@ import "assets/css/nucleo-icons.css";
 import "assets/css/nucleo-svg.css";
 import "assets/css/style.css";
 import AddCategory from "pages/Category/AddCategory";
+import EditCategory from "pages/Category/EditCategory";
 import AddProduct from "pages/Products/AddProduct";
 import EditProduct from "pages/Products/EditProduct";
 import EditOrder from "pages/Orders/EditOrder";
@@ -106,6 +107,7 @@ export default function App() {
               <Routes>
                 {getRoutes(routes)}
                 <Route path="/category/addCategory" element={<AddCategory />} />
+                <Route path="/category/editCategory/:id" element={<EditCategory />} />
                 <Route path="/products/addProducts" element={<AddProduct />} />
                 <Route path="/products/editProduct/:id" element={<EditProduct />} />
                 <Route path="/orders/editOrder/:id" element={<EditOrder />} />
@@ -134,6 +136,7 @@ export default function App() {
             <Routes>
               {getRoutes(routes)}
               <Route path="/category/addCategory" element={<AddCategory />} />
+              <Route path="/category/editCategory/:id" element={<EditCategory />} />
               <Route path="/products/addProducts" element={<AddProduct />} />
               <Route path="/banners/addBanner" element={<AddBanner />} />
               <Route path="/blogs/addBlog" element={<AddBlog />} />

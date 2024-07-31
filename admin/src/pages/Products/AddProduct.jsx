@@ -3,17 +3,18 @@ import Box from 'components/Box'
 import Input from 'components/Input'
 import PageLayout from 'layouts/PageLayout'
 import React, { useEffect, useState } from 'react'
-import DropZone from './Dropzone'
+import ImageList from './ImageList';
 import { useGetCategory } from 'queries/ProductQuery'
 import Typography from 'components/Typography'
 import { useAddProduct } from 'queries/ProductQuery'
 import toast from 'react-hot-toast'
+import { useNavigate } from 'react-router-dom'
 
 const AddProduct = () => {
+  const navigat = useNavigate()
   const [details, setDetails] = useState({})
   const { data, isLoading } = useGetCategory({ pageNo: 1, pageCount: 100 });
   const { mutateAsync: AddProduct, isLoading: loading } = useAddProduct()
-  const [images, setImage] = useState([])
   const handleChange = (e) => {
     setDetails(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
@@ -23,7 +24,6 @@ const AddProduct = () => {
   }, [category])
   const handleSubmit = () => {
     console.log(details);
-    console.log(images);
     try {
       // if (!details?.name) {
       //   return toast.error("name is required")
@@ -35,7 +35,7 @@ const AddProduct = () => {
       //   return toast.error("image is required")
       // }
       const formData = new FormData();
-      images?.forEach((image) => {
+      details?.image?.forEach((image) => {
         formData.append('images', image, image.name);
       });
       for (const key in details) {
@@ -47,7 +47,8 @@ const AddProduct = () => {
       // typeof (details.image) == 'object' && formData.append("image", details.image, details?.image?.name);
       AddProduct(formData)
         .then((res) => {
-          toast.success(res?.message ?? "category added");
+          toast.success(res?.message ?? "Product added");
+          navigat('/products')
         })
         .catch((err) => {
           toast.error(err?.message ?? "Something went wrong");
@@ -161,7 +162,7 @@ const AddProduct = () => {
               onChange={handleChange}
             />
           </Grid>
-          <Grid xs={12} pl={3} pt={2}>
+          {/* <Grid xs={12} pl={3} pt={2}>
             <Typography variant="body2">variations</Typography>
           </Grid>
           <Grid item xs={12} sm={4}>
@@ -187,7 +188,7 @@ const AddProduct = () => {
               value={details?.type3 || ''}
               onChange={handleChange}
             />
-          </Grid>
+          </Grid> */}
           <Grid item xs={12}>
             <Input
               id="description"
@@ -200,9 +201,21 @@ const AddProduct = () => {
             />
           </Grid>
         </Grid>
-        <Grid item container spacing={2} xs={12} sm={12} md={6} py={5}>
+        {/* <Grid item container spacing={2} xs={12} sm={12} md={6} py={5}>
           <Grid xs={12}>
             <DropZone dispatch={setImage} />
+          </Grid>
+          <Grid item xs={12} sm={8}></Grid>
+          <Grid item xs={12} sm={4} mt={'auto'}>
+            <Button sx={{ mr: 0, width: '100%' }} onClick={handleSubmit} variant='contained'>
+              Add Product
+            </Button>
+          </Grid>
+        </Grid> */}
+
+        <Grid item container spacing={2} xs={12} sm={12} md={6} py={5}>
+          <Grid xs={12}>
+            <ImageList data={details?.image} dispatch={setDetails} />
           </Grid>
           <Grid item xs={12} sm={8}></Grid>
           <Grid item xs={12} sm={4} mt={'auto'}>

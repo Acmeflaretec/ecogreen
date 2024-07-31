@@ -1,6 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import {
   addCategory,
+  getCategoryById,
+  editCategory,
+  deleteCategory,
   addProduct,
   deleteProduct,
   getCategory,
@@ -14,6 +17,43 @@ const useGetCategory = (data) => {
     staleTime: 3000,
     keepPreviousData: true,
     // refetchOnWindowFocus: false,
+  });
+};
+
+
+const useGetCategorysById = (data) => {
+  return useQuery(["get_category", data], () => getCategoryById(data), {
+      staleTime: 3000,
+      keepPreviousData: true,
+      // refetchOnWindowFocus: false,
+  });
+};
+
+const useEditCategorys = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation((data) => editCategory(data), {
+      onSuccess: (data) => {
+          queryClient.invalidateQueries("get_category");
+          return data;
+      },
+      onError: (data) => {
+          return data;
+      },
+  });
+};
+
+const useDeleteCategorys = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation((data) => deleteCategory(data), {
+      onSuccess: (data) => {
+          queryClient.invalidateQueries("get_category");
+          return data;
+      },
+      onError: (data) => {
+          return data;
+      },
   });
 };
 
@@ -90,6 +130,9 @@ const useDeleteProduct = () => {
 
 export {
   useGetCategory,
+  useEditCategorys, 
+  useGetCategorysById, 
+  useDeleteCategorys ,
   useGetProducts,
   useGetProductById,
   useAddCategory,
