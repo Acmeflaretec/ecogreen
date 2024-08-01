@@ -22,8 +22,8 @@ const Checkout = () => {
   const [products, setProducts] = useState([
     {
       id: 1,
-      name: 'ECO-FRIENDLY COTTON BUDS',
-      image: 'https://img.freepik.com/premium-photo/heap-bamboo-cotton-swabs-buds-top-view-beige-surface-copy-space_224798-1095.jpg?w=996',
+      name: 'wireless earphones',
+      image: 'https://img.freepik.com/free-photo/wireless-earbuds-with-neon-cyberpunk-style-lighting_23-2151074301.jpg?ga=GA1.1.1794837574.1691059421&semt=ais_user',
       price: 1999,
       quantity: 1,
     }

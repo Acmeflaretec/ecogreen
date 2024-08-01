@@ -15,9 +15,39 @@ function Wishlist() {
     // Simulate fetching wishlist items from an API
     setTimeout(() => {
       setWishlistItems([
-        { id: 1, name: 'CHARCOAL ENHANCED BAMBOO TOOTHBRUSH', imageUrl: 'https://img.freepik.com/premium-photo/eco-friendly-bamboo-toothbrush-pastel-background-zero-waste-life-without-plastic_223515-200.jpg?w=996', price: 120, originalPrice: 400, discount: 70, quantity: 500, rating: 4.5, reviews: 128 },
-        { id: 2, name: 'BAMBOO TOOTHBRUSH [ white ]', imageUrl: 'https://img.freepik.com/free-photo/top-view-toothbrushes-towels_23-2148678027.jpg?w=826&t=st=1720514150~exp=1720514750~hmac=d12b18a24d3805634f531efeebf4641f623175b2449f1117084539d439e22e35', price: 150, originalPrice: 500, discount: 70, quantity: 500, rating: 4.2, reviews: 95 },
-        { id: 3, name: 'BAMBOO TONGUE CLEANER', imageUrl: 'https://img.freepik.com/free-photo/eco-friendly-environment-bamboo-tube-straws_23-2148768567.jpg?t=st=1720514232~exp=1720517832~hmac=62cd94a2d5614c27c2c97a3235759bf284823b8b6df313938850f4dd238eb4fe&w=1060', price: 180, originalPrice: 600, discount: 70, quantity: 500, rating: 4.8, reviews: 203 },
+        { 
+          id: 1, 
+          name: 'WIRELESS EARBUDS', 
+          imageUrl: 'https://img.freepik.com/free-photo/wireless-earbuds-with-neon-cyberpunk-style-lighting_23-2151074301.jpg?ga=GA1.1.1794837574.1691059421&semt=ais_user', 
+          price: 2500, 
+          originalPrice: 5000, 
+          discount: 50, 
+          quantity: 100, 
+          rating: 4.6, 
+          reviews: 250 
+        },
+        { 
+          id: 2, 
+          name: 'BLUETOOTH SPEAKER', 
+          imageUrl: 'https://t4.ftcdn.net/jpg/01/99/21/51/240_F_199215173_Bu3MTEbuNO3Lsi8OPnwHvGTBgzGXDVqF.jpg', 
+          price: 1500, 
+          originalPrice: 3000, 
+          discount: 50, 
+          quantity: 75, 
+          rating: 4.4, 
+          reviews: 180 
+        },
+        { 
+          id: 3, 
+          name: 'SMARTPHONE', 
+          imageUrl: 'https://images.samsung.com/is/image/samsung/p6pim/au/galaxy-s21/gallery/au-galaxy-s21-5g-g991-sm-g991bzaaats-368339758?$624_624_PNG$', 
+          price: 20000, 
+          originalPrice: 40000, 
+          discount: 50, 
+          quantity: 50, 
+          rating: 4.7, 
+          reviews: 500 
+        },
       ]);
       setLoading(false);
     }, 1000);

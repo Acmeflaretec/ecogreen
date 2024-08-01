@@ -6,9 +6,27 @@ import { FaShoppingCart, FaPlus, FaMinus, FaTrash, FaReceipt, FaArrowLeft } from
 
 function Cart() {
   const initialCartItems = [
-    { id: 1, name: 'Charcoal Enhanced Bamboo Toothbrush', imageUrl: 'https://img.freepik.com/premium-photo/eco-friendly-bamboo-toothbrush-pastel-background-zero-waste-life-without-plastic_223515-200.jpg?w=996', price: 120, quantity: 1 },
-    { id: 2, name: 'Bamboo Toothbrush (White)', imageUrl: 'https://img.freepik.com/free-photo/top-view-toothbrushes-towels_23-2148678027.jpg?w=826&t=st=1720514150~exp=1720514750~hmac=d12b18a24d3805634f531efeebf4641f623175b2449f1117084539d439e22e35', price: 150, quantity: 2 },
-    { id: 3, name: 'Bamboo Tongue Cleaner', imageUrl: 'https://img.freepik.com/free-photo/eco-friendly-environment-bamboo-tube-straws_23-2148768567.jpg?t=st=1720514232~exp=1720517832~hmac=62cd94a2d5614c27c2c97a3235759bf284823b8b6df313938850f4dd238eb4fe&w=1060', price: 180, quantity: 1 },
+    { 
+      id: 1, 
+      name: 'Wireless Earbuds', 
+      imageUrl: 'https://img.freepik.com/free-photo/wireless-earbuds-with-neon-cyberpunk-style-lighting_23-2151074301.jpg?ga=GA1.1.1794837574.1691059421&semt=ais_user', 
+      price: 2500, 
+      quantity: 5 
+    },
+    { 
+      id: 2, 
+      name: 'Bluetooth Speaker', 
+      imageUrl: 'https://t4.ftcdn.net/jpg/01/99/21/51/240_F_199215173_Bu3MTEbuNO3Lsi8OPnwHvGTBgzGXDVqF.jpg', 
+      price: 1500, 
+      quantity: 3 
+    },
+    { 
+      id: 3, 
+      name: 'Smartphone', 
+      imageUrl: 'https://images.samsung.com/is/image/samsung/p6pim/au/galaxy-s21/gallery/au-galaxy-s21-5g-g991-sm-g991bzaaats-368339758?$624_624_PNG$', 
+      price: 20000, 
+      quantity: 10 
+    }
   ];
 
   const [cartItems, setCartItems] = useState(initialCartItems);
