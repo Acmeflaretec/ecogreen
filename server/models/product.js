@@ -41,9 +41,13 @@ const productSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    countries: {
+        type: [String],
+        required: true
+    },
     image: {
         type: Array,
-        required:true
+        required: true
     },
     isAvailable: {
         type: Boolean,
@@ -57,7 +61,7 @@ const productSchema = new mongoose.Schema({
         type: Array
     }
 },
-{
-    timestamps: true
-})
+    {
+        timestamps: true
+    })
 module.exports = mongoose.model('Product', productSchema)

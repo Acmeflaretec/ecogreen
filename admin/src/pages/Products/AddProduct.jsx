@@ -1,4 +1,4 @@
-import { Autocomplete, Button, Grid, TextField } from '@mui/material'
+import { Autocomplete, Button, Grid, TextField,Chip } from '@mui/material'
 import Box from 'components/Box'
 import Input from 'components/Input'
 import PageLayout from 'layouts/PageLayout'
@@ -19,9 +19,12 @@ const AddProduct = () => {
     setDetails(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
   const [category, setCategory] = useState()
-  useEffect(() => {
-    console.log(category);
-  }, [category])
+
+  const [selectedCountries, setSelectedCountries] = useState([])
+  const countries = ["Baharin", "Uae", "Kuwait", "India", "Quatar", "Oman"];
+  // useEffect(() => {
+  //   console.log('category',category);
+  // }, [category])
   const handleSubmit = () => {
     console.log(details);
     try {
@@ -44,6 +47,7 @@ const AddProduct = () => {
         }
       }
       formData.append('category', category?._id);
+      formData.append('countries', JSON.stringify(selectedCountries));
       // typeof (details.image) == 'object' && formData.append("image", details.image, details?.image?.name);
       AddProduct(formData)
         .then((res) => {
@@ -162,33 +166,30 @@ const AddProduct = () => {
               onChange={handleChange}
             />
           </Grid>
-          {/* <Grid xs={12} pl={3} pt={2}>
-            <Typography variant="body2">variations</Typography>
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <Input
-              placeholder="4 piece"
-              name="type1"
-              value={details?.type1 || ''}
-              onChange={handleChange}
+
+          <Grid item xs={12}>
+            <Autocomplete
+              multiple
+              id="countries-select"
+              options={countries}
+              value={selectedCountries}
+              onChange={(event, newValue) => {
+                setSelectedCountries(newValue);
+              }}
+              renderTags={(value, getTagProps) =>
+                value.map((option, index) => (
+                  <Chip variant="outlined" key={index} label={option} {...getTagProps({ index })} />
+                ))
+              }
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  placeholder="Select Countries"
+                />
+              )}
             />
           </Grid>
-          <Grid item xs={12} sm={4}>
-            <Input
-              placeholder="6 piece"
-              name="type2"
-              value={details?.type2 || ''}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <Input
-              placeholder="9 piece"
-              name="type3"
-              value={details?.type3 || ''}
-              onChange={handleChange}
-            />
-          </Grid> */}
+         
           <Grid item xs={12}>
             <Input
               id="description"
@@ -201,18 +202,6 @@ const AddProduct = () => {
             />
           </Grid>
         </Grid>
-        {/* <Grid item container spacing={2} xs={12} sm={12} md={6} py={5}>
-          <Grid xs={12}>
-            <DropZone dispatch={setImage} />
-          </Grid>
-          <Grid item xs={12} sm={8}></Grid>
-          <Grid item xs={12} sm={4} mt={'auto'}>
-            <Button sx={{ mr: 0, width: '100%' }} onClick={handleSubmit} variant='contained'>
-              Add Product
-            </Button>
-          </Grid>
-        </Grid> */}
-
         <Grid item container spacing={2} xs={12} sm={12} md={6} py={5}>
           <Grid xs={12}>
             <ImageList data={details?.image} dispatch={setDetails} />

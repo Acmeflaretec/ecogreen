@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Grid, Typography } from "@mui/material";
+import { Alert, Box, Button, Grid, Typography ,Chip,Autocomplete,TextField} from "@mui/material";
 import React, { useState } from 'react'
 import PageLayout from 'layouts/PageLayout';
 import { useAddCategory } from "queries/ProductQuery";
@@ -13,6 +13,9 @@ const AddCategory = () => {
   const handleFileSelect = () => {
     fileInputRef.current.click();
   };
+
+  const [selectedCountries, setSelectedCountries] = useState([])
+  const countries = ["Baharin", "Uae", "Kuwait", "India", "Quatar", "Oman"];
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -41,6 +44,8 @@ const AddCategory = () => {
           formData.append(key, data[key]);
         }
       }
+      
+      formData.append('countries', JSON.stringify(selectedCountries));
       typeof (data.image) == 'object' && formData.append("image", data.image, data?.image?.name);
       addCategory(formData)
         .then((res) => {
@@ -73,6 +78,28 @@ const AddCategory = () => {
               fullWidth
               autoComplete="name"
               variant="outlined"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <Autocomplete
+              multiple
+              id="countries-select"
+              options={countries}
+              value={selectedCountries}
+              onChange={(event, newValue) => {
+                setSelectedCountries(newValue);
+              }}
+              renderTags={(value, getTagProps) =>
+                value.map((option, index) => (
+                  <Chip variant="outlined" key={index} label={option} {...getTagProps({ index })} />
+                ))
+              }
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  placeholder="Select Countries"
+                />
+              )}
             />
           </Grid>
 

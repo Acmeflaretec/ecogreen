@@ -12,7 +12,7 @@ const getCategory = async (req, res) => {
 
 const addCategory = async (req, res) => {
   console.log('addCategory');
-  const { name, desc } = req?.body
+  const { name, desc,countries} = req?.body
   const image = req?.file?.filename
   try {
     let arr = []
@@ -23,7 +23,7 @@ const addCategory = async (req, res) => {
     const category = name.toUpperCase()
     const isExisting = arr.findIndex(x => x == category)
     if (isExisting === -1) {
-      const cat = new Category({ name, desc, image })
+      const cat = new Category({ name, desc, image,countries: JSON.parse(countries) })
       await cat.save()
       res.status(201).json({ data: cat, message: 'category created successfully' });
     } else {
@@ -65,7 +65,7 @@ const getCategoryById = async (req, res) => {
   }
 }
 const updateCategory = async (req, res) => {
-  const {_id,name, desc ,isAvailable} = req?.body
+  const {_id,name, desc,countries,isAvailable} = req?.body
   const image = req?.file?.filename
   try {
     const data = await Category.findById(_id);
@@ -82,7 +82,7 @@ const updateCategory = async (req, res) => {
       });
     }
     await Category.updateOne({ _id }, {
-      $set: { name, desc,isAvailable, ...(image && { image }) }
+      $set: { name, desc,isAvailable,countries: JSON.parse(countries), ...(image && { image }) }
     })
     res.status(200).json({ data, message: 'Category updated successfully' });
   } catch (error) {

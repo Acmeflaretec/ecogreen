@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Grid, ToggleButton, Typography } from "@mui/material";
+import { Alert, Box, Button, Grid, ToggleButton, Typography, Chip, TextField, Autocomplete } from "@mui/material";
 import React, { useEffect, useState } from 'react'
 import PageLayout from 'layouts/PageLayout';
 import toast from "react-hot-toast";
@@ -10,11 +10,18 @@ const EditCategory = () => {
    const { id } = useParams();
    const navigate = useNavigate()
    const { data: res, isLoading } = useGetCategorysById({ id });
+   const [selectedCountries, setSelectedCountries] = useState([]);
+   const countries = ["Baharin", "Uae", "Kuwait", "India", "Quatar", "Oman"];
+   const [data, setData] = useState({})
    useEffect(() => {
       setData(res?.data)
+      setSelectedCountries(res?.data?.countries || []);
    }, [res])
-   const [data, setData] = useState({})
+   
    const fileInputRef = React.useRef(null);
+
+   
+
    const handleFileSelect = () => {
       fileInputRef.current.click();
    };
@@ -61,11 +68,13 @@ const EditCategory = () => {
          }
          const formData = new FormData();
          for (const key in data) {
-            if (data.hasOwnProperty(key) && key !== "image") {
-               console.log('key',key,data[key]);
+            if (data.hasOwnProperty(key) && key !== "image" && key !== "countries") {
+               console.log('key', key, data[key]);
                formData.append(key, data[key]);
             }
          }
+         formData.append('countries', JSON.stringify(selectedCountries));
+
          typeof (data.image) == 'object' && formData.append("image", data.image, data?.image?.name);
          // console.log("formData",formData);
          editCategory(formData)
@@ -103,21 +112,43 @@ const EditCategory = () => {
                      variant="outlined"
                   />
                </Grid>
-               
+
                <Grid item xs={12} sm={6}>
                   <Typography variant="caption">
-                  Category status &nbsp;
+                     Category status &nbsp;
                   </Typography>
                   <ToggleButton
                      value={data?.isAvailable}
                      selected={data?.isAvailable}
                      onChange={() => {
-                        setData(prev => ({ ...prev, isAvailable: !data?.isAvailable}))
+                        setData(prev => ({ ...prev, isAvailable: !data?.isAvailable }))
                      }}
                   >
                      {data?.isAvailable ? 'Active' : 'Blocked'}
                   </ToggleButton>
                </Grid>
+               <Grid item xs={12}>
+              <Autocomplete
+                multiple
+                id="countries-select"
+                options={countries}
+                value={selectedCountries}
+                onChange={(event, newValue) => {
+                  setSelectedCountries(newValue);
+                }}
+                renderTags={(value, getTagProps) =>
+                  value.map((option, index) => (
+                    <Chip variant="outlined" key={index} label={option} {...getTagProps({ index })} />
+                  ))
+                }
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    placeholder="Select Countries"
+                  />
+                )}
+              />
+            </Grid>
 
                <Grid item xs={12}>
                   <Input

@@ -5,6 +5,10 @@ const categorySchema = new mongoose.Schema({
       type: String,
       required: true
    },
+   countries: {
+      type: [String],
+      required: true
+  },
    desc: {
       type: String,
    },
