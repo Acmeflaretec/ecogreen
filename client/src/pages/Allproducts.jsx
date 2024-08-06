@@ -1,6 +1,7 @@
 // src/pages/Allproducts.js
 
 import React, { useEffect, useState } from 'react';
+import axiosInstance from '../axios';
 import { Link } from 'react-router-dom';
 import { Container, Row, Col, Card, Button, Form, Pagination, Badge, Offcanvas } from 'react-bootstrap';
 import { motion } from 'framer-motion';
@@ -8,8 +9,84 @@ import { FaHeart, FaShoppingCart, FaStar, FaFilter, FaTruck, FaLeaf, FaPercent, 
 import Footer from '../components/Footer';
 import MiddleNav from '../components/MiddleNav';
 import './Allproducts.css';
+import { useNavigate,useLocation } from 'react-router-dom'; 
 
 const Allproducts = () => {
+  const { search } = useLocation();
+  const searchParams = new URLSearchParams(search);
+  const initialCategory = searchParams.get('categoryQuery') || ''; // Make sure to provide a fallback value if the parameter is not found
+  const initialSearch = searchParams.get('searchQuery') || ''; // Make sure to provide a fallback value if the parameter is not found
+  
+  const [category, setCategory] = useState('category=' + initialCategory);
+  const [searchQuery, setsearchQuery] = useState('search=' + initialSearch);
+  const navigate = useNavigate()
+
+  const [productsList,setProductsList] = useState([])
+
+  const [categoryList,setCategoryList] = useState([])
+  const [url,setUrl]= useState('/products/client?')
+  const [filtersM, setFiltersM] = useState({
+    categories: [],
+  });
+  const [sortOrder,setSortOrder] = useState('desc')
+  const [sortField,setSortField] = useState()
+
+
+
+const fetchCategory = async()=>{
+  try {
+    const response = await axiosInstance.get('/category');
+    setCategoryList(response?.data?.data);
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+  }
+}
+useState(()=>{
+  fetchCategory()
+},[])
+
+// useEffect(()=>{
+//   const searchParams = new URLSearchParams(location.search);
+//   const initialCategory = searchParams.get('categoryQuery') || '';
+//   setCategory('category='+initialCategory)
+ 
+// },[])
+
+const fetchProducts=async()=>{
+  // const searchParams = new URLSearchParams(location.search);
+  // const initialCategory = searchParams.get('categoryQuery') || '';
+  // console.log('fetch pro cat ',category)
+ const response= await axiosInstance.get(url+category);
+ // const response= await axiosInstance.get(url+'category='+initialCategory);
+
+ setProductsList(response?.data?.data)
+console.log(response?.data?.data)
+}
+
+
+useEffect(()=>{
+fetchProducts()
+},[url,category])
+// for category
+const handleFilterChangeM = (filterType, selectedValues) => {
+  console.log('sel val',selectedValues[0])
+  console.log('filter type',filterType)
+setCategory('category='+selectedValues[0])
+setUrl('/products/client?')
+  setFiltersM((prevFilters) => ({
+    ...prevFilters,
+    [filterType]: selectedValues,
+  }));
+};
+
+
+
+
+
+
+
+
+
   const sampleProducts = [
     {
       id: 1,
@@ -142,19 +219,30 @@ const Allproducts = () => {
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   const handleSort = (e) => {
+    // const searchParams = new URLSearchParams(location.search);
+    // const initialCategory = searchParams.get('categoryQuery') || '';
+console.log('this is category hook',category)
+
+    // setUrl('/products/client?'+'category='+initialCategory)
+        setUrl('/products/client?'+category)
+
     setSortBy(e.target.value);
     const sortedProducts = [...products];
     switch (e.target.value) {
       case 'price-low-high':
+        setUrl((prev)=>prev+'&sortField=sale_rate&sortOrder=asc')
         sortedProducts.sort((a, b) => a.price - b.price);
         break;
       case 'price-high-low':
+        setUrl((prev)=>prev+'&sortField=sale_rate&sortOrder=desc')
         sortedProducts.sort((a, b) => b.price - a.price);
         break;
       case 'rating':
+        setUrl((prev)=>prev+'&sortField=rating&sortOrder=desc')
         sortedProducts.sort((a, b) => b.rating - a.rating);
         break;
       case 'newest':
+        setUrl((prev)=>prev+'&sortField=createdAt&sortOrder=desc')
         sortedProducts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         break;
       default:
@@ -171,10 +259,6 @@ const Allproducts = () => {
     }));
   };
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    applyFilters();
-  };
 
   const applyFilters = () => {
     let filteredProducts = [...sampleProducts];
@@ -239,19 +323,7 @@ const Allproducts = () => {
     <h5><FaFilter /> Filters</h5>
   </Card.Header>
   <Card.Body>
-    <Form onSubmit={handleSearch}>
-      <Form.Group className="mb-3">
-        <Form.Control
-          type="text"
-          placeholder="Search products..."
-          value={filters.searchTerm}
-          onChange={(e) => handleFilterChange('searchTerm', e.target.value)}
-        />
-        <Button type="submit" variant="outline-primary" className="mt-2 w-100">
-          <FaSearch /> Search
-        </Button>
-      </Form.Group>
-    </Form>
+
     <Form>
       <Form.Group className="mb-3">
         <Form.Label>Price Range</Form.Label>
@@ -304,19 +376,17 @@ const Allproducts = () => {
         />
       </Form.Group>
       <Form.Group className="mb-3">
-        <Form.Label>Categories</Form.Label>
-        <Form.Select 
-          multiple 
-          value={filters.categories}
-          onChange={(e) => handleFilterChange('categories', Array.from(e.target.selectedOptions, option => option.value))}
-        >
-          <option value="Laptops">Laptops</option>
-          <option value="Smartphones">Smartphones</option>
-          <option value="Headphones">Headphones</option>
-          <option value="Wearables">Wearables</option>
-          <option value="Accessories">Accessories</option>
-        </Form.Select>
-      </Form.Group>
+      <Form.Label>Categories</Form.Label>
+      <Form.Select
+        multiple
+        value={filtersM.categories}
+        onChange={(e) => handleFilterChangeM('categories', Array.from(e.target.selectedOptions, option => option.value))}
+      >
+        {categoryList?.map((obj) => (
+          <option key={obj._id} value={obj._id}>{obj.name}</option>
+        ))}
+      </Form.Select>
+    </Form.Group>
       <Form.Group className="mb-3">
         <Form.Label>Brands</Form.Label>
         <Form.Select 
