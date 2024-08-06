@@ -22,7 +22,7 @@ const productSchema = new mongoose.Schema({
         type: String
     },
     tags: {
-        type: String,
+        type: [String],
         enum: ["featured", "popular", "limited_time_deal", "most_loved"]
     },
     price: {

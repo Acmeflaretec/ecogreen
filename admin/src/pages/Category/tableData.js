@@ -33,6 +33,7 @@ const TableData = () => {
     { name: "status", align: "center" },
     { name: "createdon", align: "center" },
     { name: "Lastupdated", align: "center" },
+    { name: "Important", align: "center" },
     { name: "action", align: "center" },
   ]
 
@@ -41,6 +42,7 @@ const TableData = () => {
     status: (
       <Badge variant="gradient" badgeContent={item?.isAvailable ? 'Available' : 'Unavailable'} color={item?.isAvailable ? "success" : 'secondary'} size="xs" container />
     ),
+   
     createdon: (
       <Typography variant="caption" color="secondary" fontWeight="medium">
         {new Date(item?.createdAt).toDateString()}
@@ -50,6 +52,9 @@ const TableData = () => {
       <Typography variant="caption" color="secondary" fontWeight="medium">
         {new Date(item?.updatedAt).toDateString()}
       </Typography>
+    ),
+    Important: (
+      <Badge variant="gradient" badgeContent={item?.isImportant ? 'Important' : 'Not-Important'} color={item?.isImportant ? "success" : 'secondary'} size="xs" container />
     ),
     action: (
       <Link to={`/category/editCategory/${item?._id}`}>

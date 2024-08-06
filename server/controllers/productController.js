@@ -50,13 +50,13 @@ const addProduct = async (req, res) => {
 
 const updateProduct = async (req, res) => {
   try {
-    const { _id, name, subheading, brand, price, stock, discount, sale_rate, description, image,countries  } = req?.body
+    const { _id, name, subheading, brand, price, stock, discount, sale_rate, description, image,countries,tags  } = req?.body
     const images = JSON.parse(image) ?? []
     if (req?.files?.length != 0) {
       req?.files?.map((x) => images.push(x.filename))
     }
     await Product.updateOne({ _id }, {
-      $set: { name, subheading, brand, price, stock, discount, sale_rate,description, image: images,   countries: JSON.parse(countries) }
+      $set: { name, subheading, brand, price, stock, discount, sale_rate,description, image: images,   countries: JSON.parse(countries),tags: JSON.parse(tags) }
     })
     res.status(200).json({ message: "Product updated successfully !" });
   } catch (error) {
