@@ -8,7 +8,7 @@ function BillingInformation() {
     <Card id="delete-account">
       <Box pt={3} px={2}>
         <Typography variant="h6" fontWeight="medium">
-          Billing Information
+          Tags Information
         </Typography>
       </Box>
       <Box pt={1} pb={2} px={2}>
@@ -19,19 +19,7 @@ function BillingInformation() {
             email="oliver@burrito.com"
             vat="FRB1235476"
           />
-          <Bill
-            name="lucas harper"
-            company="stone tech zone"
-            email="lucas@stone-tech.com"
-            vat="FRB1235476"
-          />
-          <Bill
-            name="ethan james"
-            company="fiber notion"
-            email="ethan@fiber.com"
-            vat="FRB1235476"
-            noGutter
-          />
+          
         </Box>
       </Box>
     </Card>

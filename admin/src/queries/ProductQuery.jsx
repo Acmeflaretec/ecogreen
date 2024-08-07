@@ -9,6 +9,7 @@ import {
   getCategory,
   getProductById,
   getProducts,
+  getTagProducts,
   updateProduct,
   getCoupon, getCouponById, addCoupon, updateCoupon, deletecoupons, couponStatus,
 } from "./productUrls";
@@ -58,8 +59,22 @@ const useDeleteCategorys = () => {
   });
 };
 
-const useGetProducts = (data) => {
-  return useQuery(["get_products", data], () => getProducts(data), {
+// const useGetProducts = (data) => {
+//   return useQuery(["get_products", data], () => getProducts(data), {
+//     // staleTime: 30000,
+//     keepPreviousData: true,
+//     refetchOnWindowFocus: false,
+//   });
+// };
+
+const useGetProducts = (params) => {
+  return useQuery(["get_products", params], () => getProducts(params), {
+    keepPreviousData: true,
+    refetchOnWindowFocus: false,
+  });
+};
+const useGetTagProducts = (data) => {
+  return useQuery(["get_products", data], () => getTagProducts(data), {
     // staleTime: 30000,
     keepPreviousData: true,
     refetchOnWindowFocus: false,
@@ -210,6 +225,7 @@ export {
   useGetCategorysById,
   useDeleteCategorys,
   useGetProducts,
+  useGetTagProducts,
   useGetProductById,
   useAddCategory,
   useAddProduct,

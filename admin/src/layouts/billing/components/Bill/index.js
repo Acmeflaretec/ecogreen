@@ -41,11 +41,11 @@ function Bill({ name, company, email, vat, noGutter }) {
             mt={{ xs: 2, sm: 0 }}
             ml={{ xs: -1.5, sm: 0 }}
           >
-            <Box mr={1}>
+            {/* <Box mr={1}>
               <Button variant="text" color="error">
                 <Icon>delete</Icon>&nbsp;Delete
               </Button>
-            </Box>
+            </Box> */}
             <Button variant="text" color="dark">
               <Icon>edit</Icon>&nbsp;Edit
             </Button>

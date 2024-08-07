@@ -24,6 +24,7 @@ import AddCategory from "pages/Category/AddCategory";
 import EditCategory from "pages/Category/EditCategory";
 import AddProduct from "pages/Products/AddProduct";
 import EditProduct from "pages/Products/EditProduct";
+import EditTags from "pages/Tags/EditTags";
 import EditOrder from "pages/Orders/EditOrder";
 import Login from "pages/Auth";
 import AddBanner from "pages/Banner/AddBanner";
@@ -112,6 +113,7 @@ export default function App() {
                 <Route path="/category/editCategory/:id" element={<EditCategory />} />
                 <Route path="/products/addProducts" element={<AddProduct />} />
                 <Route path="/products/editProduct/:id" element={<EditProduct />} />
+                <Route path="/tags/editProduct/:id" element={<EditTags />} />
                 <Route path="/orders/editOrder/:id" element={<EditOrder />} />
                 <Route path="/coupon/addCoupon" element={<AddCoupon />} />
                 <Route path="/coupon/editCoupon/:id" element={<EditCoupon />} />
@@ -145,6 +147,7 @@ export default function App() {
               <Route path="/banners/addBanner" element={<AddBanner />} />
               <Route path="/blogs/addBlog" element={<AddBlog />} />
               <Route path="/products/editProduct/:id" element={<EditProduct />} />
+              <Route path="/tags/editProduct/:id" element={<EditTags />} />
               <Route path="/orders/editOrder/:id" element={<EditOrder />} />
               <Route path="/banners/editBanner/:id" element={<EditBanner />} />
               <Route path="/blogs/editBlog/:id" element={<EditBlog />} />

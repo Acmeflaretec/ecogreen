@@ -2,6 +2,7 @@ import Dashboard from "pages/Dashboard";
 import Category from "pages/Category";
 import Coupon from "pages/Coupon";
 import Products from "pages/Products";
+import Tags from "pages/Tags";
 import Orders from "pages/Orders";
 import Banner from "pages/Banner";
 import Blogs from "pages/Blogs";
@@ -59,14 +60,14 @@ const routes = [
     icon: <Box component="i" color="warning" fontSize="14px" className="ni ni-album-2" />,
     component: <Banner />,
   },
-  {
-    type: "route",
-    name: "Blogs",
-    key: "blogs",
-    route: "/blogs",
-    icon: <Box component="i" color="primary" fontSize="14px" className="ni ni-book-bookmark" />,
-    component: <Blogs />,
-  },
+  // {
+  //   type: "route",
+  //   name: "Blogs",
+  //   key: "blogs",
+  //   route: "/blogs",
+  //   icon: <Box component="i" color="primary" fontSize="14px" className="ni ni-book-bookmark" />,
+  //   component: <Blogs />,
+  // },
   // {
   //   type: "route",
   //   name: "Billing",
@@ -75,6 +76,14 @@ const routes = [
   //   icon: <Box component="i" color="success" fontSize="14px" className="ni ni-credit-card" />,
   //   component: <Billing />,
   // },
+  {
+    type: "route",
+    name: "Tags",
+    key: "tags",
+    route: "/tags",
+    icon: <Box component="i" color="success" fontSize="14px" className="ni ni-credit-card" />,
+    component: <Tags />,
+  },
   { type: "title", title: "Account Pages", key: "account-pages" },
   // {
   //   type: "route",
