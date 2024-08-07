@@ -1,5 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes ,useLocation} from 'react-router-dom';
 import './App.css';
 import About from './pages/About';
 import Allproducts from './pages/Allproducts';
@@ -20,7 +20,35 @@ import SingleOrder from './pages/SingleOrder';
 import Wishlist from './pages/Wishlist';
 
 
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import axiosInstance from './axios'
+import { setUserDetails, clearUserDetails } from './redux/actions/userActions';
+
+
 function App() {
+  const { pathname } = useLocation();
+  const dispatch = useDispatch();
+  const token = localStorage.getItem('Tokens');
+  console.log('token1-',token);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axiosInstance.get('/auth/user');
+      //  console.log(response.data.data)
+        dispatch(setUserDetails(response.data.data));
+      } catch (error) {
+        console.log('errr', error);
+        dispatch(clearUserDetails());
+      }
+    };
+    fetchData();
+  }, [token]);
+
+  // Automatically scrolls to top whenever pathname changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
   return (
     <>
