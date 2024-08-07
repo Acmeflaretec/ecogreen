@@ -41,6 +41,71 @@ const getTagProducts = async (req, res) => {
   }
 };
 
+const getProductsClient = async(req,res)=>{
+
+  try {
+    const { page = 1, limit, sortField, sortOrder, search, category,rating, priceLessThan,priceGreaterThan   } = req.query;
+console.log(req.query)
+    // Convert page and limit to integers
+    const pageNumber = parseInt(page, 10) || 1;
+    const limitNumber = parseInt(limit, 10) || 10;
+
+    // Construct the base query
+    const query = {};
+
+    query.isAvailable=true
+
+    // Search functionality
+    if (search) {
+      const searchRegex = new RegExp(search, 'i');
+      query.$or = [
+        { name: searchRegex },
+        // { category: searchRegex },
+        // Add additional fields for search as needed
+      ];
+    }
+
+    // Category filter
+    if (category) {
+      query.category = category;
+    }
+
+    // Sorting
+    const sortOptions = {};
+    if (sortField && sortOrder) {
+      sortOptions[sortField] = sortOrder === 'asc' ? 1 : -1;
+    }
+
+  
+      // Price greater than functionality
+      if (rating) {
+        query.rating = { $gt: parseInt(rating) };
+      }
+
+    // Price less than functionality
+    if (priceLessThan) {
+      query.sale_rate = { $lt: parseInt(priceLessThan) };
+    }
+    if (priceGreaterThan) {
+      query.sale_rate = { $lt: parseInt(priceGreaterThan) };
+    }
+
+    // Find products based on the constructed query
+    const totalProducts = await Product.countDocuments(query);
+    const products = await Product.find(query)
+      .collation({ locale: 'en' }) // Enable case-insensitive search
+      .sort(sortOptions)
+      .skip((pageNumber - 1) * limitNumber)
+      .limit(limitNumber);
+    //const data = await Product.find()
+    res.status(200).json({ data:products })
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: error?.message ?? "Something went wrong !" });
+  }
+
+}
+
 const getProductById = async (req, res) => {
   try {
     const data = await Product.findOne({ _id: req.params.id }).populate('category')

@@ -1,6 +1,7 @@
 // src/pages/Allproducts.js
 
 import React, { useEffect, useState } from 'react';
+import axiosInstance from '../axios';
 import { Link } from 'react-router-dom';
 import { Container, Row, Col, Card, Button, Form, Pagination, Badge, Offcanvas } from 'react-bootstrap';
 import { motion } from 'framer-motion';
@@ -8,8 +9,72 @@ import { FaHeart, FaShoppingCart, FaStar, FaFilter, FaTruck, FaLeaf, FaPercent, 
 import Footer from '../components/Footer';
 import MiddleNav from '../components/MiddleNav';
 import './Allproducts.css';
+import { useNavigate,useLocation } from 'react-router-dom'; 
 
 const Allproducts = () => {
+  const { search } = useLocation();
+  const searchParams = new URLSearchParams(search);
+  const initialCategory = searchParams.get('categoryQuery') || ''; // Make sure to provide a fallback value if the parameter is not found
+  const initialSearch = searchParams.get('search') || ''; // Make sure to provide a fallback value if the parameter is not found
+  
+  const [category, setCategory] = useState('category=' + initialCategory);
+  const [searchQuery, setsearchQuery] = useState('&search=' + initialSearch);
+  const navigate = useNavigate()
+
+  const [productsList,setProductsList] = useState([])
+
+  const [categoryList,setCategoryList] = useState([])
+  const [url,setUrl]= useState('/products/client?'+category+searchQuery)
+  const [filtersM, setFiltersM] = useState({
+    categories: [],
+  });
+const [sorted,setSorted]=useState('')
+
+
+
+const fetchCategory = async()=>{
+  try {
+    const response = await axiosInstance.get('/category');
+    setCategoryList(response?.data?.data);
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+  }
+}
+useState(()=>{
+  fetchCategory()
+},[])
+
+
+const fetchProducts=async()=>{
+ const response= await axiosInstance.get(url);
+ setProductsList(response?.data?.data)
+console.log(response?.data?.data)
+}
+
+
+useEffect(()=>{
+fetchProducts()
+},[url,category])
+// for category
+const handleFilterChangeM = (filterType, selectedValues) => {
+  console.log('sel val',selectedValues[0])
+  console.log('filter type',filterType)
+setCategory('&category='+selectedValues[0])
+setUrl('/products/client?'+'&'+category)
+  setFiltersM((prevFilters) => ({
+    ...prevFilters,
+    [filterType]: selectedValues,
+  }));
+};
+
+
+
+
+
+
+
+
+
   const sampleProducts = [
     {
       id: 1,
@@ -141,20 +206,31 @@ const Allproducts = () => {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  const handleSort = (e) => {
+  const handleSort =async (e) => {
+    console.log(url)
+    // const searchParams = new URLSearchParams(location.search);
+    // const initialCategory = searchParams.get('categoryQuery') || '';
+console.log('this is category hook',category)
+setUrl('')
+       // setUrl('/products/client?'+category)
+
     setSortBy(e.target.value);
     const sortedProducts = [...products];
     switch (e.target.value) {
       case 'price-low-high':
+        setUrl('/products/client?'+category+'&sortField=sale_rate&sortOrder=asc&')
         sortedProducts.sort((a, b) => a.price - b.price);
         break;
       case 'price-high-low':
+        setUrl('/products/client?'+category+'&sortField=sale_rate&sortOrder=desc&')
         sortedProducts.sort((a, b) => b.price - a.price);
         break;
       case 'rating':
+        setUrl('/products/client?'+category+'&sortField=rating&sortOrder=desc&')
         sortedProducts.sort((a, b) => b.rating - a.rating);
         break;
       case 'newest':
+        setUrl('/products/client?'+category+'&sortField=createdAt&sortOrder=desc&')
         sortedProducts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         break;
       default:
@@ -162,6 +238,7 @@ const Allproducts = () => {
         break;
     }
     setProducts(sortedProducts);
+    console.log(url)
   };
 
   const handleFilterChange = (filterName, value) => {
@@ -171,10 +248,6 @@ const Allproducts = () => {
     }));
   };
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    applyFilters();
-  };
 
   const applyFilters = () => {
     let filteredProducts = [...sampleProducts];
@@ -239,19 +312,7 @@ const Allproducts = () => {
     <h5><FaFilter /> Filters</h5>
   </Card.Header>
   <Card.Body>
-    <Form onSubmit={handleSearch}>
-      <Form.Group className="mb-3">
-        <Form.Control
-          type="text"
-          placeholder="Search products..."
-          value={filters.searchTerm}
-          onChange={(e) => handleFilterChange('searchTerm', e.target.value)}
-        />
-        <Button type="submit" variant="outline-primary" className="mt-2 w-100">
-          <FaSearch /> Search
-        </Button>
-      </Form.Group>
-    </Form>
+
     <Form>
       <Form.Group className="mb-3">
         <Form.Label>Price Range</Form.Label>
@@ -304,19 +365,17 @@ const Allproducts = () => {
         />
       </Form.Group>
       <Form.Group className="mb-3">
-        <Form.Label>Categories</Form.Label>
-        <Form.Select 
-          multiple 
-          value={filters.categories}
-          onChange={(e) => handleFilterChange('categories', Array.from(e.target.selectedOptions, option => option.value))}
-        >
-          <option value="Laptops">Laptops</option>
-          <option value="Smartphones">Smartphones</option>
-          <option value="Headphones">Headphones</option>
-          <option value="Wearables">Wearables</option>
-          <option value="Accessories">Accessories</option>
-        </Form.Select>
-      </Form.Group>
+      <Form.Label>Categories</Form.Label>
+      <Form.Select
+        multiple
+        value={filtersM.categories}
+        onChange={(e) => handleFilterChangeM('categories', Array.from(e.target.selectedOptions, option => option.value))}
+      >
+        {categoryList?.map((obj) => (
+          <option key={obj._id} value={obj._id}>{obj.name}</option>
+        ))}
+      </Form.Select>
+    </Form.Group>
       <Form.Group className="mb-3">
         <Form.Label>Brands</Form.Label>
         <Form.Select 
@@ -344,7 +403,7 @@ const Allproducts = () => {
       transition={{ duration: 0.5, delay: index * 0.1 }}
     >
       <Card className="h-100 product-card shadow-sm border-0">
-        <Link to={`/product/${item.id}`} className="text-decoration-none">
+        <Link to={`/product/${item?._id}`} className="text-decoration-none">
           <div className="product-image-container">
             <Card.Img variant="top" src={item.imageUrl} alt={item.name} className="product-image" />
             {item.freeDelivery && <span bg="success" className="position-absolute top-0 start-0 m-2"><FaTruck /> Free Delivery</span>}
@@ -431,8 +490,8 @@ const Allproducts = () => {
               </Col>
             </Row>
             <Row className="g-4">
-              {currentProducts.map((item, index) => (
-                <Col key={item.id} sm={6} md={4} lg={4}>
+              {productsList?.map((item, index) => (
+                <Col key={item._id} sm={6} md={4} lg={4}>
                   <ProductCard item={item} index={index} />
                 </Col>
               ))}
