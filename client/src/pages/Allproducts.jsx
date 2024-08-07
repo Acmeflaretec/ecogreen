@@ -16,7 +16,8 @@ const Allproducts = () => {
   const searchParams = new URLSearchParams(search);
   const initialCategory = searchParams.get('categoryQuery') || ''; // Make sure to provide a fallback value if the parameter is not found
   const initialSearch = searchParams.get('search') || ''; // Make sure to provide a fallback value if the parameter is not found
-  
+  const [sorted,setSorted]=useState('')
+
   const [category, setCategory] = useState('category=' + initialCategory);
   const [searchQuery, setsearchQuery] = useState('&search=' + initialSearch);
   const navigate = useNavigate()
@@ -24,11 +25,10 @@ const Allproducts = () => {
   const [productsList,setProductsList] = useState([])
 
   const [categoryList,setCategoryList] = useState([])
-  const [url,setUrl]= useState('/products/client?'+category+searchQuery)
+  const [url,setUrl]= useState('/products/client?'+category+searchQuery+sorted)
   const [filtersM, setFiltersM] = useState({
     categories: [],
   });
-const [sorted,setSorted]=useState('')
 
 
 
@@ -47,6 +47,7 @@ useState(()=>{
 
 const fetchProducts=async()=>{
  const response= await axiosInstance.get(url);
+ console.log('fp ',url)
  setProductsList(response?.data?.data)
 console.log(response?.data?.data)
 }
@@ -54,13 +55,16 @@ console.log(response?.data?.data)
 
 useEffect(()=>{
 fetchProducts()
-},[url,category])
+},[url,category,sorted])
+
+
+
 // for category
 const handleFilterChangeM = (filterType, selectedValues) => {
   console.log('sel val',selectedValues[0])
   console.log('filter type',filterType)
-setCategory('&category='+selectedValues[0])
-setUrl('/products/client?'+'&'+category)
+setCategory('category='+selectedValues[0])
+setUrl('/products/client?'+'category='+selectedValues[0]+searchQuery+sorted)
   setFiltersM((prevFilters) => ({
     ...prevFilters,
     [filterType]: selectedValues,
@@ -207,30 +211,34 @@ setUrl('/products/client?'+'&'+category)
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   const handleSort =async (e) => {
-    console.log(url)
-    // const searchParams = new URLSearchParams(location.search);
-    // const initialCategory = searchParams.get('categoryQuery') || '';
-console.log('this is category hook',category)
-setUrl('')
-       // setUrl('/products/client?'+category)
-
+    e.preventDefault()
     setSortBy(e.target.value);
     const sortedProducts = [...products];
     switch (e.target.value) {
       case 'price-low-high':
-        setUrl('/products/client?'+category+'&sortField=sale_rate&sortOrder=asc&')
+        setUrl('/products/client?'+category+searchQuery+'&sortField=sale_rate&sortOrder=asc')
+        setSorted('&sortField=sale_rate&sortOrder=asc')
+        //setUrl('/products/client?'+category+'&sortField=sale_rate&sortOrder=asc&')
         sortedProducts.sort((a, b) => a.price - b.price);
         break;
       case 'price-high-low':
-        setUrl('/products/client?'+category+'&sortField=sale_rate&sortOrder=desc&')
+        setUrl('/products/client?'+category+searchQuery+'&sortField=sale_rate&sortOrder=desc')
+        setSorted('&sortField=sale_rate&sortOrder=desc')
+      //  setUrl('/products/client?'+category+'&sortField=sale_rate&sortOrder=desc&')
         sortedProducts.sort((a, b) => b.price - a.price);
         break;
       case 'rating':
-        setUrl('/products/client?'+category+'&sortField=rating&sortOrder=desc&')
+        setUrl('/products/client?'+category+searchQuery+'&sortField=rating&sortOrder=desc')
+        setSorted('&sortField=rating&sortOrder=desc')
+
+     //   setUrl('/products/client?'+category+'&sortField=rating&sortOrder=desc&')
         sortedProducts.sort((a, b) => b.rating - a.rating);
         break;
       case 'newest':
-        setUrl('/products/client?'+category+'&sortField=createdAt&sortOrder=desc&')
+        setUrl('/products/client?'+category+searchQuery+'&sortField=createdAt&sortOrder=desc')
+        setSorted('&sortField=createdAt&sortOrder=desc')
+
+       // setUrl('/products/client?'+category+'&sortField=createdAt&sortOrder=desc&')
         sortedProducts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         break;
       default:
@@ -328,14 +336,14 @@ setUrl('')
           <span>₹{filters.priceRange[1]}</span>
         </div>
       </Form.Group>
-      <Form.Group className="mb-3">
+      {/* <Form.Group className="mb-3">
         <Form.Check 
           type="checkbox" 
           label="Free Delivery" 
           checked={filters.freeDelivery}
           onChange={(e) => handleFilterChange('freeDelivery', e.target.checked)}
         />
-      </Form.Group>
+      </Form.Group> */}
       <Form.Group className="mb-3">
         <Form.Label>Minimum Rating</Form.Label>
         <Form.Select 
@@ -348,22 +356,22 @@ setUrl('')
           <option value={2}>2★ & above</option>
         </Form.Select>
       </Form.Group>
-      <Form.Group className="mb-3">
+      {/* <Form.Group className="mb-3">
         <Form.Check 
           type="checkbox" 
           label="Eco-Friendly" 
           checked={filters.ecoFriendly}
           onChange={(e) => handleFilterChange('ecoFriendly', e.target.checked)}
         />
-      </Form.Group>
-      <Form.Group className="mb-3">
+      </Form.Group> */}
+      {/* <Form.Group className="mb-3">
         <Form.Check 
           type="checkbox" 
           label="In Stock" 
           checked={filters.inStock}
           onChange={(e) => handleFilterChange('inStock', e.target.checked)}
         />
-      </Form.Group>
+      </Form.Group> */}
       <Form.Group className="mb-3">
       <Form.Label>Categories</Form.Label>
       <Form.Select
@@ -376,7 +384,7 @@ setUrl('')
         ))}
       </Form.Select>
     </Form.Group>
-      <Form.Group className="mb-3">
+      {/* <Form.Group className="mb-3">
         <Form.Label>Brands</Form.Label>
         <Form.Select 
           multiple 
@@ -389,7 +397,7 @@ setUrl('')
           <option value="Sony">Sony</option>
           <option value="Bose">Bose</option>
         </Form.Select>
-      </Form.Group>
+      </Form.Group> */}
     </Form>
   </Card.Body>
 </Card>
