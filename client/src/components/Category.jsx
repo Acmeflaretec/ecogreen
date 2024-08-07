@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useState,useEffect } from 'react';
+import axiosInstance from '../axios';
 import { Link } from 'react-router-dom';
 import './Category.css';
+import { useNavigate,useLocation } from 'react-router-dom'; 
+
 
 const categories = [
   { id: 1, name: 'Fashion' },
@@ -14,11 +17,27 @@ const categories = [
 ];
 
 function Category() {
+const navigate = useNavigate()
+const [category,setCategory] = useState([])
+
+useEffect(()=>{
+  fetchCategory()
+},[])
+
+
+const fetchCategory = async (urlC) => {
+  try {
+    const response = await axiosInstance.get('/category');
+    setCategory(response?.data?.data);
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+  }
+};
   return (
     <div className="category-container">
       <div className="category-scroll">
-        {categories.map((category) => (
-          <Link to={`/category/${category.id}`} key={category.id} className="category-item">
+        {category.map((category) => (
+          <Link to={`/allproducts?categoryQuery=${category._id}`} key={category._id} className="category-item">
             {category.name}
           </Link>
         ))}

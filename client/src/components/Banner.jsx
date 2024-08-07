@@ -1,4 +1,6 @@
-import React from 'react';
+import React,{useState,useEffect} from 'react';
+import axiosInstance from '../axios'
+import LoadingScreen from "../components/loading/LoadingScreen";
 import Slider from 'react-slick';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -7,6 +9,33 @@ import 'slick-carousel/slick/slick-theme.css';
 import './Banner.css';
 
 function Banner() {
+
+  const [banner,setBanner] = useState([])
+  const [loadScreenState, setLoadScreenState] = useState(true); // Loading state
+  useEffect(()=>{
+  
+      
+  
+    const fetchData = async()=>{
+
+      try {
+
+        const response = await axiosInstance.get(`/banners`);
+        setBanner(response?.data?.data)
+       
+      } catch (error) {
+        console.log(error)
+      }finally {
+        setLoadScreenState(false); // Set loading to false after data is fetched
+      }
+
+    }
+
+
+    fetchData()
+
+
+  },[])
   const settings = {
     dots: true,
     infinite: true,
@@ -45,11 +74,11 @@ function Banner() {
   return (
     <div className="banner-carousel">
       <Slider {...settings}>
-        {bannerData.map((slide, index) => (
+        {banner?.map((slide, index) => (
           <div key={index} className="banner-slide">         
               <motion.img 
-                src={slide.image} 
-                alt={slide.alt}
+               src={`${import.meta.env.VITE_API_BASE_URL_LOCALHOST}/uploads/${slide?.image}`}
+                alt={slide.title}
                 className="banner-image"
                 style={{height:'60vh',objectFit:'cover'}}
                 initial={{ opacity: 0 }}
