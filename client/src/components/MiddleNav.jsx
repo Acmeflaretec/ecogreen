@@ -1,18 +1,24 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate,useLocation } from 'react-router-dom'; 
 import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import './MiddleNav.css'; // Custom styles
 
 function MiddleNav() {
+ const navigate = useNavigate()
   const cartItemCount = 3;
   const wishlistItemCount = 2;
   const [isLoggedIn, setIsLoggedIn] = useState(true); 
-
+  const [search,setSearch] =useState('')
   const handleLogout = () => {
     setIsLoggedIn(false);
     // Add your logout logic here
   };
+  const handleSearch =async()=>{
+navigate(`/allproducts?search=${search}`)
+
+  }
 
   return (
     <nav className="navbar navbar-expand-lg navbar-light middle-nav">
@@ -20,8 +26,8 @@ function MiddleNav() {
         <Link className="navbar-brand" to="/">
           <img src="logo.png" className="logo" alt="Logo" />
         </Link>
-        <form className="search-bar mx-auto d-none d-md-flex">
-          <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
+        <form className="search-bar mx-auto d-none d-md-flex" onSubmit={handleSearch} >
+          <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search" name='search' onChange={(e)=>setSearch(e.target.value)} />
           <button className="btn btn-outline-success" type="submit">Search</button>
         </form>
         <div className="nav-actions ms-auto">

@@ -30,7 +30,7 @@ console.log(req.query)
       const searchRegex = new RegExp(search, 'i');
       query.$or = [
         { name: searchRegex },
-        { category: searchRegex },
+        // { category: searchRegex },
         // Add additional fields for search as needed
       ];
     }

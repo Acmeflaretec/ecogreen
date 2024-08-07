@@ -15,21 +15,20 @@ const Allproducts = () => {
   const { search } = useLocation();
   const searchParams = new URLSearchParams(search);
   const initialCategory = searchParams.get('categoryQuery') || ''; // Make sure to provide a fallback value if the parameter is not found
-  const initialSearch = searchParams.get('searchQuery') || ''; // Make sure to provide a fallback value if the parameter is not found
+  const initialSearch = searchParams.get('search') || ''; // Make sure to provide a fallback value if the parameter is not found
   
   const [category, setCategory] = useState('category=' + initialCategory);
-  const [searchQuery, setsearchQuery] = useState('search=' + initialSearch);
+  const [searchQuery, setsearchQuery] = useState('&search=' + initialSearch);
   const navigate = useNavigate()
 
   const [productsList,setProductsList] = useState([])
 
   const [categoryList,setCategoryList] = useState([])
-  const [url,setUrl]= useState('/products/client?')
+  const [url,setUrl]= useState('/products/client?'+category+searchQuery)
   const [filtersM, setFiltersM] = useState({
     categories: [],
   });
-  const [sortOrder,setSortOrder] = useState('desc')
-  const [sortField,setSortField] = useState()
+const [sorted,setSorted]=useState('')
 
 
 
@@ -45,20 +44,9 @@ useState(()=>{
   fetchCategory()
 },[])
 
-// useEffect(()=>{
-//   const searchParams = new URLSearchParams(location.search);
-//   const initialCategory = searchParams.get('categoryQuery') || '';
-//   setCategory('category='+initialCategory)
- 
-// },[])
 
 const fetchProducts=async()=>{
-  // const searchParams = new URLSearchParams(location.search);
-  // const initialCategory = searchParams.get('categoryQuery') || '';
-  // console.log('fetch pro cat ',category)
- const response= await axiosInstance.get(url+category);
- // const response= await axiosInstance.get(url+'category='+initialCategory);
-
+ const response= await axiosInstance.get(url);
  setProductsList(response?.data?.data)
 console.log(response?.data?.data)
 }
@@ -71,8 +59,8 @@ fetchProducts()
 const handleFilterChangeM = (filterType, selectedValues) => {
   console.log('sel val',selectedValues[0])
   console.log('filter type',filterType)
-setCategory('category='+selectedValues[0])
-setUrl('/products/client?')
+setCategory('&category='+selectedValues[0])
+setUrl('/products/client?'+'&'+category)
   setFiltersM((prevFilters) => ({
     ...prevFilters,
     [filterType]: selectedValues,
@@ -218,31 +206,31 @@ setUrl('/products/client?')
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  const handleSort = (e) => {
+  const handleSort =async (e) => {
+    console.log(url)
     // const searchParams = new URLSearchParams(location.search);
     // const initialCategory = searchParams.get('categoryQuery') || '';
 console.log('this is category hook',category)
-
-    // setUrl('/products/client?'+'category='+initialCategory)
-        setUrl('/products/client?'+category)
+setUrl('')
+       // setUrl('/products/client?'+category)
 
     setSortBy(e.target.value);
     const sortedProducts = [...products];
     switch (e.target.value) {
       case 'price-low-high':
-        setUrl((prev)=>prev+'&sortField=sale_rate&sortOrder=asc')
+        setUrl('/products/client?'+category+'&sortField=sale_rate&sortOrder=asc&')
         sortedProducts.sort((a, b) => a.price - b.price);
         break;
       case 'price-high-low':
-        setUrl((prev)=>prev+'&sortField=sale_rate&sortOrder=desc')
+        setUrl('/products/client?'+category+'&sortField=sale_rate&sortOrder=desc&')
         sortedProducts.sort((a, b) => b.price - a.price);
         break;
       case 'rating':
-        setUrl((prev)=>prev+'&sortField=rating&sortOrder=desc')
+        setUrl('/products/client?'+category+'&sortField=rating&sortOrder=desc&')
         sortedProducts.sort((a, b) => b.rating - a.rating);
         break;
       case 'newest':
-        setUrl((prev)=>prev+'&sortField=createdAt&sortOrder=desc')
+        setUrl('/products/client?'+category+'&sortField=createdAt&sortOrder=desc&')
         sortedProducts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         break;
       default:
@@ -250,6 +238,7 @@ console.log('this is category hook',category)
         break;
     }
     setProducts(sortedProducts);
+    console.log(url)
   };
 
   const handleFilterChange = (filterName, value) => {
@@ -414,7 +403,7 @@ console.log('this is category hook',category)
       transition={{ duration: 0.5, delay: index * 0.1 }}
     >
       <Card className="h-100 product-card shadow-sm border-0">
-        <Link to={`/product/${item.id}`} className="text-decoration-none">
+        <Link to={`/product/${item?._id}`} className="text-decoration-none">
           <div className="product-image-container">
             <Card.Img variant="top" src={item.imageUrl} alt={item.name} className="product-image" />
             {item.freeDelivery && <span bg="success" className="position-absolute top-0 start-0 m-2"><FaTruck /> Free Delivery</span>}
@@ -501,8 +490,8 @@ console.log('this is category hook',category)
               </Col>
             </Row>
             <Row className="g-4">
-              {currentProducts.map((item, index) => (
-                <Col key={item.id} sm={6} md={4} lg={4}>
+              {productsList?.map((item, index) => (
+                <Col key={item._id} sm={6} md={4} lg={4}>
                   <ProductCard item={item} index={index} />
                 </Col>
               ))}
