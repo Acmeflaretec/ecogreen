@@ -65,7 +65,7 @@ const getCategoryById = async (req, res) => {
   }
 }
 const updateCategory = async (req, res) => {
-  const {_id,name, desc,countries,isAvailable} = req?.body
+  const {_id,name, desc,countries,isAvailable,isImportant} = req?.body
   const image = req?.file?.filename
   try {
     const data = await Category.findById(_id);
@@ -82,7 +82,7 @@ const updateCategory = async (req, res) => {
       });
     }
     await Category.updateOne({ _id }, {
-      $set: { name, desc,isAvailable,countries: JSON.parse(countries), ...(image && { image }) }
+      $set: { name, desc,isAvailable,isImportant,countries: JSON.parse(countries), ...(image && { image }) }
     })
     res.status(200).json({ data, message: 'Category updated successfully' });
   } catch (error) {
