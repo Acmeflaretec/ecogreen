@@ -16,9 +16,9 @@ import Transactions from "layouts/billing/components/Transactions";
 
 function Billing() {
   return (
-    <BaseLayout stickyNavbar>
+    // <BaseLayout stickyNavbar>
       <Box mt={4}>
-        <Box mb={3}>
+        {/* <Box mb={3}>
           <Grid container spacing={3}>
             <Grid item xs={12} lg={8}>
               <Grid container spacing={3}>
@@ -50,19 +50,19 @@ function Billing() {
               <Invoices />
             </Grid>
           </Grid>
-        </Box>
+        </Box> */}
         <Box mb={3}>
           <Grid container spacing={3}>
-            <Grid item xs={12} md={7}>
+            <Grid item xs={12} md={12}>
               <BillingInformation />
             </Grid>
-            <Grid item xs={12} md={5}>
+            {/* <Grid item xs={12} md={5}>
               <Transactions />
-            </Grid>
+            </Grid> */}
           </Grid>
         </Box>
       </Box>
-    </BaseLayout>
+    // </BaseLayout>
   );
 }
 
