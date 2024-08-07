@@ -18,14 +18,18 @@ const Allproducts = () => {
   const initialSearch = searchParams.get('search') || ''; // Make sure to provide a fallback value if the parameter is not found
   const [sorted,setSorted]=useState('')
 
+  const [totalProducts, setTotalProducts] = useState(0);
+  const productsPerPage = 10;
+  const [currentPage, setCurrentPage] = useState(1);
+const [ratingChange,setRatingChange] = useState('')
   const [category, setCategory] = useState('category=' + initialCategory);
   const [searchQuery, setsearchQuery] = useState('&search=' + initialSearch);
   const navigate = useNavigate()
 
   const [productsList,setProductsList] = useState([])
-
+const [ratedBy,setRatedBy] = useState(0)
   const [categoryList,setCategoryList] = useState([])
-  const [url,setUrl]= useState('/products/client?'+category+searchQuery+sorted)
+  const [url,setUrl]= useState('/products/client?'+category+searchQuery+sorted+ratingChange)
   const [filtersM, setFiltersM] = useState({
     categories: [],
   });
@@ -45,30 +49,37 @@ useState(()=>{
 },[])
 
 
-const fetchProducts=async()=>{
- const response= await axiosInstance.get(url);
+const fetchProducts=async(pageNumber = 1)=>{
+  // page: pageNumber,
+  // limit: productsPerPage,
+
+ const response= await axiosInstance.get(url+`&page=${pageNumber}&limit=${productsPerPage}`);
  console.log('fp ',url)
  setProductsList(response?.data?.data)
-console.log(response?.data?.data)
+ setTotalProducts(response?.data?.total);
+
 }
 
 
 useEffect(()=>{
-fetchProducts()
-},[url,category,sorted])
+fetchProducts(currentPage)
+},[url,category,sorted,currentPage,ratingChange])
 
 
+//pagination
+const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
 // for category
 const handleFilterChangeM = (filterType, selectedValues) => {
-  console.log('sel val',selectedValues[0])
-  console.log('filter type',filterType)
+  setRatedBy(0)
+  setRatingChange(``)
 setCategory('category='+selectedValues[0])
-setUrl('/products/client?'+'category='+selectedValues[0]+searchQuery+sorted)
+setUrl('/products/client?'+'category='+selectedValues[0]+searchQuery+sorted+ratingChange)
   setFiltersM((prevFilters) => ({
     ...prevFilters,
     [filterType]: selectedValues,
   }));
+
 };
 //filter category name for product
 const filterCategoryName = (catId) => {
@@ -77,7 +88,24 @@ const filterCategoryName = (catId) => {
 };
 
 
+const handleRatingChange =async ( filterType, selectedValues) => {
+  setRatedBy(selectedValues)
+  console.log('fi',filterType)
+  console.log('seltd val',selectedValues)
+if (selectedValues===0){
 
+  setUrl('/products/client?'+category+searchQuery+sorted)
+
+}else{
+
+  setUrl('/products/client?'+category+searchQuery+`&rating=${selectedValues}`+sorted)
+  setRatingChange(`&rating=${selectedValues}`)
+
+}
+
+
+  
+}
 
 
 
@@ -185,7 +213,6 @@ const filterCategoryName = (catId) => {
 
   const [products, setProducts] = useState([]);
   const [sortBy, setSortBy] = useState('featured');
-  const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState({
     priceRange: [0, 1000],
     freeDelivery: false,
@@ -198,7 +225,7 @@ const filterCategoryName = (catId) => {
   });
   const [showFilters, setShowFilters] = useState(false);
 
-  const productsPerPage = 12;
+  // const productsPerPage = 12;
 
   useEffect(() => {
     setProducts(sampleProducts);
@@ -212,34 +239,35 @@ const filterCategoryName = (catId) => {
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
 
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  // const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   const handleSort =async (e) => {
     e.preventDefault()
     setSortBy(e.target.value);
+ 
     const sortedProducts = [...products];
     switch (e.target.value) {
       case 'price-low-high':
-        setUrl('/products/client?'+category+searchQuery+'&sortField=sale_rate&sortOrder=asc')
+        setUrl('/products/client?'+category+searchQuery+'&sortField=sale_rate&sortOrder=asc'+ratingChange)
         setSorted('&sortField=sale_rate&sortOrder=asc')
         //setUrl('/products/client?'+category+'&sortField=sale_rate&sortOrder=asc&')
         sortedProducts.sort((a, b) => a.price - b.price);
         break;
       case 'price-high-low':
-        setUrl('/products/client?'+category+searchQuery+'&sortField=sale_rate&sortOrder=desc')
+        setUrl('/products/client?'+category+searchQuery+'&sortField=sale_rate&sortOrder=desc'+ratingChange)
         setSorted('&sortField=sale_rate&sortOrder=desc')
       //  setUrl('/products/client?'+category+'&sortField=sale_rate&sortOrder=desc&')
         sortedProducts.sort((a, b) => b.price - a.price);
         break;
       case 'rating':
-        setUrl('/products/client?'+category+searchQuery+'&sortField=rating&sortOrder=desc')
+        setUrl('/products/client?'+category+searchQuery+'&sortField=rating&sortOrder=desc'+ratingChange)
         setSorted('&sortField=rating&sortOrder=desc')
 
      //   setUrl('/products/client?'+category+'&sortField=rating&sortOrder=desc&')
         sortedProducts.sort((a, b) => b.rating - a.rating);
         break;
       case 'newest':
-        setUrl('/products/client?'+category+searchQuery+'&sortField=createdAt&sortOrder=desc')
+        setUrl('/products/client?'+category+searchQuery+'&sortField=createdAt&sortOrder=desc'+ratingChange)
         setSorted('&sortField=createdAt&sortOrder=desc')
 
        // setUrl('/products/client?'+category+'&sortField=createdAt&sortOrder=desc&')
@@ -247,10 +275,11 @@ const filterCategoryName = (catId) => {
         break;
       default:
         // 'featured' - assume products are already in featured order
+        setUrl('/products/client?')
+        setSorted('')
         break;
     }
     setProducts(sortedProducts);
-    console.log(url)
   };
 
   const handleFilterChange = (filterName, value) => {
@@ -351,8 +380,8 @@ const filterCategoryName = (catId) => {
       <Form.Group className="mb-3">
         <Form.Label>Minimum Rating</Form.Label>
         <Form.Select 
-          value={filters.rating}
-          onChange={(e) => handleFilterChange('rating', parseInt(e.target.value))}
+          value={ratedBy}
+          onChange={(e) => handleRatingChange('rating', parseInt(e.target.value))}
         >
           <option value={0}>All Ratings</option>
           <option value={4}>4★ & above</option>
@@ -484,7 +513,7 @@ const filterCategoryName = (catId) => {
             <Row className="mb-4 align-items-center">
               <Col>
                 <h1 className="display-4 mb-0">Our Products</h1>
-                <p className="lead text-muted mb-0">{products.length} results found</p>
+                <p className="lead text-muted mb-0">{productsList.length} results found</p>
               </Col>
               <Col xs="auto" className="d-flex align-items-center">
                 <Button 
@@ -495,7 +524,7 @@ const filterCategoryName = (catId) => {
                   <FaFilter /> Filters
                 </Button>
                 <Form.Select value={sortBy} onChange={handleSort} className="w-auto">
-                  <option value="featured">Featured</option>
+                  <option value="featured">All Products</option>
                   <option value="price-low-high">Price: Low to High</option>
                   <option value="price-high-low">Price: High to Low</option>
                   <option value="rating">Highest Rated</option>
@@ -511,16 +540,16 @@ const filterCategoryName = (catId) => {
               ))}
             </Row>
             <Pagination className="justify-content-center mt-5">
-              {[...Array(Math.ceil(products.length / productsPerPage))].map((_, index) => (
-                <Pagination.Item
-                  key={index + 1}
-                  active={index + 1 === currentPage}
-                  onClick={() => paginate(index + 1)}
-                >
-                  {index + 1}
-                </Pagination.Item>
-              ))}
-            </Pagination>
+        {[...Array(Math.ceil(totalProducts / productsPerPage))].map((_, index) => (
+          <Pagination.Item
+            key={index + 1}
+            active={index + 1 === currentPage}
+            onClick={() => paginate(index + 1)}
+          >
+            {index + 1}
+          </Pagination.Item>
+        ))}
+      </Pagination>
           </Col>
         </Row>
       </Container>
