@@ -25,11 +25,11 @@ const [ratingChange,setRatingChange] = useState('')
   const [category, setCategory] = useState('category=' + initialCategory);
   const [searchQuery, setsearchQuery] = useState('&search=' + initialSearch);
   const navigate = useNavigate()
-
+const [lesserThan,setLesserThan] = useState('')
   const [productsList,setProductsList] = useState([])
 const [ratedBy,setRatedBy] = useState(0)
   const [categoryList,setCategoryList] = useState([])
-  const [url,setUrl]= useState('/products/client?'+category+searchQuery+sorted+ratingChange)
+  const [url,setUrl]= useState('/products/client?'+category+searchQuery+sorted+ratingChange+lesserThan)
   const [filtersM, setFiltersM] = useState({
     categories: [],
   });
@@ -63,7 +63,7 @@ const fetchProducts=async(pageNumber = 1)=>{
 
 useEffect(()=>{
 fetchProducts(currentPage)
-},[url,category,sorted,currentPage,ratingChange])
+},[url,category,sorted,currentPage,ratingChange,lesserThan])
 
 
 //pagination
@@ -74,7 +74,7 @@ const handleFilterChangeM = (filterType, selectedValues) => {
   setRatedBy(0)
   setRatingChange(``)
 setCategory('category='+selectedValues[0])
-setUrl('/products/client?'+'category='+selectedValues[0]+searchQuery+sorted+ratingChange)
+setUrl('/products/client?'+'category='+selectedValues[0]+searchQuery+sorted+ratingChange+lesserThan)
   setFiltersM((prevFilters) => ({
     ...prevFilters,
     [filterType]: selectedValues,
@@ -90,21 +90,15 @@ const filterCategoryName = (catId) => {
 
 const handleRatingChange =async ( filterType, selectedValues) => {
   setRatedBy(selectedValues)
-  console.log('fi',filterType)
-  console.log('seltd val',selectedValues)
 if (selectedValues===0){
 
-  setUrl('/products/client?'+category+searchQuery+sorted)
+  setUrl('/products/client?'+category+searchQuery+sorted+lesserThan)
 
 }else{
 
-  setUrl('/products/client?'+category+searchQuery+`&rating=${selectedValues}`+sorted)
+  setUrl('/products/client?'+category+searchQuery+`&rating=${selectedValues}`+sorted+lesserThan)
   setRatingChange(`&rating=${selectedValues}`)
-
 }
-
-
-  
 }
 
 
@@ -248,26 +242,26 @@ if (selectedValues===0){
     const sortedProducts = [...products];
     switch (e.target.value) {
       case 'price-low-high':
-        setUrl('/products/client?'+category+searchQuery+'&sortField=sale_rate&sortOrder=asc'+ratingChange)
+        setUrl('/products/client?'+category+searchQuery+'&sortField=sale_rate&sortOrder=asc'+ratingChange+lesserThan)
         setSorted('&sortField=sale_rate&sortOrder=asc')
         //setUrl('/products/client?'+category+'&sortField=sale_rate&sortOrder=asc&')
         sortedProducts.sort((a, b) => a.price - b.price);
         break;
       case 'price-high-low':
-        setUrl('/products/client?'+category+searchQuery+'&sortField=sale_rate&sortOrder=desc'+ratingChange)
+        setUrl('/products/client?'+category+searchQuery+'&sortField=sale_rate&sortOrder=desc'+ratingChange+lesserThan)
         setSorted('&sortField=sale_rate&sortOrder=desc')
       //  setUrl('/products/client?'+category+'&sortField=sale_rate&sortOrder=desc&')
         sortedProducts.sort((a, b) => b.price - a.price);
         break;
       case 'rating':
-        setUrl('/products/client?'+category+searchQuery+'&sortField=rating&sortOrder=desc'+ratingChange)
+        setUrl('/products/client?'+category+searchQuery+'&sortField=rating&sortOrder=desc'+ratingChange+lesserThan)
         setSorted('&sortField=rating&sortOrder=desc')
 
      //   setUrl('/products/client?'+category+'&sortField=rating&sortOrder=desc&')
         sortedProducts.sort((a, b) => b.rating - a.rating);
         break;
       case 'newest':
-        setUrl('/products/client?'+category+searchQuery+'&sortField=createdAt&sortOrder=desc'+ratingChange)
+        setUrl('/products/client?'+category+searchQuery+'&sortField=createdAt&sortOrder=desc'+ratingChange+lesserThan)
         setSorted('&sortField=createdAt&sortOrder=desc')
 
        // setUrl('/products/client?'+category+'&sortField=createdAt&sortOrder=desc&')
@@ -282,11 +276,15 @@ if (selectedValues===0){
     setProducts(sortedProducts);
   };
 
-  const handleFilterChange = (filterName, value) => {
+  const handleFilterChangeLesserThan = (filterName, value) => {
     setFilters(prevFilters => ({
       ...prevFilters,
       [filterName]: value
     }));
+
+console.log('less than',value[1])
+setUrl('/products/client?'+category+searchQuery+`&priceGreaterThan=${value[1]}`+sorted+ratingChange)
+setLesserThan(`&priceGreaterThan=${value[1]}`)
   };
 
 
@@ -358,14 +356,14 @@ if (selectedValues===0){
       <Form.Group className="mb-3">
         <Form.Label>Price Range</Form.Label>
         <Form.Range 
-          min={0} 
-          max={2000} 
+          min={500} 
+          max={50000} 
           step={10} 
           value={filters.priceRange[1]} 
-          onChange={(e) => handleFilterChange('priceRange', [0, parseInt(e.target.value)])}
+          onChange={(e) => handleFilterChangeLesserThan('priceRange', [0, parseInt(e.target.value)])}
         />
         <div className="d-flex justify-content-between">
-          <span>₹0</span>
+          <span>₹500</span>
           <span>₹{filters.priceRange[1]}</span>
         </div>
       </Form.Group>
