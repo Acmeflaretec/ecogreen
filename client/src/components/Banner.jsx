@@ -75,7 +75,7 @@ function Banner() {
     <div className="banner-carousel">
       <Slider {...settings}>
         {banner?.map((slide, index) => (
-          <div key={index} className="banner-slide">         
+          <div key={slide._id} className="banner-slide">         
               <motion.img 
                src={`${import.meta.env.VITE_API_BASE_URL_LOCALHOST}/uploads/${slide?.image}`}
                 alt={slide.title}

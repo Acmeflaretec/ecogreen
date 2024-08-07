@@ -60,8 +60,6 @@ console.log(req.query)
       const searchRegex = new RegExp(search, 'i');
       query.$or = [
         { name: searchRegex },
-        // { category: searchRegex },
-        // Add additional fields for search as needed
       ];
     }
 
@@ -96,7 +94,7 @@ console.log(req.query)
       .collation({ locale: 'en' }) // Enable case-insensitive search
       .sort(sortOptions)
       .skip((pageNumber - 1) * limitNumber)
-      .limit(limitNumber);
+      .limit(limitNumber)
     //const data = await Product.find()
     res.status(200).json({ data:products })
   } catch (error) {
@@ -105,6 +103,61 @@ console.log(req.query)
   }
 
 }
+
+const getTaggedProducts =async (req,res) => {
+  try {
+    const { page = 1, limit, sortField, sortOrder,tagName  } = req.query;
+console.log(req.query)
+    // Convert page and limit to integers
+    const pageNumber = parseInt(page, 10) || 1;
+    const limitNumber = parseInt(limit, 10) || 10;
+
+    // Construct the base query
+    const query = {};
+
+    query.isAvailable=true
+
+    // Category filter
+    if (tagName) {
+      query.tags = tagName;
+    }
+
+    // Sorting
+    const sortOptions = {};
+    if (sortField && sortOrder) {
+      sortOptions[sortField] = sortOrder === 'asc' ? 1 : -1;
+    }
+
+  
+  
+    // Find products based on the constructed query
+    const totalProducts = await Product.countDocuments(query);
+    const products = await Product.find(query)
+      .collation({ locale: 'en' }) // Enable case-insensitive search
+      .sort(sortOptions)
+      .skip((pageNumber - 1) * limitNumber)
+      .limit(limitNumber)
+    //const data = await Product.find()
+    res.status(200).json({ data:products })
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: error?.message ?? "Something went wrong !" });
+  }
+}
+
+const getTagList = async (req, res) => {
+  try {
+    const tags = await Product.aggregate([
+      { $unwind: "$tags" },
+      { $group: { _id: "$tags" } },
+      { $sort: { _id: 1 } }
+    ]);
+
+    res.status(200).json({ data: tags.map(tag => tag._id) });
+  } catch (error) {
+    res.status(400).json({ message: error?.message ?? "Something went wrong!" });
+  }
+};
 
 const getProductById = async (req, res) => {
   try {
@@ -179,5 +232,8 @@ module.exports = {
   deleteProduct,
   getTagProducts,
   getAdminProducts ,
-  getProductsClient
+  getProductsClient,
+  getTaggedProducts,
+  getTagList,
+  
 }

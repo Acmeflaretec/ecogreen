@@ -1,10 +1,14 @@
 const { Router } = require('express');
 const router = Router();
 const authorization = require("../middlewares/authorization");
-const { addProduct, getProducts, deleteProduct, getProductById, updateProduct,getTagProducts,getAdminProducts,getProductsClient } = require('../controllers/productController');
+const { addProduct, getProducts, deleteProduct, getProductById, updateProduct,getTagProducts,getAdminProducts,getProductsClient
+  ,getTaggedProducts,getTagList,
+ } = require('../controllers/productController');
 const { upload } = require('../middlewares/multer');
 
 router.post('/', upload.array('images', 10), addProduct);
+router.get('/gettaggedproducts', getTaggedProducts);
+router.get('/getTagList', getTagList);
 router.get('/', getProducts);
 router.get('/adminProducts', getAdminProducts);
 router.get('/tagProducts', getTagProducts);
