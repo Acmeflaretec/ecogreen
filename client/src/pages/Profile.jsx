@@ -63,12 +63,12 @@ function Profile() {
             </Card>
           </Col>
           <Col lg={9}>
-            <Card>
-              <Card.Body>
+            <div>
+              
                 {activeTab === 'profile' && <ProfileInfo />}
                 {activeTab === 'address' && <ManageAddress />}
-              </Card.Body>
-            </Card>
+            
+            </div>
           </Col>
         </Row>
       </div>
