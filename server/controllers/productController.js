@@ -169,6 +169,8 @@ const deleteProduct = async (req, res) => {
     res.status(400).json({ message: error?.message ?? "Something went wrong !" });
   }
 }
+
+
 module.exports = {
   getProducts,
   getProductById,
@@ -176,5 +178,6 @@ module.exports = {
   addProduct,
   deleteProduct,
   getTagProducts,
-  getAdminProducts 
+  getAdminProducts ,
+  getProductsClient
 }
