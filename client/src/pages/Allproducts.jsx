@@ -70,7 +70,11 @@ setUrl('/products/client?'+'category='+selectedValues[0]+searchQuery+sorted)
     [filterType]: selectedValues,
   }));
 };
-
+//filter category name for product
+const filterCategoryName = (catId) => {
+  const filteredCategory = categoryList?.filter((obj) => obj._id === catId);
+  return filteredCategory?.length > 0 ? filteredCategory[0].name : 'Unknown Category';
+};
 
 
 
@@ -413,28 +417,30 @@ setUrl('/products/client?'+'category='+selectedValues[0]+searchQuery+sorted)
       <Card className="h-100 product-card shadow-sm border-0">
         <Link to={`/product/${item?._id}`} className="text-decoration-none">
           <div className="product-image-container">
-            <Card.Img variant="top" src={item.imageUrl} alt={item.name} className="product-image" />
+            <Card.Img variant="top"
+               src={`${import.meta.env.VITE_API_BASE_URL_LOCALHOST}/uploads/${item?.image[0]}`}
+               alt={item.name} className="product-image" />
             {item.freeDelivery && <span bg="success" className="position-absolute top-0 start-0 m-2"><FaTruck /> Free Delivery</span>}
             {/* {item.ecoFriendly && <span bg="info" className="position-absolute top-0 end-0 m-2"><FaLeaf /> Eco-Friendly</span>} */}
             <span bg="danger" className="position-absolute bottom-0 end-0 m-2"><FaPercent /> {item.discount}% OFF</span>
           </div>
           <Card.Body className="p-4">
-            <Card.Title className="product-title h5 mb-2 text-dark">{item.name}</Card.Title>
-            <p className="text-muted small mb-2">{item.brand} | {item.category}</p>
+            <Card.Title className="product-title h5 mb-2 text-dark">{item?.name}</Card.Title>
+            <p className="text-muted small mb-2">{item?.brand} | {filterCategoryName(item?.category)}</p>
             <div className="d-flex justify-content-between align-items-center mb-3">
               <div>
-                <h4 className="mb-0 text-primary">₹{item.price}</h4>
-                <s className="text-muted small">₹{item.originalPrice}</s>
+                <h4 className="mb-0 text-primary">₹{item?.sale_rate}</h4>
+                <s className="text-muted small">₹{item?.price}</s>
               </div>
               <div className="text-warning">
-                <FaStar /> <span className="ms-1">{item.rating}</span>
-                <small className="text-muted">({item.reviews})</small>
+                <FaStar /> <span className="ms-1">{item?.rating}</span>
+                {/* <small className="text-muted">({item?.reviews.length})</small> */}
               </div>
             </div>
-            <p className="product-description small text-muted mb-3">{item.description}</p>
+            <p className="product-description small text-muted mb-3">{item?.description}</p>
             <p className="mb-0 small">
               <span className={`fw-bold ${item.inStock ? 'text-success' : 'text-danger'}`}>
-                {item.inStock ? 'In Stock' : 'Out of Stock'}
+                {item?.inStock ? 'In Stock' : 'Out of Stock'}
               </span>
             </p>
           </Card.Body>

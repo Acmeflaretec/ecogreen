@@ -1,4 +1,5 @@
-import React from 'react';
+import React,{useState,useEffect} from 'react';
+import axiosInstance from '../axios'
 import '../App.css';
 import Banner from '../components/Banner';
 import Category from '../components/Category';
@@ -79,20 +80,44 @@ const recommendationimg= "https://img.freepik.com/free-psd/online-sale-banner-te
 const recommendationimg1= "https://img.freepik.com/free-vector/online-shopping-banner-template_23-2148819250.jpg?ga=GA1.1.1794837574.1691059421&semt=ais_user"
 
 function Home() {
+const [tagList,setTagList] = useState([])
+
+const fetchTagList = async()=>{
+
+try {
+  const response = await axiosInstance.get('/products/getTagList');
+  setTagList(response?.data?.data)
+ } catch (error) {
+  
+}
+
+}
+
+useEffect(()=>{
+  fetchTagList()
+},[])
+
   return (
     <div className='bg-light-subtle'>
       <MiddleNav/>
       <Category/>
       <Banner/>
-      <FeaturedProducts data={featuredProductsData1} title="Featured Mobile Accessories" />
-      <RecommendationPanel videoImage={recommendationimg1} title="Deals on Fresh Produce & More" deals={deals}/>
+  { tagList?.map((item,index)=>(
+ <FeaturedProducts key={index} data={featuredProductsData1} title={item} tagName={item}  />
+
+  ))  
+
+}
+
+
+      {/* <RecommendationPanel videoImage={recommendationimg1} title="Deals on Fresh Produce & More" deals={deals}/>
       <ProductCarousel products={exampleProducts} />
       <HomeProducts title="collections only For You" products={officeSupplies} bannerImage={officeSuppliesBanner}/>
       
       <FeaturedProducts data={featuredProductsData2} title="Featured Electronics" />
       <RecommendationPanel videoImage={recommendationimg} title="Fashion Deals" deals={fashionDeals}/>
       <ProductCarousel products={exampleProducts} />
-      <HomeProducts title="Fashions For You" products={homeFashion} bannerImage={homeFashionbanner}/>
+      <HomeProducts title="Fashions For You" products={homeFashion} bannerImage={homeFashionbanner}/> */}
       <Footer/>
     </div>
   )
