@@ -4,16 +4,27 @@ import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import './MiddleNav.css'; // Custom styles
+import { setUserDetails, clearUserDetails } from '../redux/actions/userActions';
+import { useDispatch, useSelector } from 'react-redux';
 
 function MiddleNav() {
+
+  const dispatch = useDispatch();
+  const userDetails = useSelector(state => state.userDetails);
+  console.log('userDetails',userDetails);
+  
+
+
  const navigate = useNavigate()
   const cartItemCount = 3;
   const wishlistItemCount = 2;
-  const [isLoggedIn, setIsLoggedIn] = useState(true); 
   const [search,setSearch] =useState('')
   const handleLogout = () => {
-    setIsLoggedIn(false);
-    // Add your logout logic here
+    dispatch(clearUserDetails());
+
+    localStorage.removeItem('Tokens');
+    // window.location.reload();
+    navigate('/')
   };
   const handleSearch =async()=>{
 navigate(`/allproducts?search=${search}`)
@@ -35,7 +46,7 @@ navigate(`/allproducts?search=${search}`)
             <i className="fas fa-shopping-cart"></i>
             {cartItemCount > 0 && <span className="badge">{cartItemCount}</span>}
           </Link>
-          {isLoggedIn ? (
+          {userDetails ? (
             <div className="dropdown">
               <button className="profile-icon btn btn-secondary" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                 <i className="fas fa-user text-white"></i>
@@ -47,7 +58,7 @@ navigate(`/allproducts?search=${search}`)
               </ul>
             </div>
           ) : (
-            <Link to="/" className="btn login-btn"><i className="fa-solid fa-arrow-right-to-bracket"></i></Link>
+            <Link to="/login" className="btn login-btn"><i className="fa-solid fa-arrow-right-to-bracket"></i></Link>
           )}
         </div>
         <form className="search-bar mx-auto d-flex d-md-none mt-2">
