@@ -96,7 +96,7 @@ console.log(req.query)
       .skip((pageNumber - 1) * limitNumber)
       .limit(limitNumber)
     //const data = await Product.find()
-    res.status(200).json({ data:products })
+    res.status(200).json({ data:products, total: totalProducts  })
   } catch (error) {
     console.log(error);
     res.status(400).json({ message: error?.message ?? "Something went wrong !" });
@@ -236,5 +236,5 @@ module.exports = {
   getProductsClient,
   getTaggedProducts,
   getTagList,
-  
+
 }

@@ -21,7 +21,6 @@ const fetchProductsList = async()=>{
   try {
     const response = await axiosInstance.get(`/products/gettaggedproducts?tagName=${tagName}`);
     setProductList(response?.data?.data)
-    console.log(response?.data?.data)
   } catch (error) {
     console.log(error)
   }
@@ -61,7 +60,7 @@ const fetchProductsList = async()=>{
                alt={product?.name} className="product-image" />
         <h3 className="product-name">{product?.name}</h3>
         <div className="product-rating">{renderStars(product?.rating)}</div>
-        <p className="product-price">₹ {product?.price.toFixed(2)}</p>
+        <p className="product-price">₹ {product?.sale_rate.toFixed(2)}</p>
        <Link to={'/'}> <button className="add-to-cart-btn">Add to Cart</button></Link>
       </div>
     </Link>
