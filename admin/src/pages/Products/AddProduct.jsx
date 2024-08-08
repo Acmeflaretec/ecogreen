@@ -1,4 +1,5 @@
-import { Autocomplete, Button, Grid, TextField,Chip } from '@mui/material'
+import { Autocomplete, Button, Grid, TextField,Chip,IconButton } from '@mui/material'
+import CancelIcon from '@mui/icons-material/Cancel';
 import Box from 'components/Box'
 import Input from 'components/Input'
 import PageLayout from 'layouts/PageLayout'
@@ -22,6 +23,22 @@ const AddProduct = () => {
 
   const [selectedCountries, setSelectedCountries] = useState([])
   const countries = ["Baharin", "Uae", "Kuwait", "India", "Quatar", "Oman"];
+
+  const [benefits, setBenefits] = useState([])
+  const [benefitInput, setBenefitInput] = useState('')
+  const handleBenefitChange = (e) => {
+    setBenefitInput(e.target.value);
+  }
+  const handleAddBenefit = () => {
+    if (benefitInput.trim()) {
+      setBenefits(prev => [...prev, benefitInput.trim()]);
+      setBenefitInput('');
+    }
+  }
+
+  const handleRemoveBenefit = (index) => {
+    setBenefits(prev => prev.filter((_, i) => i !== index));
+  };
   // useEffect(() => {
   //   console.log('category',category);
   // }, [category])
@@ -48,6 +65,9 @@ const AddProduct = () => {
       }
       formData.append('category', category?._id);
       formData.append('countries', JSON.stringify(selectedCountries));
+      benefits.forEach((ben, index) => {
+        formData.append(`benefits[${index}]`, ben);
+      });
       // typeof (details.image) == 'object' && formData.append("image", details.image, details?.image?.name);
       AddProduct(formData)
         .then((res) => {
@@ -200,6 +220,30 @@ const AddProduct = () => {
               multiline
               rows={5}
             />
+          </Grid>
+
+
+          <Grid item xs={12}>
+            <TextField
+              placeholder="Add Benefit"
+              value={benefitInput}
+              onChange={handleBenefitChange}
+              sx={{ mr: 2 }}
+            />
+            <Button onClick={handleAddBenefit} variant='contained'>Add</Button>
+            <Box mt={2}>
+              {benefits.map((benefit, index) => (
+                <Box key={index} display="flex" alignItems="center">
+                  <Typography variant="body2">
+                    {benefit}
+                  </Typography>
+                  <IconButton size="small" onClick={() => handleRemoveBenefit(index)}>
+                    <CancelIcon fontSize="small" />
+                  </IconButton>
+                </Box>
+              ))}
+            </Box>
+
           </Grid>
         </Grid>
         <Grid item container spacing={2} xs={12} sm={12} md={6} py={5}>

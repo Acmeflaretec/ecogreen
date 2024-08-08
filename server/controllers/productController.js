@@ -172,10 +172,11 @@ const getProductById = async (req, res) => {
 const addProduct = async (req, res) => {
   try {
     console.log(req.files);
-    const { name, subheading, category, brand, price, stock, discount, sale_rate, description,countries  } = req?.body
+    const { name, subheading, category, brand, price, stock, discount, sale_rate, description,countries,benefits  } = req?.body
+    console.log('bene',benefits)
     if (req.files.length != 0) {
       const product = new Product({
-        name, subheading, category, brand, price, stock, discount, sale_rate, description,
+        name, subheading, category, brand, price, stock, discount, sale_rate, description,benefits,
         image: req.files.map((x) => x.filename),
         countries: JSON.parse(countries)
       });

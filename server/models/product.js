@@ -47,6 +47,9 @@ const productSchema = new mongoose.Schema({
         type: [String],
         required: true
     },
+    benefits:{
+        type:[String]
+    },
     image: {
         type: Array,
         required: true
