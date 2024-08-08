@@ -36,12 +36,28 @@ const fetchCategory = async (urlC) => {
   return (
     <div className="category-container">
       <div className="category-scroll">
+  <Link to={`/allproducts`} className="category-item">
+    All products
+  </Link>
+  {category.map((category) => (
+    <Link
+      to={`/allproducts?categoryQuery=${category._id}`}
+      key={category._id}
+      className="category-item"
+    >
+      {category.name}
+    </Link>
+  ))}
+</div>
+
+      {/* <div className="category-scroll">
         {category.map((category) => (
+          
           <Link to={`/allproducts?categoryQuery=${category._id}`} key={category._id} className="category-item">
             {category.name}
           </Link>
         ))}
-      </div>
+      </div> */}
     </div>
   );
 }
