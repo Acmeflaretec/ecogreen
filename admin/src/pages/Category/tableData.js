@@ -3,10 +3,11 @@ import Box from "components/Box";
 import Typography from "components/Typography";
 import Avatar from "components/Avatar";
 import Badge from "components/Badge";
-import { useGetCategory } from "queries/ProductQuery";
+import { useGetFilterCategory } from "queries/ProductQuery";
 import Table from "examples/Tables/Table";
-import { Icon } from "@mui/material";
+import { Icon,TextField, Button,Pagination  } from "@mui/material";
 import { Link } from "react-router-dom";
+import { useState } from "react";
 
 function Category({ image, name, desc }) {
   return (
@@ -27,7 +28,18 @@ function Category({ image, name, desc }) {
 }
 
 const TableData = () => {
-  const { data, isLoading } = useGetCategory({ pageNo: 1, pageCount: 100 });
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(10);
+  const [sortBy, setSortBy] = useState('createdAt');
+  const [order, setOrder] = useState('desc');
+  const [search, setSearch] = useState('');
+
+
+  const { data, isLoading } = useGetFilterCategory({ page, perPage, sortBy, order, search });
+
+  const handlePageChange = (event, value) => {
+    setPage(value);
+  };
   const columns = [
     { name: "category", align: "left" },
     { name: "status", align: "center" },
@@ -37,7 +49,7 @@ const TableData = () => {
     { name: "action", align: "center" },
   ]
 
-  const rows = data?.data?.map(item => ({
+  const rows = data?.docs?.map(item => ({
     category: <Category image={`${process.env.REACT_APP_API_URL}/uploads/${item?.image}`} name={item?.name} desc={item?.desc} />,
     status: (
       <Badge variant="gradient" badgeContent={item?.isAvailable ? 'Available' : 'Unavailable'} color={item?.isAvailable ? "success" : 'secondary'} size="xs" container />
@@ -64,7 +76,38 @@ const TableData = () => {
       </Link>
     ),
   }))
-  return isLoading ? <Typography fontSize={14} sx={{ paddingX: 5 }}>loading...</Typography> : <Table columns={columns} rows={rows} />
+  // return isLoading ? <Typography fontSize={14} sx={{ paddingX: 5 }}>loading...</Typography> : <Table columns={columns} rows={rows} />
+return(
+  <>
+  <Box display="flex" alignItems="center" justifyContent="space-between" py={2}>
+    <TextField
+      placeholder="Search..."
+      value={search}
+      onChange={(e) => setSearch(e.target.value)}
+      variant="outlined"
+      size="small"
+      style={{marginLeft:'5px'}}
+    />
+    <Box>
+      <Button onClick={() => setOrder(order === 'asc' ? 'desc' : 'asc')}>
+        Sort by {sortBy} ({order})
+      </Button>
+    </Box>
+  </Box>
+  {isLoading ? (
+    <Typography fontSize={14} sx={{ paddingX: 5 }}>loading...</Typography>
+  ) : (
+    <Table columns={columns} rows={rows} />
+  )}
+  <Box style={{display:'flex',justifyContent:'center', Margin:'10px'}}>
+    <Pagination
+      count={Math.ceil((data?.totalDocs || 0) / perPage)}
+      page={page}
+      onChange={handlePageChange}
+    />
+  </Box>
+</>
+)
 };
 
 export default TableData;
