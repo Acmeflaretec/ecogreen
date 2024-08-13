@@ -442,7 +442,7 @@ setLesserThan(`&priceGreaterThan=${value[1]}`)
       transition={{ duration: 0.5, delay: index * 0.1 }}
     >
       <Card className="h-100 product-card shadow-sm border-0">
-        <Link to={`/product/${item?._id}`} className="text-decoration-none">
+        <Link to={`/product?productId=${item?._id}`} className="text-decoration-none">
           <div className="product-image-container">
             <Card.Img variant="top"
                src={`${import.meta.env.VITE_API_BASE_URL_LOCALHOST}/uploads/${item?.image[0]}`}
