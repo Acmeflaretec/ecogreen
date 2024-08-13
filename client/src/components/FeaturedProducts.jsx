@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../axios'
-
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
 import 'swiper/css';
@@ -53,7 +52,7 @@ const fetchProductsList = async()=>{
   };
 
   const ProductCard = ({ product }) => (
-    <Link to={'/product'}>
+    <Link to={`/product?productId=${product._id}`}>
       <div className="product-card mb-5">
         <img
                src={`${import.meta.env.VITE_API_BASE_URL_LOCALHOST}/uploads/${product?.image[0]}`}
