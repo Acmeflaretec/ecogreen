@@ -204,7 +204,7 @@
 // export default EditProduct;
 
 
-import { Autocomplete, Button, Chip, Grid, TextField, ToggleButton } from '@mui/material';
+import { Autocomplete, Button, Chip, Grid, TextField, ToggleButton ,Checkbox, FormControlLabel,IconButton,Box} from '@mui/material';
 import Input from 'components/Input';
 import PageLayout from 'layouts/PageLayout';
 import React, { useEffect, useState } from 'react';
@@ -213,6 +213,7 @@ import toast from 'react-hot-toast';
 import { useGetProductById, useUpdateProduct, useDeleteProduct } from 'queries/ProductQuery';
 import { useNavigate, useParams } from 'react-router-dom';
 import ImageList from './ImageList';
+import { Delete } from '@mui/icons-material';
 
 const EditProduct = () => {
   const navigate = useNavigate();
@@ -224,11 +225,14 @@ const EditProduct = () => {
   const countries = ["Baharin", "Uae", "Kuwait", "India", "Quatar", "Oman"];
   const tags = ["featured", "popular", "limited_time_deal", "most_loved"];
 
+  const [isSingleType, setIsSingleType] = useState(false);
+
   useEffect(() => {
     if (data?.data) {
       setDetails(data.data);
       setSelectedCountries(data.data.countries || []);
       setSelectedTags(data.data.tags || []);
+      data?.data.sizes.length > 0 && setIsSingleType(true);
     }
   }, [data]);
 
@@ -250,12 +254,33 @@ const EditProduct = () => {
         }
       });
       for (const key in details) {
-        if (details.hasOwnProperty(key) && key !== "image" && key !== "countries" && key !== "tags") {
+        if (details.hasOwnProperty(key) && key !== "image" && key !== "countries" && key !== "tags" && key !== "feature" && key !== "spec" && key !== "sizes") {
           formData.append(key, details[key]);
         }
       }
       formData.append('countries', JSON.stringify(selectedCountries));
       formData.append('tags', JSON.stringify(selectedTags));
+      details?.feature?.forEach(feat => {
+        if (feat === '') {
+
+        } else {
+          return formData.append('feature', feat)
+        }
+      });
+      details?.spec?.forEach(specif => {
+        if (specif === '') {
+
+        } else {
+          return formData.append('spec', specif)
+        }
+      });
+      details?.sizes?.forEach(sizes => {
+        if (sizes === '') {
+
+        } else {
+          return formData.append('sizes', sizes)
+        }
+      });
 
       updateProduct(formData)
         .then((res) => {
@@ -283,6 +308,49 @@ const EditProduct = () => {
       .catch((err) => {
         toast.error(err?.message ?? "Something went wrong");
       });
+  };
+
+
+  const handleFeatureChange = (index, value) => {
+    const newfeature = [...details.feature];
+    newfeature[index] = value;
+    setDetails(prevData => ({ ...prevData, feature: newfeature }));
+  };
+  const handleAddFeature = () => {
+    setDetails(prevData => ({ ...prevData, feature: [...prevData.feature, ''] }));
+  };
+  const handleRemoveFeature = (index) => {
+    const newfeature = details.feature.filter((_, i) => i !== index);
+    setDetails(prevData => ({ ...prevData, feature: newfeature }));
+  };
+
+
+
+  const handlespecChange = (index, value) => {
+    const newspec = [...details.spec];
+    newspec[index] = value;
+    setDetails(prevData => ({ ...prevData, spec: newspec }));
+  };
+  const handleAddspec = () => {
+    setDetails(prevData => ({ ...prevData, spec: [...prevData.spec, ''] }));
+  };
+  const handleRemovespec = (index) => {
+    const newspec = details.spec.filter((_, i) => i !== index);
+    setDetails(prevData => ({ ...prevData, spec: newspec }));
+  };
+
+
+  const handlesizesChange = (index, value) => {
+    const newsizes = [...details.sizes];
+    newsizes[index] = value;
+    setDetails(prevData => ({ ...prevData, sizes: newsizes }));
+  };
+  const handleAddsizes = () => {
+    setDetails(prevData => ({ ...prevData, sizes: [...prevData.sizes, ''] }));
+  };
+  const handleRemovesizes = (index) => {
+    const newsizes = details.sizes.filter((_, i) => i !== index);
+    setDetails(prevData => ({ ...prevData, sizes: newsizes }));
   };
 
   return (
@@ -336,6 +404,100 @@ const EditProduct = () => {
                 onChange={handleChange}
               />
             </Grid>
+
+            <Grid item xs={12}>
+            {details?.feature?.map((feature, index) => (
+              <Box key={index} display="flex" alignItems="center">
+                <TextField
+                  // label={`feature ${index + 1}`}
+                  placeholder={`feature ${index + 1}`}
+                  value={feature}
+                  onChange={(e) => handleFeatureChange(index, e.target.value)}
+                  fullWidth
+                  margin="normal"
+                  required
+                />
+                {details.feature.length > 1 && (
+                  <IconButton onClick={() => handleRemoveFeature(index)}>
+                    <Delete />
+                  </IconButton>
+                )}
+              </Box>
+            ))}
+            <Button onClick={handleAddFeature} variant="contained" color="primary" fullWidth className="mt-4">
+              Add Feature
+            </Button>
+          </Grid>
+          <Grid item xs={12}>
+            {details?.spec?.map((spec, index) => (
+              <Box key={index} display="flex" alignItems="center">
+                <TextField
+                  // label={`spec ${index + 1}`}
+                  placeholder={`spec ${index + 1}`}
+                  value={spec}
+                  onChange={(e) => handlespecChange(index, e.target.value)}
+                  fullWidth
+                  margin="normal"
+                  required
+                />
+                {details.spec.length > 1 && (
+                  <IconButton onClick={() => handleRemovespec(index)}>
+                    <Delete />
+                  </IconButton>
+                )}
+              </Box>
+            ))}
+            <Button onClick={handleAddspec} variant="contained" color="primary" fullWidth className="mt-4">
+              Add specification
+            </Button>
+          </Grid>
+
+
+          <Grid item xs={12} ml={2} container >
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={isSingleType}
+                  onChange={() => setIsSingleType(!isSingleType)}
+                  name="isSingleType"
+                  // disabled = {isSingleType}
+                />
+              }
+              label="this product is cloth"
+            />
+            
+          </Grid>
+          {isSingleType && <Grid item xs={12} >
+            <Grid container direction="row">
+                {details?.sizes?.map((sizes, index) => (
+              <Grid item xs={12} sm={4} md={3} key={index}>
+                  <Box key={index} display="flex" alignItems="center">
+                    <TextField
+                      // label={`sizes ${index + 1}`}
+                      placeholder={`sizes ${index + 1}`}
+                      value={sizes}
+                      onChange={(e) => handlesizesChange(index, e.target.value)}
+                      fullWidth
+                      margin="normal"
+                      required
+                    />
+                    {details.sizes.length > 1 && (
+                      <IconButton onClick={() => handleRemovesizes(index)}>
+                        <Delete />
+                      </IconButton>
+                    )}
+                  </Box>
+                  </Grid>
+                ))}
+                <Button onClick={handleAddsizes} variant="contained" color="primary" fullWidth className="mt-4">
+                  Add Sizes
+                </Button>
+              
+            </Grid>
+
+          </Grid>}
+
+
             <Grid item xs={12} sm={4}>
               <Input
                 placeholder="MRP (Maximum Retail Price)"
