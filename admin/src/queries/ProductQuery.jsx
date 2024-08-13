@@ -11,7 +11,7 @@ import {
   getProducts,
   getTagProducts,
   updateProduct,
-  getCoupon, getCouponById, addCoupon, updateCoupon, deletecoupons, couponStatus,
+  getCoupon, getCouponById, addCoupon, updateCoupon, deletecoupons, couponStatus,getCoinCoupon
 } from "./productUrls";
 
 const useGetCategory = (data) => {
@@ -154,6 +154,13 @@ const useGetCoupon = (data) => {
     // refetchOnWindowFocus: false,
   });
 };
+const useGetCoinCoupen = (data) => {
+  return useQuery(["get_category", data], () => getCoinCoupon(data), {
+    staleTime: 3000,
+    keepPreviousData: true,
+    // refetchOnWindowFocus: false,
+  });
+};
 
 const useAddCoupon = () => {
   const queryClient = useQueryClient();
@@ -231,5 +238,5 @@ export {
   useAddProduct,
   useUpdateProduct,
   useDeleteProduct,
-  useGetCoupon, useAddCoupon, useGetCouponById, useUpdateCouponStatus, useUpdateCoupon, useDeletecoupons
+  useGetCoupon, useAddCoupon, useGetCouponById, useUpdateCouponStatus, useUpdateCoupon, useDeletecoupons,useGetCoinCoupen
 };

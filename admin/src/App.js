@@ -2,10 +2,10 @@ import { useState, useEffect, useMemo } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-import Sidenav from "examples/Sidenav";    
+import Sidenav from "examples/Sidenav";
 import theme from "assets/theme";
 import themeRTL from "assets/theme/theme-rtl";
-import themeDark from "assets/theme-dark";   
+import themeDark from "assets/theme-dark";
 import themeDarkRTL from "assets/theme-dark/theme-rtl";
 import rtlPlugin from "stylis-plugin-rtl";
 import { CacheProvider } from "@emotion/react";
@@ -33,6 +33,7 @@ import EditBanner from "pages/Banner/EditBanner";
 import EditBlog from "pages/Blogs/EditBlog";
 import AddCoupon from "pages/Coupon/AddCoupon";
 import EditCoupon from "pages/Coupon/EditCoupon";
+import EditCoinCoupon from "pages/CoinCoupon/EditCoupon";
 
 export default function App() {
   const [controller, dispatch] = useController();
@@ -117,6 +118,7 @@ export default function App() {
                 <Route path="/orders/editOrder/:id" element={<EditOrder />} />
                 <Route path="/coupon/addCoupon" element={<AddCoupon />} />
                 <Route path="/coupon/editCoupon/:id" element={<EditCoupon />} />
+                <Route path="/coincoupons/editCoinCoupon/:id" element={<EditCoinCoupon />} />
                 <Route path="*" element={<Navigate to="/orders" />} />
               </Routes>
               <Footer />
@@ -152,7 +154,8 @@ export default function App() {
               <Route path="/banners/editBanner/:id" element={<EditBanner />} />
               <Route path="/blogs/editBlog/:id" element={<EditBlog />} />
               <Route path="/coupon/addCoupon" element={<AddCoupon />} />
-                <Route path="/coupon/editCoupon/:id" element={<EditCoupon />} />
+              <Route path="/coupon/editCoupon/:id" element={<EditCoupon />} />
+              <Route path="/coincoupons/editCoinCoupon/:id" element={<EditCoinCoupon />} />
               <Route path="*" element={<Navigate to="/orders" />} />
             </Routes>
             <Footer />

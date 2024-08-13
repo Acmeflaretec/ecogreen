@@ -13,6 +13,7 @@ const getTagProducts = async (data) => request(`/products/tagProducts?page=${dat
 const getProductById = async (data) => request(`/products/${data?.id}`, 'GET', data)
 
 const getCoupon = async (data) => request(`/coupons?page=${data?.pageNo}&perpageitems=${data?.pageCount}`, 'GET', data)
+const getCoinCoupon = async (data) => request(`/coupons/coincoupon?page=${data?.pageNo}&perpageitems=${data?.pageCount}`, 'GET', data)
 const addCoupon = async (data) => request(`/coupons`, 'POST', data)
 const deletecoupons = async (data) => request(`/coupons/${data?._id}`, 'DELETE', data)
 const couponStatus = async (data) => request(`/coupons/status/${data?._id}`, 'PATCH', data)
@@ -51,4 +52,5 @@ const getProducts = async ({ page, perPage, sortBy, order, search }) => {
     updateCoupon,
     getCouponById,
     deletecoupons,
+    getCoinCoupon
   };
