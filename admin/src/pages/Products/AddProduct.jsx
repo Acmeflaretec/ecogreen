@@ -1,4 +1,4 @@
-import { Autocomplete, Button, Grid, TextField,Chip,IconButton } from '@mui/material'
+import { Autocomplete, Button, Grid, TextField, Chip, IconButton,Checkbox, FormControlLabel, } from '@mui/material'
 import CancelIcon from '@mui/icons-material/Cancel';
 import Box from 'components/Box'
 import Input from 'components/Input'
@@ -10,10 +10,15 @@ import Typography from 'components/Typography'
 import { useAddProduct } from 'queries/ProductQuery'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
+import { Delete } from '@mui/icons-material';
 
 const AddProduct = () => {
   const navigat = useNavigate()
-  const [details, setDetails] = useState({})
+  const [details, setDetails] = useState({
+    feature: [''],
+    spec: [''],
+    sizes: [''],
+  })
   const { data, isLoading } = useGetCategory({ pageNo: 1, pageCount: 100 });
   const { mutateAsync: AddProduct, isLoading: loading } = useAddProduct()
   const handleChange = (e) => {
@@ -24,21 +29,9 @@ const AddProduct = () => {
   const [selectedCountries, setSelectedCountries] = useState([])
   const countries = ["Baharin", "Uae", "Kuwait", "India", "Quatar", "Oman"];
 
-  const [benefits, setBenefits] = useState([])
-  const [benefitInput, setBenefitInput] = useState('')
-  const handleBenefitChange = (e) => {
-    setBenefitInput(e.target.value);
-  }
-  const handleAddBenefit = () => {
-    if (benefitInput.trim()) {
-      setBenefits(prev => [...prev, benefitInput.trim()]);
-      setBenefitInput('');
-    }
-  }
+  const [isSingleType, setIsSingleType] = useState(false);
 
-  const handleRemoveBenefit = (index) => {
-    setBenefits(prev => prev.filter((_, i) => i !== index));
-  };
+
   // useEffect(() => {
   //   console.log('category',category);
   // }, [category])
@@ -59,14 +52,32 @@ const AddProduct = () => {
         formData.append('images', image, image.name);
       });
       for (const key in details) {
-        if (details.hasOwnProperty(key) && key !== "image") {
+        if (details.hasOwnProperty(key) && key !== "image" && key !== "feature" && key !== "spec" && key !== "sizes") {
           formData.append(key, details[key]);
         }
       }
       formData.append('category', category?._id);
       formData.append('countries', JSON.stringify(selectedCountries));
-      benefits.forEach((ben, index) => {
-        formData.append(`benefits[${index}]`, ben);
+      details?.feature?.forEach(feat => {
+        if (feat === '') {
+
+        } else {
+          return formData.append('feature', feat)
+        }
+      });
+      details?.spec?.forEach(specif => {
+        if (specif === '') {
+
+        } else {
+          return formData.append('spec', specif)
+        }
+      });
+      details?.sizes?.forEach(sizes => {
+        if (sizes === '') {
+
+        } else {
+          return formData.append('sizes', sizes)
+        }
       });
       // typeof (details.image) == 'object' && formData.append("image", details.image, details?.image?.name);
       AddProduct(formData)
@@ -81,6 +92,48 @@ const AddProduct = () => {
       console.error(error)
     }
   }
+
+  const handleFeatureChange = (index, value) => {
+    const newfeature = [...details.feature];
+    newfeature[index] = value;
+    setDetails(prevData => ({ ...prevData, feature: newfeature }));
+  };
+  const handleAddFeature = () => {
+    setDetails(prevData => ({ ...prevData, feature: [...prevData.feature, ''] }));
+  };
+  const handleRemoveFeature = (index) => {
+    const newfeature = details.feature.filter((_, i) => i !== index);
+    setDetails(prevData => ({ ...prevData, feature: newfeature }));
+  };
+
+
+
+  const handlespecChange = (index, value) => {
+    const newspec = [...details.spec];
+    newspec[index] = value;
+    setDetails(prevData => ({ ...prevData, spec: newspec }));
+  };
+  const handleAddspec = () => {
+    setDetails(prevData => ({ ...prevData, spec: [...prevData.spec, ''] }));
+  };
+  const handleRemovespec = (index) => {
+    const newspec = details.spec.filter((_, i) => i !== index);
+    setDetails(prevData => ({ ...prevData, spec: newspec }));
+  };
+
+
+  const handlesizesChange = (index, value) => {
+    const newsizes = [...details.sizes];
+    newsizes[index] = value;
+    setDetails(prevData => ({ ...prevData, sizes: newsizes }));
+  };
+  const handleAddsizes = () => {
+    setDetails(prevData => ({ ...prevData, sizes: [...prevData.sizes, ''] }));
+  };
+  const handleRemovesizes = (index) => {
+    const newsizes = details.sizes.filter((_, i) => i !== index);
+    setDetails(prevData => ({ ...prevData, sizes: newsizes }));
+  };
   return (
     <PageLayout
       title={'Add Product'}
@@ -162,6 +215,96 @@ const AddProduct = () => {
               onChange={handleChange}
             />
           </Grid>
+          <Grid item xs={12}>
+            {details?.feature?.map((feature, index) => (
+              <Box key={index} display="flex" alignItems="center">
+                <TextField
+                  // label={`feature ${index + 1}`}
+                  placeholder={`feature ${index + 1}`}
+                  value={feature}
+                  onChange={(e) => handleFeatureChange(index, e.target.value)}
+                  fullWidth
+                  margin="normal"
+                  required
+                />
+                {details.feature.length > 1 && (
+                  <IconButton onClick={() => handleRemoveFeature(index)}>
+                    <Delete />
+                  </IconButton>
+                )}
+              </Box>
+            ))}
+            <Button onClick={handleAddFeature} variant="contained" color="primary" fullWidth className="mt-4">
+              Add Feature
+            </Button>
+          </Grid>
+          <Grid item xs={12}>
+            {details?.spec?.map((spec, index) => (
+              <Box key={index} display="flex" alignItems="center">
+                <TextField
+                  // label={`spec ${index + 1}`}
+                  placeholder={`spec ${index + 1}`}
+                  value={spec}
+                  onChange={(e) => handlespecChange(index, e.target.value)}
+                  fullWidth
+                  margin="normal"
+                  required
+                />
+                {details.spec.length > 1 && (
+                  <IconButton onClick={() => handleRemovespec(index)}>
+                    <Delete />
+                  </IconButton>
+                )}
+              </Box>
+            ))}
+            <Button onClick={handleAddspec} variant="contained" color="primary" fullWidth className="mt-4">
+              Add specification
+            </Button>
+          </Grid>
+
+
+          <Grid item xs={12} ml={2} container >
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={isSingleType}
+                  onChange={() => setIsSingleType(!isSingleType)}
+                  name="isSingleType"
+                />
+              }
+              label="this product is cloth"
+            />
+            
+          </Grid>
+          {isSingleType && <Grid item xs={12} >
+            <Grid container direction="row">
+                {details?.sizes?.map((sizes, index) => (
+              <Grid item xs={12} sm={4} md={3} key={index}>
+                  <Box key={index} display="flex" alignItems="center">
+                    <TextField
+                      // label={`sizes ${index + 1}`}
+                      placeholder={`sizes ${index + 1}`}
+                      value={sizes}
+                      onChange={(e) => handlesizesChange(index, e.target.value)}
+                      fullWidth
+                      margin="normal"
+                      required
+                    />
+                    {details.sizes.length > 1 && (
+                      <IconButton onClick={() => handleRemovesizes(index)}>
+                        <Delete />
+                      </IconButton>
+                    )}
+                  </Box>
+                  </Grid>
+                ))}
+                <Button onClick={handleAddsizes} variant="contained" color="primary" fullWidth className="mt-4">
+                  Add Sizes
+                </Button>
+              
+            </Grid>
+
+          </Grid>}
           <Grid item xs={12} sm={4}>
             <Input
               placeholder="MRP (Maximum Retail Price)"
@@ -209,7 +352,7 @@ const AddProduct = () => {
               )}
             />
           </Grid>
-         
+
           <Grid item xs={12}>
             <Input
               id="description"
@@ -223,28 +366,7 @@ const AddProduct = () => {
           </Grid>
 
 
-          <Grid item xs={12}>
-            <TextField
-              placeholder="Add Benefit"
-              value={benefitInput}
-              onChange={handleBenefitChange}
-              sx={{ mr: 2 }}
-            />
-            <Button onClick={handleAddBenefit} variant='contained'>Add</Button>
-            <Box mt={2}>
-              {benefits.map((benefit, index) => (
-                <Box key={index} display="flex" alignItems="center">
-                  <Typography variant="body2">
-                    {benefit}
-                  </Typography>
-                  <IconButton size="small" onClick={() => handleRemoveBenefit(index)}>
-                    <CancelIcon fontSize="small" />
-                  </IconButton>
-                </Box>
-              ))}
-            </Box>
 
-          </Grid>
         </Grid>
         <Grid item container spacing={2} xs={12} sm={12} md={6} py={5}>
           <Grid xs={12}>
