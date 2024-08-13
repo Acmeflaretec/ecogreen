@@ -148,4 +148,16 @@ userSchema.methods.removefromWishlist =async function (productId){
     
 }
 
+
+userSchema.statics.getCartWithProductsByUserId = async function (userId) {
+    try {
+      const user = await this.findById(userId).populate("cart.item.productId");
+  
+      return user?.cart;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  };
+
 module.exports = mongoose.model('User', userSchema)

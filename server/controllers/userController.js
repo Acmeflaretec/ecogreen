@@ -89,6 +89,32 @@ const removeFromWishlist = async (req, res) => {
   }
 }
 
+const getCartDetailsByUserId = async (req, res) => {
+  const { _id } = req?.decoded
+
+  if (_id) {
+    try {
+      const cart = await User.getCartWithProductsByUserId(_id);
+
+      if (cart) {
+          return res.status(200).json({ data:cart });
+      } else {
+          return res.status(404).json({data:[] });
+      }
+  } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: "Internal server error" });
+  }
+
+  }else{
+
+    return res.status(404).json({ data: [] });
+  }
+
+
+}
+
+
 module.exports = {
     getUser,
     getUsers,
@@ -96,5 +122,8 @@ module.exports = {
     addToCart,
     removeFromCart,
     addToWishlist,
-    removeFromWishlist
+    removeFromWishlist,
+
+    getCartDetailsByUserId,
+    
   }
