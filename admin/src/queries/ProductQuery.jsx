@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import {
   addCategory,
+  getFilterCategory,
   getCategoryById,
   editCategory,
   deleteCategory,
@@ -16,6 +17,14 @@ import {
 
 const useGetCategory = (data) => {
   return useQuery(["get_category", data], () => getCategory(data), {
+    staleTime: 3000,
+    keepPreviousData: true,
+    // refetchOnWindowFocus: false,
+  });
+};
+
+const useGetFilterCategory = (params) => {
+  return useQuery(["get_category", params], () => getFilterCategory(params), {
     staleTime: 3000,
     keepPreviousData: true,
     // refetchOnWindowFocus: false,
@@ -228,6 +237,7 @@ const useDeletecoupons = () => {
 
 export {
   useGetCategory,
+  useGetFilterCategory,
   useEditCategorys,
   useGetCategorysById,
   useDeleteCategorys,
