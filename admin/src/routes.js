@@ -1,6 +1,7 @@
 import Dashboard from "pages/Dashboard";
 import Category from "pages/Category";
 import Coupon from "pages/Coupon";
+import Coincoupon from "pages/CoinCoupon";
 import Products from "pages/Products";
 import Tags from "pages/Tags";
 import Orders from "pages/Orders";
@@ -83,6 +84,14 @@ const routes = [
     route: "/tags",
     icon: <Box component="i" color="success" fontSize="14px" className="ni ni-credit-card" />,
     component: <Tags />,
+  },
+  {
+    type: "route",
+    name: "Coin-Coupons",
+    key: "coincoupons",
+    route: "/coincoupons",
+    icon: <Box component="i" color="primary" fontSize="14px" className="ni ni-album-2" />,
+    component: <Coincoupon />,
   },
   { type: "title", title: "Account Pages", key: "account-pages" },
   // {

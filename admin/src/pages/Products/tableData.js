@@ -77,6 +77,7 @@ import { useGetProducts } from "queries/ProductQuery";
 import { Link } from "react-router-dom";
 import { Icon, TextField, Button, TablePagination,Pagination  } from "@mui/material";
 import { Margin } from '@mui/icons-material';
+import PropTypes from 'prop-types';
 
 function Author({id, image, name, desc }) {
   return (
@@ -95,6 +96,12 @@ function Author({id, image, name, desc }) {
     </Box>
   );
 }
+Author.propTypes = {
+  id: PropTypes.string.isRequired,
+  image: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  desc: PropTypes.string.isRequired,
+};
 
 const TableData = () => {
   const [page, setPage] = useState(1);

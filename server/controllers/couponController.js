@@ -75,7 +75,17 @@ const getCoupons = async (req, res) => {
 
   try {
     const today = new Date();
-    const coupons = await Coupon.find().sort({ createdAt: -1 });
+    const coupons = await Coupon.find({ coincoupon: false}).sort({ createdAt: -1 });
+    res.status(200).json({ data: coupons })
+  } catch (error) {
+    res.status(400).json({ message: error?.message ?? "Something went wrong !" });
+  }
+};
+
+const getCoinCoupons =async (req, res) =>{
+  try {
+    const today = new Date();
+    const coupons = await Coupon.find({ coincoupon: true});
     res.status(200).json({ data: coupons })
   } catch (error) {
     res.status(400).json({ message: error?.message ?? "Something went wrong !" });
@@ -84,7 +94,7 @@ const getCoupons = async (req, res) => {
 
 const addCoupon = async (req, res) => {
   try {
-    const { name, validity, discount, minValue, maxValue } = req.body;
+    const { name, validity, discount, minValue, maxValue } = req.body;   
 
 
 
@@ -250,6 +260,7 @@ module.exports = {
   updateCouponStatus,
   getCouponById,
   getClientCoupons,
-  validateCoupon
+  validateCoupon,
+  getCoinCoupons
 
 }
