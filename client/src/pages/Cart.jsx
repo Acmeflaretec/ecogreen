@@ -511,7 +511,7 @@ item?.productId?.isAvailable ?(
 
 
                    <button className="btn btn-primary btn-lg w-100 mt-4" onClick={() => navigate('/checkout')} 
-                     disabled={salePriceTotal<80} >{salePriceTotal<80? 'Add above ₹80 to continue': 'Proceed to Checkout'} 
+                     >{  'Proceed to Checkout'} 
                      </button>
 
                                 <Link to="/allproducts" className="mt-2 btn btn-outline-secondary w-100">
