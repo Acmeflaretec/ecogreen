@@ -22,14 +22,18 @@ const couponSchema = new Schema({
     type: Number,
     required: true
   },
-  status:{
-    type:Boolean,
-    default:true
-  }
+  status: {
+    type: Boolean,
+    default: true
+  },
+  coincoupon: {
+    type: Boolean,
+    default: false
+  },
 },
-{
+  {
     timestamps: true
-});
+  });
 
 const Coupon = mongoose.model('Coupon', couponSchema);
 
