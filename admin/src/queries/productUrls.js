@@ -33,6 +33,18 @@ const getProducts = async ({ page, perPage, sortBy, order, search }) => {
   const response = await request(`/products/adminProducts?${queryParams}`, 'GET');
   return response;
 };
+const getFilterCategory = async ({ page, perPage, sortBy, order, search }) => {
+  const queryParams = new URLSearchParams({
+    page,
+    perPage,
+    sortBy,
+    order,
+    search,
+  }).toString();
+
+  const response = await request(`/category/adminCategory?${queryParams}`, 'GET');
+  return response;
+};
 
   export {
     addCategory,
@@ -43,6 +55,7 @@ const getProducts = async ({ page, perPage, sortBy, order, search }) => {
     updateProduct,
     deleteProduct,
     getCategory,
+    getFilterCategory,
     getProducts,
     getProductById,
     getTagProducts,
