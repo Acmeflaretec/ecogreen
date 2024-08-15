@@ -331,11 +331,16 @@ import Swal from "sweetalert2";
 import { Modal, Button, Form } from "react-bootstrap";
 import logoPng from "../assets/images/logo.png";
 import LoadingScreen from "../components/loading/LoadingScreen";
+import { useDispatch, useSelector } from 'react-redux';
 
 
 const Checkout = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
+
+  const dispatch = useDispatch();
+  const userDetails = useSelector(state => state.userDetails);
+  console.log('userDetails',userDetails?._id);
 
   const [currentStep, setCurrentStep] = useState(1);
   const [deliveryAddress, setDeliveryAddress] = useState(
@@ -355,6 +360,28 @@ const Checkout = () => {
 
   const [loadingIndex, setLoadingIndex] = useState(null);
   const [loadScreenState, setLoadScreenState] = useState(true); // Loading state
+
+  const [couponCode, setCouponCode] = useState('');
+
+  const handleCouponChange = (e) => {
+    setCouponCode(e.target.value);
+  };
+ 
+  const applyCoupon = () => {
+
+try {
+ const fetchCoupon = async()=>{
+//   const response = await axiosInstance.post('/coupons/validate-coupon',{couponCode,userId: userDetails?._id,subtotal:salePriceTotal});
+// console.log(response?.data)
+ }
+
+ fetchCoupon()
+
+} catch (error) {
+  
+}
+
+  };
 
   const fetchAddress = async (urlQ) => {
     try {
@@ -996,6 +1023,32 @@ const Checkout = () => {
               </div>
 
               <div className="col-lg-4">
+
+              <div className="card shadow-sm">
+                  <div className="card-header bg-white border-bottom">
+                    <h5 className="mb-0 text-primary">Add coupon</h5>
+                  </div>
+                  <div className="card-body">
+                  <div className="input-group mb-3">
+    <input
+      type="text"
+      className="form-control"
+      placeholder="Enter Coupon Code"
+      aria-label="Enter Coupon Code"
+      aria-describedby="apply-coupon-button"
+      value={couponCode}
+      onChange={handleCouponChange}
+    />
+    <button className="btn btn-outline-primary" type="button" id="apply-coupon-button" onClick={applyCoupon}>
+      Apply Coupon
+    </button>
+  </div>
+
+
+                  </div>
+                </div>
+
+
                 <div className="card shadow-sm">
                   <div className="card-header bg-white border-bottom">
                     <h5 className="mb-0 text-primary">Order Summary</h5>
