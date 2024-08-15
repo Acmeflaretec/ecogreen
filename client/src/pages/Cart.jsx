@@ -382,14 +382,14 @@ loadScreenState ? (
 )  : (
 
 <div className="container my-5 flex-grow-1">
-        <h1 className="text-success mb-4 text-center">
+        <h1 className="text-primary mb-4 text-center">
           <FaShoppingCart className="me-2" /> Your Cart
         </h1>
         
         {cartData?.item?.length === 0 ? (
           <div className="text-center py-5">
             <p className="text-muted mb-4">Your cart is empty</p>
-            <Link to="/allproducts" className="btn btn-prmary btn-lg">
+            <Link to="/allproducts" className="btn btn-primary btn-lg">
               <FaPlus className="me-2" />Browse Products
             </Link>
           </div>
@@ -502,7 +502,7 @@ item?.productId?.isAvailable ?(
                   <div className="d-flex justify-content-between fw-bold">
                     <span>Total:</span>
                     <span>
-                    ₹{salePriceTotal < 299 ? salePriceTotal + deliveryCharge : salePriceTotal}
+                    ₹{ salePriceTotal}
                     </span>
                   </div>
                   {/* <Link to="/checkout" className="btn btn-success btn-lg w-100 mt-4" >

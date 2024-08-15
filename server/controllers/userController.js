@@ -51,8 +51,9 @@ const addToCart = async (req, res) => {
 
 const removeFromCart = async (req, res) => {
   try {
-    const { _id } = req?.decoded
-    const productId = req?.params?.id
+   const { _id } = req?.decoded
+    // const _id = '66796d0936bb97720a7764f4'
+    const productId = req?.params?.id 
     const userData = await User.findById({ _id })
     userData.removefromCart(productId)
     res.status(201).json({ message: 'Product removed from cart' });

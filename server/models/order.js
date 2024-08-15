@@ -8,16 +8,57 @@ const orderSchema = new mongoose.Schema({
     },
     payment_mode: {
         type: String,
-        required: true
+        required: true  
     },
     amount: {
         type: Number,
         required: true
     },
+    // address: {
+    //     type: mongoose.Types.ObjectId,
+    //     ref: 'Address',
+    //     required: true
+    // },
     address: {
-        type: mongoose.Types.ObjectId,
-        ref: 'Address',
-        required: true
+        firstname: {
+            type: String,
+            required: true
+        },
+        lastname: {
+            type: String,
+            required: true
+        },
+        country: {
+            type: String,
+            required: true
+        },
+        address_line_1: {
+            type: String,
+            required: true
+        },
+        address_line_2: {
+            type: String,
+            required: true
+        },
+        type: {
+            type: String
+        },
+        city: {
+            type: String,
+            required: true
+        },
+        state: {
+            type: String,
+            required: true
+        },
+        zip: {
+            type: String,
+            required: true
+        },
+        mobile: {
+            type: Number,
+            required: true 
+        },
     },
     products: {
         item: [{
@@ -41,7 +82,7 @@ const orderSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ["Pending", "Placed", "Shipped", "Out_of_delivery", "Delivered", "Delayed", "Canceled"],
+        enum: ["Pending", "Placed", "Shipped", "Out for delivery", "Delivered", "Delayed", "Canceled"],
         default: "Placed"
     },
     offer: {
