@@ -39,7 +39,7 @@ const fetchCategory = async (urlC) => {
   <Link to={`/allproducts`} className="category-item">
     All products
   </Link>
-  {category.map((category) => (
+  {category?.map((category) => (
     <Link
       to={`/allproducts?categoryQuery=${category._id}`}
       key={category._id}
