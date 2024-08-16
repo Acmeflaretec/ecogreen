@@ -1,6 +1,6 @@
 const User = require("../models/user");
-const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+// const bcrypt = require("bcrypt");
 
 // module.exports.signup = async (req, res) => {
 //    const {
@@ -161,22 +161,27 @@ module.exports.sendOtp = async (req, res) => {
   }
 };
 
-module.exports.verifyOtp = async (req, res) => {    
-  console.log('verifyOtp called');
-  const { number, otp } = req.body;
-  console.log('number, otp',number, otp);
+module.exports.verifyOtp = async (req, res) => {  
+  const { number, otp,referrerId  } = req.body;
+  console.log('number, otp,referrerId',number, otp,referrerId);
 
   if (otpStore[number] !== otp) {
     return res.status(400).json({ message: 'Invalid OTP' });
   }
 
   let user = await User.findOne({ phone:number });
-  console.log('user12-',user);
   
 
   if (!user) {   
-    console.log('no user');
     user = new User({ phone:number });
+    user.wallet += 500;
+    if (referrerId) {
+      const referrer = await User.findById(referrerId);
+      if (referrer) {
+          referrer.wallet += 100; 
+          await referrer.save();
+      }
+  }
     await user.save();   
   }  
 //    else{

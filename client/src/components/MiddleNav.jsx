@@ -11,7 +11,7 @@ function MiddleNav() {
 
   const dispatch = useDispatch();
   const userDetails = useSelector(state => state.userDetails);
-  console.log('userDetails',userDetails);
+  // console.log('userDetails',userDetails);
   
 
 
@@ -23,6 +23,7 @@ function MiddleNav() {
     dispatch(clearUserDetails());
 
     localStorage.removeItem('Tokens');
+    localStorage.removeItem('referrerId');
     // window.location.reload();
     navigate('/')
   };

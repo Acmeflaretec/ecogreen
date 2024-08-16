@@ -1,4 +1,4 @@
-import { Autocomplete, Button, Grid, TextField, Chip, IconButton,Checkbox, FormControlLabel, } from '@mui/material'
+import { Autocomplete, Button, Grid, TextField, Chip, IconButton, Checkbox, FormControlLabel, } from '@mui/material'
 import CancelIcon from '@mui/icons-material/Cancel';
 import Box from 'components/Box'
 import Input from 'components/Input'
@@ -17,7 +17,7 @@ const AddProduct = () => {
   const [details, setDetails] = useState({
     feature: [''],
     spec: [''],
-    sizes: [''],
+    sizes: [{ sizes: '', quantity: '' }],
   })
   const { data, isLoading } = useGetCategory({ pageNo: 1, pageCount: 100 });
   const { mutateAsync: AddProduct, isLoading: loading } = useAddProduct()
@@ -72,12 +72,14 @@ const AddProduct = () => {
           return formData.append('spec', specif)
         }
       });
-      details?.sizes?.forEach(sizes => {
-        if (sizes === '') {
+      details?.sizes?.forEach(si => {
+        if (si.sizes === '') {
 
         } else {
-          return formData.append('sizes', sizes)
+          formData.append('sizes', si.sizes);
+          formData.append('sizeQuantity', si.quantity);
         }
+
       });
       // typeof (details.image) == 'object' && formData.append("image", details.image, details?.image?.name);
       AddProduct(formData)
@@ -122,14 +124,18 @@ const AddProduct = () => {
   };
 
 
-  const handlesizesChange = (index, value) => {
+
+
+  const handleAddsizes = () => {
+    setDetails(prevData => ({ ...prevData, sizes: [...prevData.sizes, { sizes: '', quantity: '' }] }));
+  };
+  const handlesizesChange = (index, field, value) => {
     const newsizes = [...details.sizes];
-    newsizes[index] = value;
+    // newsizes[index] = value;
+    newsizes[index] = { ...newsizes[index], [field]: value };;
     setDetails(prevData => ({ ...prevData, sizes: newsizes }));
   };
-  const handleAddsizes = () => {
-    setDetails(prevData => ({ ...prevData, sizes: [...prevData.sizes, ''] }));
-  };
+
   const handleRemovesizes = (index) => {
     const newsizes = details.sizes.filter((_, i) => i !== index);
     setDetails(prevData => ({ ...prevData, sizes: newsizes }));
@@ -274,18 +280,27 @@ const AddProduct = () => {
               }
               label="this product is cloth"
             />
-            
+
           </Grid>
           {isSingleType && <Grid item xs={12} >
             <Grid container direction="row">
-                {details?.sizes?.map((sizes, index) => (
-              <Grid item xs={12} sm={4} md={3} key={index}>
+              {details?.sizes?.map((sizes, index) => (
+                <Grid item xs={12} sm={6} md={4} key={index}>
                   <Box key={index} display="flex" alignItems="center">
                     <TextField
                       // label={`sizes ${index + 1}`}
                       placeholder={`sizes ${index + 1}`}
-                      value={sizes}
-                      onChange={(e) => handlesizesChange(index, e.target.value)}
+                      value={sizes.sizes}
+                      onChange={(e) => handlesizesChange(index, 'sizes', e.target.value)}
+                      fullWidth
+                      margin="normal"
+                      required
+                      style={{ marginRight: '5px' }}
+                    />
+                    <TextField
+                      placeholder="quantity"
+                      value={sizes.quantity}
+                      onChange={(e) => handlesizesChange(index, 'quantity', e.target.value)}
                       fullWidth
                       margin="normal"
                       required
@@ -296,12 +311,12 @@ const AddProduct = () => {
                       </IconButton>
                     )}
                   </Box>
-                  </Grid>
-                ))}
-                <Button onClick={handleAddsizes} variant="contained" color="primary" fullWidth className="mt-4">
-                  Add Sizes
-                </Button>
-              
+                </Grid>
+              ))}
+              <Button onClick={handleAddsizes} variant="contained" color="primary" fullWidth className="mt-4">
+                Add Sizes
+              </Button>
+
             </Grid>
 
           </Grid>}

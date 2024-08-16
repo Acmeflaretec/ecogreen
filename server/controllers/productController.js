@@ -11,7 +11,7 @@ const getProducts = async (req, res) => {
   }
 };
 
-const  getAdminProducts = async (req, res) => {
+const getAdminProducts = async (req, res) => {
   try {
     const { page = 1, perPage = 10, sortBy = 'createdAt', order = 'desc', search = '' } = req.query;
     const query = search ? { name: { $regex: search, $options: 'i' } } : {};
@@ -23,7 +23,7 @@ const  getAdminProducts = async (req, res) => {
     };
 
     const products = await Product.paginate(query, options);
-    
+
 
     res.status(200).json(products);
   } catch (error) {
@@ -41,11 +41,11 @@ const getTagProducts = async (req, res) => {
   }
 };
 
-const getProductsClient = async(req,res)=>{
+const getProductsClient = async (req, res) => {
 
   try {
-    const { page = 1, limit, sortField, sortOrder, search, category,rating, priceLessThan,priceGreaterThan   } = req.query;
-console.log(req.query)
+    const { page = 1, limit, sortField, sortOrder, search, category, rating, priceLessThan, priceGreaterThan } = req.query;
+    console.log(req.query)
     // Convert page and limit to integers
     const pageNumber = parseInt(page, 10) || 1;
     const limitNumber = parseInt(limit, 10) || 10;
@@ -53,7 +53,7 @@ console.log(req.query)
     // Construct the base query
     const query = {};
 
-    query.isAvailable=true
+    query.isAvailable = true
 
     // Search functionality
     if (search) {
@@ -74,11 +74,11 @@ console.log(req.query)
       sortOptions[sortField] = sortOrder === 'asc' ? 1 : -1;
     }
 
-  
-      // Price greater than functionality
-      if (rating) {
-        query.rating = { $gt: parseInt(rating) };
-      }
+
+    // Price greater than functionality
+    if (rating) {
+      query.rating = { $gt: parseInt(rating) };
+    }
 
     // Price less than functionality
     if (priceLessThan) {
@@ -96,7 +96,7 @@ console.log(req.query)
       .skip((pageNumber - 1) * limitNumber)
       .limit(limitNumber)
     //const data = await Product.find()
-    res.status(200).json({ data:products, total: totalProducts  })
+    res.status(200).json({ data: products, total: totalProducts })
   } catch (error) {
     console.log(error);
     res.status(400).json({ message: error?.message ?? "Something went wrong !" });
@@ -104,10 +104,10 @@ console.log(req.query)
 
 }
 
-const getTaggedProducts =async (req,res) => {
+const getTaggedProducts = async (req, res) => {
   try {
-    const { page = 1, limit, sortField, sortOrder,tagName  } = req.query;
-console.log(req.query)
+    const { page = 1, limit, sortField, sortOrder, tagName } = req.query;
+    console.log(req.query)
     // Convert page and limit to integers
     const pageNumber = parseInt(page, 10) || 1;
     const limitNumber = parseInt(limit, 10) || 10;
@@ -115,7 +115,7 @@ console.log(req.query)
     // Construct the base query
     const query = {};
 
-    query.isAvailable=true
+    query.isAvailable = true
 
     // Category filter
     if (tagName) {
@@ -128,8 +128,8 @@ console.log(req.query)
       sortOptions[sortField] = sortOrder === 'asc' ? 1 : -1;
     }
 
-  
-  
+
+
     // Find products based on the constructed query
     const totalProducts = await Product.countDocuments(query);
     const products = await Product.find(query)
@@ -138,7 +138,7 @@ console.log(req.query)
       .skip((pageNumber - 1) * limitNumber)
       .limit(limitNumber)
     //const data = await Product.find()
-    res.status(200).json({ data:products })
+    res.status(200).json({ data: products })
   } catch (error) {
     console.log(error);
     res.status(400).json({ message: error?.message ?? "Something went wrong !" });
@@ -172,11 +172,19 @@ const getProductById = async (req, res) => {
 const addProduct = async (req, res) => {
   try {
     console.log(req.files);
-    const { name, subheading, category, brand, price, stock, discount, sale_rate, description,countries,feature,spec,sizes  } = req?.body
-    console.log('feature,spec,sizes',feature,spec,sizes)
+    const { name, subheading, category, brand, price, stock, discount, sale_rate, description, countries, feature, spec, sizes, sizeQuantity } = req?.body
+    // console.log('feature,spec,sizes', feature, spec, sizes, sizeQuantity)
+
+    const sizesArray = Array.isArray(sizes) ? sizes : [sizes];
+    const quantityArray = Array.isArray(sizeQuantity) ? sizeQuantity : [sizeQuantity];
+
+    const sizesInside = sizesArray.map((sizes, index) => ({
+      sizes,
+      quantity: quantityArray[index]
+    }));
     if (req.files.length != 0) {
       const product = new Product({
-        name, subheading, category, brand, price, stock, discount, sale_rate, description,feature,spec,sizes,
+        name, subheading, category, brand, price, stock, discount, sale_rate, description, feature, spec, sizes: sizesInside,
         image: req.files.map((x) => x.filename),
         countries: JSON.parse(countries)
       });
@@ -199,13 +207,21 @@ const addProduct = async (req, res) => {
 
 const updateProduct = async (req, res) => {
   try {
-    const { _id, name, subheading, brand, price, stock, discount, sale_rate, description, image,countries,tags ,isAvailable,feature,spec,sizes } = req?.body
+    const { _id, name, subheading, brand, price, stock, discount, sale_rate, description, image, countries, tags, isAvailable, feature, spec, sizes, sizeQuantity } = req?.body
+    const sizesArray = Array.isArray(sizes) ? sizes : [sizes];
+    const quantityArray = Array.isArray(sizeQuantity) ? sizeQuantity : [sizeQuantity];
+
+    const sizesInside = sizesArray.map((sizes, index) => ({
+      sizes,
+      quantity: quantityArray[index]
+    }));
+
     const images = JSON.parse(image) ?? []
     if (req?.files?.length != 0) {
       req?.files?.map((x) => images.push(x.filename))
     }
     await Product.updateOne({ _id }, {
-      $set: { name, subheading, brand, price, stock, discount, sale_rate,description,isAvailable,feature,spec,sizes, image: images,   countries: JSON.parse(countries),tags: JSON.parse(tags) }
+      $set: { name, subheading, brand, price, stock, discount, sale_rate, description, isAvailable, feature, spec, sizes: sizesInside, image: images, countries: JSON.parse(countries), tags: JSON.parse(tags) }
     })
     res.status(200).json({ message: "Product updated successfully !" });
   } catch (error) {
@@ -232,7 +248,7 @@ module.exports = {
   addProduct,
   deleteProduct,
   getTagProducts,
-  getAdminProducts ,
+  getAdminProducts,
   getProductsClient,
   getTaggedProducts,
   getTagList,

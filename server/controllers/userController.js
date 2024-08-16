@@ -12,6 +12,7 @@ const getUsers = async (req, res) => {
 };
 
 const getUser = async (req, res) => {
+  
   try {
     const { _id } = req?.decoded
     const data = await User.find({ _id })
@@ -115,6 +116,31 @@ const getCartDetailsByUserId = async (req, res) => {
 
 }
 
+const updateUserProfile = async (req, res) => {  
+  try {
+      const { _id } = req.decoded;
+      console.log('user1.id',_id);
+      
+      const { name, email, phone } = req.body;
+      
+
+      const updatedUser = await User.findByIdAndUpdate(_id, {
+          username:name,
+          email,
+          phone,
+      }, { new: true });
+
+      if (!updatedUser) {
+          return res.status(404).json({ message: 'User not found' });
+      }   
+
+      res.status(200).json({ message: 'Profile updated successfully', data: updatedUser });
+  } catch (error) {
+      console.error('Error updating profile:', error);
+      return res.status(500).json({ message: 'Something went wrong' });
+  }
+};
+
 
 module.exports = {
     getUser,
@@ -124,7 +150,7 @@ module.exports = {
     removeFromCart,
     addToWishlist,
     removeFromWishlist,
-
+    updateUserProfile,
     getCartDetailsByUserId,
     
   }
