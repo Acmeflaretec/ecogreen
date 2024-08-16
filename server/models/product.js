@@ -53,9 +53,10 @@ const productSchema = new mongoose.Schema({
     spec:{
         type:[String]
     },
-    sizes:{
-        type:[String]
-    },
+    sizes:[{
+        sizes: String,
+        quantity: String
+      }],
     image: {
         type: Array,
         required: true

@@ -204,7 +204,7 @@
 // export default EditProduct;
 
 
-import { Autocomplete, Button, Chip, Grid, TextField, ToggleButton ,Checkbox, FormControlLabel,IconButton,Box} from '@mui/material';
+import { Autocomplete, Button, Chip, Grid, TextField, ToggleButton, Checkbox, FormControlLabel, IconButton, Box } from '@mui/material';
 import Input from 'components/Input';
 import PageLayout from 'layouts/PageLayout';
 import React, { useEffect, useState } from 'react';
@@ -274,12 +274,14 @@ const EditProduct = () => {
           return formData.append('spec', specif)
         }
       });
-      details?.sizes?.forEach(sizes => {
-        if (sizes === '') {
+      details?.sizes?.forEach(si => {
+        if (si.sizes === '') {
 
         } else {
-          return formData.append('sizes', sizes)
+          formData.append('sizes', si.sizes);
+          formData.append('sizeQuantity', si.quantity);
         }
+
       });
 
       updateProduct(formData)
@@ -340,19 +342,19 @@ const EditProduct = () => {
   };
 
 
-  const handlesizesChange = (index, value) => {
+  const handleAddsizes = () => {
+    setDetails(prevData => ({ ...prevData, sizes: [...prevData.sizes, { sizes: '', quantity: '' }] }));
+  };
+  const handlesizesChange = (index, field, value) => {
     const newsizes = [...details.sizes];
-    newsizes[index] = value;
+    newsizes[index] = { ...newsizes[index], [field]: value };;
     setDetails(prevData => ({ ...prevData, sizes: newsizes }));
   };
-  const handleAddsizes = () => {
-    setDetails(prevData => ({ ...prevData, sizes: [...prevData.sizes, ''] }));
-  };
+
   const handleRemovesizes = (index) => {
     const newsizes = details.sizes.filter((_, i) => i !== index);
     setDetails(prevData => ({ ...prevData, sizes: newsizes }));
   };
-
   return (
     <PageLayout title={'Edit Product'}>
       {isLoading ? <Typography fontSize={14} sx={{ paddingX: 5 }}>loading...</Typography> :
@@ -406,96 +408,105 @@ const EditProduct = () => {
             </Grid>
 
             <Grid item xs={12}>
-            {details?.feature?.map((feature, index) => (
-              <Box key={index} display="flex" alignItems="center">
-                <TextField
-                  // label={`feature ${index + 1}`}
-                  placeholder={`feature ${index + 1}`}
-                  value={feature}
-                  onChange={(e) => handleFeatureChange(index, e.target.value)}
-                  fullWidth
-                  margin="normal"
-                  required
-                />
-                {details.feature.length > 1 && (
-                  <IconButton onClick={() => handleRemoveFeature(index)}>
-                    <Delete />
-                  </IconButton>
-                )}
-              </Box>
-            ))}
-            <Button onClick={handleAddFeature} variant="contained" color="primary" fullWidth className="mt-4">
-              Add Feature
-            </Button>
-          </Grid>
-          <Grid item xs={12}>
-            {details?.spec?.map((spec, index) => (
-              <Box key={index} display="flex" alignItems="center">
-                <TextField
-                  // label={`spec ${index + 1}`}
-                  placeholder={`spec ${index + 1}`}
-                  value={spec}
-                  onChange={(e) => handlespecChange(index, e.target.value)}
-                  fullWidth
-                  margin="normal"
-                  required
-                />
-                {details.spec.length > 1 && (
-                  <IconButton onClick={() => handleRemovespec(index)}>
-                    <Delete />
-                  </IconButton>
-                )}
-              </Box>
-            ))}
-            <Button onClick={handleAddspec} variant="contained" color="primary" fullWidth className="mt-4">
-              Add specification
-            </Button>
-          </Grid>
+              {details?.feature?.map((feature, index) => (
+                <Box key={index} display="flex" alignItems="center">
+                  <TextField
+                    // label={`feature ${index + 1}`}
+                    placeholder={`feature ${index + 1}`}
+                    value={feature}
+                    onChange={(e) => handleFeatureChange(index, e.target.value)}
+                    fullWidth
+                    margin="normal"
+                    required
+                  />
+                  {details.feature.length > 1 && (
+                    <IconButton onClick={() => handleRemoveFeature(index)}>
+                      <Delete />
+                    </IconButton>
+                  )}
+                </Box>
+              ))}
+              <Button onClick={handleAddFeature} variant="contained" color="primary" fullWidth className="mt-4">
+                Add Feature
+              </Button>
+            </Grid>
+            <Grid item xs={12}>
+              {details?.spec?.map((spec, index) => (
+                <Box key={index} display="flex" alignItems="center">
+                  <TextField
+                    // label={`spec ${index + 1}`}
+                    placeholder={`spec ${index + 1}`}
+                    value={spec}
+                    onChange={(e) => handlespecChange(index, e.target.value)}
+                    fullWidth
+                    margin="normal"
+                    required
+                  />
+                  {details.spec.length > 1 && (
+                    <IconButton onClick={() => handleRemovespec(index)}>
+                      <Delete />
+                    </IconButton>
+                  )}
+                </Box>
+              ))}
+              <Button onClick={handleAddspec} variant="contained" color="primary" fullWidth className="mt-4">
+                Add specification
+              </Button>
+            </Grid>
 
 
-          <Grid item xs={12} ml={2} container >
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={isSingleType}
-                  onChange={() => setIsSingleType(!isSingleType)}
-                  name="isSingleType"
+            <Grid item xs={12} ml={2} container >
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={isSingleType}
+                    onChange={() => setIsSingleType(!isSingleType)}
+                    name="isSingleType"
                   // disabled = {isSingleType}
-                />
-              }
-              label="this product is cloth"
-            />
-            
-          </Grid>
-          {isSingleType && <Grid item xs={12} >
-            <Grid container direction="row">
+                  />
+                }
+                label="this product is cloth"
+              />
+
+            </Grid>
+            {isSingleType && <Grid item xs={12} >
+              <Grid container direction="row">
                 {details?.sizes?.map((sizes, index) => (
-              <Grid item xs={12} sm={4} md={3} key={index}>
-                  <Box key={index} display="flex" alignItems="center">
-                    <TextField
-                      // label={`sizes ${index + 1}`}
-                      placeholder={`sizes ${index + 1}`}
-                      value={sizes}
-                      onChange={(e) => handlesizesChange(index, e.target.value)}
-                      fullWidth
-                      margin="normal"
-                      required
-                    />
-                    {details.sizes.length > 1 && (
-                      <IconButton onClick={() => handleRemovesizes(index)}>
-                        <Delete />
-                      </IconButton>
-                    )}
-                  </Box>
+                  <Grid item xs={12} sm={6} md={4} key={index}>
+                    <Box key={index} display="flex" alignItems="center">
+                      <TextField
+                        // label={`sizes ${index + 1}`}
+                        placeholder={`sizes ${index + 1}`}
+                        value={sizes.sizes}
+                        onChange={(e) => handlesizesChange(index, 'sizes', e.target.value)}
+                        fullWidth
+                        margin="normal"
+                        required
+                        style={{ marginRight: '5px' }}
+                      />
+                      <TextField
+                        placeholder="quantity"
+                        value={sizes.quantity}
+                        onChange={(e) => handlesizesChange(index, 'quantity', e.target.value)}
+                        fullWidth
+                        margin="normal"
+                        required
+                      />
+                      {details.sizes.length > 1 && (
+                        <IconButton onClick={() => handleRemovesizes(index)}>
+                          <Delete />
+                        </IconButton>
+                      )}
+                    </Box>
                   </Grid>
                 ))}
                 <Button onClick={handleAddsizes} variant="contained" color="primary" fullWidth className="mt-4">
                   Add Sizes
                 </Button>
-              
-            </Grid>
 
-          </Grid>}
+              </Grid>
+
+            </Grid>}
 
 
             <Grid item xs={12} sm={4}>
