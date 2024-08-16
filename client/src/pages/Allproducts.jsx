@@ -5,7 +5,7 @@ import axiosInstance from '../axios';
 import { Link } from 'react-router-dom';
 import { Container, Row, Col, Card, Button, Form, Pagination, Badge, Offcanvas } from 'react-bootstrap';
 import { motion } from 'framer-motion';
-import { FaHeart, FaShoppingCart, FaStar, FaFilter, FaTruck, FaLeaf, FaPercent, FaSearch } from 'react-icons/fa';
+import { FaHeart,FaShare, FaShoppingCart, FaStar, FaFilter, FaTruck, FaLeaf, FaPercent, FaSearch } from 'react-icons/fa';
 import Footer from '../components/Footer';
 import MiddleNav from '../components/MiddleNav';
 import './Allproducts.css';
@@ -54,7 +54,7 @@ const fetchProducts=async(pageNumber = 1)=>{
   // limit: productsPerPage,
 
  const response= await axiosInstance.get(url+`&page=${pageNumber}&limit=${productsPerPage}`);
- console.log('fp ',url)
+ console.log('fprods ',response?.data?.data)
  setProductsList(response?.data?.data)
  setTotalProducts(response?.data?.total);
 
@@ -467,7 +467,7 @@ setLesserThan(`&priceGreaterThan=${value[1]}`)
             <p className="product-description small text-muted mb-3">{item?.description}</p>
             <p className="mb-0 small">
               <span className={`fw-bold ${item.inStock ? 'text-success' : 'text-danger'}`}>
-                {item?.inStock ? 'In Stock' : 'Out of Stock'}
+                {item?.stock >= 1 ? 'In Stock' : 'Out of Stock'}
               </span>
             </p>
           </Card.Body>
@@ -484,15 +484,25 @@ setLesserThan(`&priceGreaterThan=${value[1]}`)
                 <FaHeart /> Wishlist
               </Button>
             </Link>
+            <Link >
             <Button 
+            
+            variant="outline-primary" 
+            size="sm" 
+            className="flex-grow-1 me-2"
+            ><FaShare /> Share</Button>
+            </Link>
+
+
+            {/* <Button 
               variant="primary" 
               size="sm" 
               className="flex-grow-1" 
               disabled={!item.inStock}
               onClick={() => addToCart(item.id)}
             >
-              <FaShoppingCart /> {item.inStock ? 'Add to Cart' : 'Out of Stock'}
-            </Button>
+              <FaShoppingCart /> {item?.stock >=1 ? 'Add to Cart' : 'Out of Stock'}
+            </Button> */}
           </div>
         </Card.Footer>
       </Card>

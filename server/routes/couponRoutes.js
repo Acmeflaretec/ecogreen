@@ -1,7 +1,8 @@
 const { Router } = require('express');
 const router = Router();
 const authorization = require("../middlewares/authorization");
-const { getCoupons,addCoupon,updateCoupon,deleteCoupon,updateCouponStatus,getCouponById,getClientCoupons,validateCoupon,getCoinCoupons } = require('../controllers/couponController');
+const { getCoupons,addCoupon,updateCoupon,deleteCoupon,updateCouponStatus,
+  getCouponById,getClientCoupons,validateCoupon,getCoinCoupons } = require('../controllers/couponController');
 const { upload } = require('../middlewares/multer');
 
 router.get('/', getCoupons);

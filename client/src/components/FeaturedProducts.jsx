@@ -60,7 +60,7 @@ const fetchProductsList = async()=>{
         <h3 className="product-name">{product?.name}</h3>
         <div className="product-rating">{renderStars(product?.rating)}</div>
         <p className="product-price">₹ {product?.sale_rate.toFixed(2)}</p>
-       <Link to={'/'}> <button className="add-to-cart-btn">Add to Cart</button></Link>
+       {/* <Link to={'/'}> <button className="add-to-cart-btn">Add to Cart</button></Link> */}
       </div>
     </Link>
   );
