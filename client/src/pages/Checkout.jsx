@@ -353,7 +353,7 @@ const Checkout = () => {
   const [salePriceTotal, setSalePriceTotal] = useState(0);
   const [proPriceTotal, setProPriceTotal] = useState(0);
   const [discountTotal, setDiscountTotal] = useState(0);
-  const deliveryCharge = 30;
+  const deliveryCharge = 40;
 
   const [addressDatas, setAddressDatas] = useState([]);
   const [orderAddress, setOrderAddress] = useState({});
@@ -565,6 +565,7 @@ try {
       product_id: item.productId._id,
       qty: item.qty,
       price: item.productId.sale_rate,
+      size:item?.size
     }));
 
     // Calculate the total price based on the cart items
@@ -597,13 +598,13 @@ try {
     });
     navigate("/order");
   };
+  const totalAmountToPay = salePriceTotal > 200
+    ? salePriceTotal  
+    :salePriceTotal + deliveryCharge 
 
   const placeOrder = async () => {
 
-    const totalAmountToPay = salePriceTotal < 299 
-    ? salePriceTotal + deliveryCharge 
-    : salePriceTotal;
-
+    
     if (paymentOption === "cod") {
       handlePaymentSuccess();
     } else if (paymentOption === "razorpay") {
@@ -826,7 +827,7 @@ try {
                           </div>
                           <div className="col-md-6">
                             <h6 className="fw-bold mb-1">{product?.productId?.name}</h6>
-                            {/* <p className="text-muted small mb-2">Microgreen</p> */}
+                            {product?.size &&<span className="bg-success-subtle mb-0 px-3">size:{product?.size}</span>}
                             <div className="d-flex align-items-center">
                               <span className="fw-bold me-2">
                                 ₹{product?.productId?.sale_rate}
@@ -1004,7 +1005,7 @@ try {
             <span className="text-muted small">Pay securely with your credit/debit card or net banking</span>
           </label>
         </div>
-        <div className="form-check mb-3 p-3 border rounded">
+        {/* <div className="form-check mb-3 p-3 border rounded">
           <input className="form-check-input" type="radio" name="paymentOption" 
           id="codOption" value="cod" checked={paymentOption === 'cod'} onChange={() => setPaymentOption('cod')} />
           <label className="form-check-label" htmlFor="codOption">
@@ -1012,7 +1013,7 @@ try {
             <span className="fw-bold d-block mb-1">Cash on Delivery</span>
             <span className="text-muted small">Pay when your order is delivered</span>
           </label>
-        </div>
+        </div> */}
         <div className="d-flex justify-content-between mt-4">
           <button className="btn btn-outline-secondary" onClick={() => setCurrentStep(2)}>Back</button>
           <button className="btn btn-primary" onClick={placeOrder}>Place Your Order</button>
@@ -1058,23 +1059,26 @@ try {
                       <span>Subtotal:</span>
                       <span>₹{proPriceTotal}</span>
                     </div>
-                    <div className="d-flex justify-content-between mb-2">
-                      <span>Delivery Fee:</span>
-                  
-                        <span className="text-decoration-line-through text-success">
-                          Free Delivery{" "}
-                        </span>
                     
-                    </div>
                     <div className="d-flex justify-content-between mb-2">
                       <span>Total Discount:</span>
                       <span>-₹{proPriceTotal - salePriceTotal}</span>
                     </div>
+                    <div className="d-flex justify-content-between mb-2">
+                          <span>Delivery Charges:</span>
+                          {salePriceTotal > 200 ? (
+                            <span className=' text-success' >
+
+                              Free Delivery  </span>
+                          ) : (<span>₹{deliveryCharge}</span>
+                          )}
+
+                        </div>
                     <hr />
                     <div className="d-flex justify-content-between fw-bold">
                       <span>Total:</span>
                       <span>
-                        ₹ {salePriceTotal}
+                        ₹ {totalAmountToPay}
                       </span>
                     </div>
                   </div>

@@ -82,6 +82,7 @@ const recommendationimg1= "https://img.freepik.com/free-vector/online-shopping-b
 function Home() {
 const [tagList,setTagList] = useState([])
 
+
 const fetchTagList = async()=>{
 
 try {

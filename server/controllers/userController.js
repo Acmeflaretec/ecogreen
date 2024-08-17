@@ -39,10 +39,13 @@ const updateQty = async (req, res) => {
 const addToCart = async (req, res) => {
   try {
     const { _id } = req?.decoded
+    const { size } = req.body
+    console.log('new size',size);
+    
     const productId = req?.params?.id
     const userData =await User.findById({ _id })
     const productData =await Product.findById({ _id:productId })
-    userData.addToCart(productData)
+    userData.addToCart(productData,size)
     res.status(201).json({ message: 'Product added to cart' });
   } catch (error) {
     console.log(error);
