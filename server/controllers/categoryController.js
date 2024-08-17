@@ -3,7 +3,15 @@ const fs = require('fs')
 
 const getCategory = async (req, res) => {
   try {
-    const data = await Category.find()
+    const data = await Category.find({isAvailable:true})
+    res.status(200).json({ data })
+  } catch (error) {
+    console.log(error);
+  }
+};
+const getHomeCategory = async (req, res) => {
+  try {
+    const data = await Category.find({isAvailable:true,isImportant:true})
     res.status(200).json({ data })
   } catch (error) {
     console.log(error);
@@ -122,5 +130,6 @@ module.exports = {
     deleteCategory,
     updateCategory,
     getCategoryById,
-    getadminCategory
+    getadminCategory,
+    getHomeCategory
   }

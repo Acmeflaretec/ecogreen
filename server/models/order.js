@@ -60,7 +60,7 @@ const orderSchema = new mongoose.Schema({
             required: true 
         },
     },
-    products: {
+    products: {   
         item: [{
             product_id: {
                 type: mongoose.Types.ObjectId,
@@ -73,6 +73,9 @@ const orderSchema = new mongoose.Schema({
             },
             price: {
                 type: Number,
+            },
+            size: {
+                type: String,
             }
         }],
         totalPrice: {

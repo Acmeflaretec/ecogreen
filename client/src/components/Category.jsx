@@ -5,16 +5,6 @@ import './Category.css';
 import { useNavigate,useLocation } from 'react-router-dom'; 
 
 
-const categories = [
-  { id: 1, name: 'Fashion' },
-  { id: 2, name: 'Grocery' },
-  { id: 3, name: 'Electronics' },
-  { id: 4, name: 'Mobile Accessories' },
-  { id: 5, name: 'Home & Living' },
-  { id: 6, name: 'Books' },
-  { id: 7, name: 'Sports & Outdoors' },
-  // Add more categories as needed
-];
 
 function Category() {
 const navigate = useNavigate()
@@ -27,7 +17,7 @@ useEffect(()=>{
 
 const fetchCategory = async (urlC) => {
   try {
-    const response = await axiosInstance.get('/category');
+    const response = await axiosInstance.get('/category/getHomeCategory');
     setCategory(response?.data?.data);
   } catch (error) {
     console.error('Error fetching categories:', error);

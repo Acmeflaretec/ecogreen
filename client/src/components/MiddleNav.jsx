@@ -1,24 +1,46 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate,useLocation } from 'react-router-dom'; 
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import './MiddleNav.css'; // Custom styles
 import { setUserDetails, clearUserDetails } from '../redux/actions/userActions';
 import { useDispatch, useSelector } from 'react-redux';
+import axiosInstance from '../axios'
 
-function MiddleNav() {
+function MiddleNav({notification}) {
 
   const dispatch = useDispatch();
   const userDetails = useSelector(state => state.userDetails);
+  const [cartData, setCartData] = useState([])
   // console.log('userDetails',userDetails);
-  
+  let urlQuery = '';
+  useEffect(() => {
+
+    urlQuery=`/user/getcarts`
+
+    const fetchData = async () => {
+
+      try {
+
+        const response = await axiosInstance.get(urlQuery);
+        console.log('response?.data?.data',response?.data?.data);
+        
+        setCartData(response?.data?.data?.item?.length)
+
+      } catch (error) {
+
+      }
+    }
+
+    fetchData()
+  }, [notification])
 
 
- const navigate = useNavigate()
-  const cartItemCount = 3;
+  const navigate = useNavigate()
+  // const cartItemCount = 3;
   const wishlistItemCount = 2;
-  const [search,setSearch] =useState('')
+  const [search, setSearch] = useState('')
   const handleLogout = () => {
     dispatch(clearUserDetails());
 
@@ -27,8 +49,8 @@ function MiddleNav() {
     // window.location.reload();
     navigate('/')
   };
-  const handleSearch =async()=>{
-navigate(`/allproducts?search=${search}`)
+  const handleSearch = async () => {
+    navigate(`/allproducts?search=${search}`)
 
   }
 
@@ -39,13 +61,17 @@ navigate(`/allproducts?search=${search}`)
           <img src="logo.png" className="logo" alt="Logo" />
         </Link>
         <form className="search-bar mx-auto d-none d-md-flex" onSubmit={handleSearch} >
-          <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search" name='search' onChange={(e)=>setSearch(e.target.value)} />
+          <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search" name='search' onChange={(e) => setSearch(e.target.value)} />
           <button className="btn btn-outline-success" type="submit">Search</button>
         </form>
         <div className="nav-actions ms-auto">
-          <Link to="/cart" className="nav-icon-link" title="Cart">
+          {/* <Link to="/cart" className="nav-icon-link" title="Cart">
             <i className="fas fa-shopping-cart"></i>
             {cartItemCount > 0 && <span className="badge">{cartItemCount}</span>}
+          </Link> */}
+          <Link to={userDetails ? '/cart' : '/login'} className="nav-icon-link" title="Cart">
+            <i className="fas fa-shopping-cart"></i>
+            {cartData > 0 && <span className="badge">{cartData}</span>}
           </Link>
           {userDetails ? (
             <div className="dropdown">
