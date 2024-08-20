@@ -1,70 +1,89 @@
-/* SingleOrder.css */
-.progress-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: relative;
-}
-
-.progress-step {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  flex: 1;
-  z-index: 1;
-}
-
-.progress-icon-wrapper {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+.single-order-page {
   background-color: #f8f9fa;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 8px;
-  transition: all 0.3s ease;
 }
 
-.progress-step.active .progress-icon-wrapper {
-  background-color: #007bff;
-  color: white;
+.progress-container {
+  position: relative;
+  height: 6px;
+  background-color: #e9ecef;
+  border-radius: 3px;
+  margin: 60px 0;
 }
 
-.progress-icon {
-  font-size: 1.2rem;
+.progress-bar {
+  height: 100%;
+  background-color: #28a745;
+  border-radius: 3px;
+  transition: width 0.6s ease;
 }
 
-.progress-label {
-  font-size: 0.8rem;
+.round-point {
+  position: absolute;
+  top: -18px;
+  transform: translateX(-50%);
   text-align: center;
 }
 
-.progress-line {
-  position: absolute;
-  top: 20px;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background-color: #e9ecef;
-  z-index: 0;
+.icon-container {
+  width: 40px;
+  height: 40px;
+  background-color: #fff;
+  border: 2px solid #e9ecef;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  transition: all 0.3s ease;
 }
 
-.progress-step.active .progress-line {
-  background-color: #007bff;
+.round-point.completed .icon-container {
+  background-color: #28a745;
+  border-color: #28a745;
+  color: #fff;
+}
+
+.step-name {
+  font-size: 0.85rem;
+  color: #6c757d;
+  position: absolute;
+  width: 120px;
+  left: -40px;
+  font-weight: 500;
+}
+
+.current-status {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #28a745;
+}
+
+.card {
+  border: none;
+  transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
 }
 
 @media (max-width: 768px) {
-  .progress-label {
-    font-size: 0.7rem;
+  .progress-container {
+    margin: 40px 0;
+  }
+
+  .step-name {
+    display: none;
   }
   
-  .progress-icon-wrapper {
-    width: 30px;
-    height: 30px;
+  .round-point {
+    top: -14px;
   }
   
-  .progress-icon {
-    font-size: 1rem;
+  .icon-container {
+    width: 32px;
+    height: 32px;
+    font-size: 0.9rem;
   }
 }

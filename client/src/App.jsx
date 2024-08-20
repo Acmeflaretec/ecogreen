@@ -68,7 +68,7 @@ function App() {
       <Route path='/profileinfo' element={<ProfileInfo/>}/>
       <Route path='/manageaddress' element={<ManageAddress/>}/>
       <Route path='/order' element={<Orders/>}/>
-      <Route path='/ordertrack' element={<SingleOrder/>}/>
+      <Route path='/ordertrack/:orderId' element={<SingleOrder/>}/>
       <Route path='*' element={<PageNotFound/>}/>
      </Routes>
  
