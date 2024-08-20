@@ -838,40 +838,41 @@ const Checkout = () => {
                   </section>
                 )}
 
-                {currentStep === 2 && (
-                  <section className="card shadow-sm mb-4">
-                    <div className="card-header bg-white border-bottom">
-                      <h5 className="mb-0 text-primary">2. Review Items</h5>
-                    </div>
-                    <div className="card-body">
-                      {filteredCartData?.map((product, index) => (
-                        <div
-                          key={product?._id}
-                          className="row mb-4 align-items-center"
-                        >
-                          <div className="col-md-3">
-                            <img
-                              src={`${import.meta.env.VITE_API_BASE_URL_LOCALHOST
-                                }/uploads/${product?.productId?.image[0]}`}
-                              alt={product?.name}
-                              className="img-fluid rounded"
-                            />
-                          </div>
-                          <div className="col-md-6">
-                            <h6 className="fw-bold mb-1">{product?.productId?.name}</h6>
-                            {product?.size && <span className="bg-success-subtle mb-0 px-3">size:{product?.size}</span>}
-                            <div className="d-flex align-items-center">
-                              <span className="fw-bold me-2">
-                                ₹{product?.productId?.sale_rate}
-                              </span>
-                              <span className="text-muted text-decoration-line-through small me-2">
-                                ₹{product?.price}
-                              </span>
-                              <span className="bg-success-subtle text-success px-2 py-1 rounded-pill">
-                                {product?.productId?.discount}% off
-                              </span>
-                            </div>
-                          </div>
+{currentStep === 2 && (
+  <section className="bg-white p-3 shadow-sm mb-4">
+    <div className="card-header bg-white border-bottom">
+      <h5 className="mb-0 text-primary">2. Review Items</h5>
+    </div>
+    <div className="card-body">
+      {filteredCartData?.map((product, index) => (
+        <div
+          key={product?._id}
+          className="row mb-4 align-items-center"
+        >
+          <div className="col-md-3">
+            <img
+              src={`${
+                import.meta.env.VITE_API_BASE_URL_LOCALHOST
+              }/uploads/${product?.productId?.image[0]}`}
+              alt={product?.name}
+              className="img-fluid rounded"
+            />
+          </div>
+          <div className="col-md-6">
+            <h6 className="fw-bold mb-1">{product?.productId?.name}</h6>
+            {product?.size && <span className="bg-success-subtle mb-0 px-3">size:{product?.size}</span>}
+            <div className="d-flex align-items-center">
+              <span className="fw-bold me-2">
+                ₹{product?.productId?.sale_rate}
+              </span>
+              <span className="text-muted text-decoration-line-through small me-2">
+                ₹{product?.price}
+              </span>
+              <span className="bg-success-subtle text-success px-2 py-1 rounded-pill">
+                {product?.productId?.discount}% off
+              </span>
+            </div>
+          </div>
 
                           <div className="col-md-3 mt-4">
                             <div className="input-group">
