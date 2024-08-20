@@ -363,6 +363,18 @@ const Checkout = () => {
 
   const [couponCode, setCouponCode] = useState('');
 
+  const [useCoinDiscount, setUseCoinDiscount] = useState(false);
+const [availableCoins, setAvailableCoins] = useState(100); // Example: User has 100 coins
+
+const coinDiscountAmount = 20; // Fixed discount amount
+const coinDiscount = useCoinDiscount ? coinDiscountAmount : 0;
+
+const handleCoinDiscountToggle = () => {
+  setUseCoinDiscount(!useCoinDiscount);
+};
+
+
+
   const handleCouponChange = (e) => {
     setCouponCode(e.target.value);
   };
@@ -600,7 +612,7 @@ try {
   };
   const totalAmountToPay = salePriceTotal > 200
     ? salePriceTotal  
-    :salePriceTotal + deliveryCharge 
+    :salePriceTotal + deliveryCharge - coinDiscount;
 
   const placeOrder = async () => {
 
@@ -805,118 +817,139 @@ try {
                   </section>
                 )}
 
-                {currentStep === 2 && (
-                  <section className="card shadow-sm mb-4">
-                    <div className="card-header bg-white border-bottom">
-                      <h5 className="mb-0 text-primary">2. Review Items</h5>
-                    </div>
-                    <div className="card-body">
-                      {filteredCartData?.map((product, index) => (
-                        <div
-                          key={product?._id}
-                          className="row mb-4 align-items-center"
-                        >
-                          <div className="col-md-3">
-                            <img
-                              src={`${
-                                import.meta.env.VITE_API_BASE_URL_LOCALHOST
-                              }/uploads/${product?.productId?.image[0]}`}
-                              alt={product?.name}
-                              className="img-fluid rounded"
-                            />
-                          </div>
-                          <div className="col-md-6">
-                            <h6 className="fw-bold mb-1">{product?.productId?.name}</h6>
-                            {product?.size &&<span className="bg-success-subtle mb-0 px-3">size:{product?.size}</span>}
-                            <div className="d-flex align-items-center">
-                              <span className="fw-bold me-2">
-                                ₹{product?.productId?.sale_rate}
-                              </span>
-                              <span className="text-muted text-decoration-line-through small me-2">
-                                ₹{product?.price}
-                              </span>
-                              <span className="bg-success-subtle text-success px-2 py-1 rounded-pill">
-                                {product?.productId?.discount}% off
-                              </span>
-                            </div>
-                          </div>
+{currentStep === 2 && (
+  <section className="card shadow-sm mb-4">
+    <div className="card-header bg-white border-bottom">
+      <h5 className="mb-0 text-primary">2. Review Items</h5>
+    </div>
+    <div className="card-body">
+      {filteredCartData?.map((product, index) => (
+        <div
+          key={product?._id}
+          className="row mb-4 align-items-center"
+        >
+          <div className="col-md-3">
+            <img
+              src={`${
+                import.meta.env.VITE_API_BASE_URL_LOCALHOST
+              }/uploads/${product?.productId?.image[0]}`}
+              alt={product?.name}
+              className="img-fluid rounded"
+            />
+          </div>
+          <div className="col-md-6">
+            <h6 className="fw-bold mb-1">{product?.productId?.name}</h6>
+            {product?.size && <span className="bg-success-subtle mb-0 px-3">size:{product?.size}</span>}
+            <div className="d-flex align-items-center">
+              <span className="fw-bold me-2">
+                ₹{product?.productId?.sale_rate}
+              </span>
+              <span className="text-muted text-decoration-line-through small me-2">
+                ₹{product?.price}
+              </span>
+              <span className="bg-success-subtle text-success px-2 py-1 rounded-pill">
+                {product?.productId?.discount}% off
+              </span>
+            </div>
+          </div>
 
-                          <div className="col-md-3 mt-4">
-                            <div className="input-group">
-                              <button
-                                className="btn btn-outline-secondary"
-                                type="button"
-                                onClick={() =>
-                                  handleQuantityChange(
-                                    product,
-                                    "decrement",
-                                    index
-                                  )
-                                }
-                                disabled={
-                                  product?.qty === 1 || loadingIndex === index
-                                }
-                              >
-                                    {loadingIndex === index ? <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> : <FaMinus />}
+          <div className="col-md-3 mt-4">
+            <div className="input-group">
+              <button
+                className="btn btn-outline-secondary"
+                type="button"
+                onClick={() =>
+                  handleQuantityChange(
+                    product,
+                    "decrement",
+                    index
+                  )
+                }
+                disabled={
+                  product?.qty === 1 || loadingIndex === index
+                }
+              >
+                {loadingIndex === index ? <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> : <FaMinus />}
+              </button>
+              <input
+                type="text"
+                className="form-control text-center"
+                value={product?.qty}
+                readOnly
+              />
+              <button
+                className="btn btn-outline-secondary"
+                type="button"
+                onClick={() =>
+                  handleQuantityChange(
+                    product,
+                    "increment",
+                    index
+                  )
+                }
+                disabled={loadingIndex === index}
+              >
+                {loadingIndex === index ? <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> : <FaPlus />}
+              </button>
+            </div>
 
-                              </button>
-                              <input
-                                type="text"
-                                className="form-control text-center"
-                                value={product?.qty}
-                                readOnly
-                              />
-                              <button
-                                className="btn btn-outline-secondary"
-                                type="button"
-                                onClick={() =>
-                                  handleQuantityChange(
-                                    product,
-                                    "increment",
-                                    index
-                                  )
-                                }
-                                disabled={loadingIndex === index}
-                              >
-                              {loadingIndex === index ? <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> : <FaPlus />}
-                              </button>
-                            </div>
+            <button
+              className="btn btn-link text-danger mt-2"
+              onClick={() => handleRemoveItem(product?._id)}
+            >
+              <FaRegTrashAlt /> Remove
+            </button>
+          </div>
+        </div>
+      ))}
 
-                            <button
-                              className="btn btn-link text-danger mt-2"
-                              onClick={() => handleRemoveItem(product?._id)}
-                            >
-                              <FaRegTrashAlt /> Remove
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                      <div className="d-flex justify-content-between mt-4">
-                        <button
-                          className="btn btn-outline-secondary"
-                          onClick={() => {
-                            window.scrollTo(0, 0);
-                            setCurrentStep(1);
-                          }}
-                        >
-                          Back
-                        </button>
+      {/* New Coupon Section */}
+      <div className="mt-4 mb-4">
+        <h6 className="fw-bold mb-3">Apply Coupon</h6>
+        <div className="row g-2 text-center">
+          <div className="col-md-8 col-lg-6">
+            <div className="input-group">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Enter coupon code"
+                aria-label="Coupon code"
+              />
+              <button className="btn btn-outline-secondary" type="button">
+                Apply
+              </button>
+            </div>
+          </div>
+        </div>
+        <div className="mt-2">
+          <small className="text-muted">Enter a valid coupon code to get discounts on your order.</small>
+        </div>
+      </div>
 
-                        <button
-                          className="btn btn-primary"
-                          onClick={() => {
-                            window.scrollTo(0, 0);
-                            setCurrentStep(3);
-                          }}
-                        >
-                          {" "}
-                          Continue to Payment
-                        </button>
-                      </div>
-                      {/*  */}
-                    </div>
-                  </section>
-                )}
+      <div className="d-flex justify-content-between mt-4">
+        <button
+          className="btn btn-outline-secondary"
+          onClick={() => {
+            window.scrollTo(0, 0);
+            setCurrentStep(1);
+          }}
+        >
+          Back
+        </button>
+
+        <button
+          className="btn btn-primary"
+          onClick={() => {
+            window.scrollTo(0, 0);
+            setCurrentStep(3);
+          }}
+        >
+          Continue to Payment
+        </button>
+      </div>
+    </div>
+  </section>
+)}
 
                 {currentStep === 3 && (
                   // <section className="card shadow-sm mb-4">
@@ -1025,7 +1058,7 @@ try {
 
               <div className="col-lg-4">
 
-              <div className="card shadow-sm">
+              {/* <div className="card shadow-sm">
                   <div className="card-header bg-white border-bottom">
                     <h5 className="mb-0 text-primary">Add coupon</h5>
                   </div>
@@ -1047,42 +1080,65 @@ try {
 
 
                   </div>
-                </div>
+                </div> */}
 
 
-                <div className="card shadow-sm">
-                  <div className="card-header bg-white border-bottom">
-                    <h5 className="mb-0 text-primary">Order Summary</h5>
-                  </div>
-                  <div className="card-body">
-                    <div className="d-flex justify-content-between mb-2">
-                      <span>Subtotal:</span>
-                      <span>₹{proPriceTotal}</span>
-                    </div>
-                    
-                    <div className="d-flex justify-content-between mb-2">
-                      <span>Total Discount:</span>
-                      <span>-₹{proPriceTotal - salePriceTotal}</span>
-                    </div>
-                    <div className="d-flex justify-content-between mb-2">
-                          <span>Delivery Charges:</span>
-                          {salePriceTotal > 200 ? (
-                            <span className=' text-success' >
-
-                              Free Delivery  </span>
-                          ) : (<span>₹{deliveryCharge}</span>
-                          )}
-
-                        </div>
-                    <hr />
-                    <div className="d-flex justify-content-between fw-bold">
-                      <span>Total:</span>
-                      <span>
-                        ₹ {totalAmountToPay}
-                      </span>
-                    </div>
-                  </div>
-                </div>
+<div className="card shadow">
+  <div className="card-header bg-primary text-white">
+    <h5 className="mb-0">Order Summary</h5>
+  </div>
+  <div className="card-body">
+    <div className="row mb-3">
+      <div className="col-8">Subtotal:</div>
+      <div className="col-4 text-end">₹{proPriceTotal}</div>
+    </div>
+    <div className="row mb-3">
+      <div className="col-8">Product Discount:</div>
+      <div className="col-4 text-end text-success">-₹{proPriceTotal - salePriceTotal}</div>
+    </div>
+    <div className="row mb-3">
+      <div className="col-8">Delivery Charges:</div>
+      <div className="col-4 text-end">
+        {salePriceTotal > 200 ? (
+          <span className="text-success">Free Delivery</span>
+        ) : (
+          <span>₹{deliveryCharge}</span>
+        )}
+      </div>
+    </div>
+    <div className="row mb-3">
+      <div className="col-8">
+        <div className="d-flex align-items-center">
+          <span>Coin Discount:</span>
+          <span className="p-1 rounded bg-success-subtle ms-2">20 coins</span>
+        </div>
+      </div>
+      <div className="col-4 text-end text-success">-₹{coinDiscount}</div>
+    </div>
+    <hr />
+    <div className="row fw-bold">
+      <div className="col-8">Total:</div>
+      <div className="col-4 text-end">₹{totalAmountToPay}</div>
+    </div>
+  </div>
+  <div className="card-footer bg-light">
+    <div className="form-check">
+      <input 
+        className="form-check-input" 
+        type="checkbox" 
+        id="useCoinDiscount"
+        checked={useCoinDiscount}
+        onChange={handleCoinDiscountToggle}
+      />
+      <label className="form-check-label" htmlFor="useCoinDiscount">
+        Use 20 coins for ₹{coinDiscount} discount
+      </label>
+    </div>
+    <small className="text-muted d-block mt-2">
+      You have {availableCoins} coins remaining.
+    </small>
+  </div>
+</div>
               </div>
             </div>
           </main>

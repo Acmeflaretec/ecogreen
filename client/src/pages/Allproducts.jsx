@@ -337,8 +337,22 @@ setLesserThan(`&priceGreaterThan=${value[1]}`)
     setProducts(filteredProducts);
   };
 
-  const addToWishlist = (productId) => {
-    console.log(`Added product ${productId} to wishlist`);
+  const addToWishlist = async (proId) => {
+    if(!userDetails){
+      navigate('/login')
+      
+          }else{
+  
+  
+            try {
+              
+              const response = await axiosInstance.patch(`/user/addToWishlist/${proId}`);
+             
+            } catch (error) {
+              console.log(error)
+            
+            }
+          }
   };
 
   const addToCart = (productId) => {
@@ -474,7 +488,7 @@ setLesserThan(`&priceGreaterThan=${value[1]}`)
         </Link>
         <Card.Footer className="bg-white border-top-0 p-4">
           <div className="d-flex justify-content-between">
-            <Link to={'/wishlist'}>
+            <Link>
               <Button 
                 variant="outline-primary" 
                 size="sm" 

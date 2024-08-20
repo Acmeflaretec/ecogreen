@@ -436,6 +436,29 @@ const Product = () => {
     }
   };
 
+  const addWishlist = async (proId) => {
+
+    if(!userDetails){
+      navigate('/login')
+      
+          }else{
+  
+  
+            try {
+              
+              const response = await axiosInstance.patch(`/user/addToWishlist/${proId}`);
+             
+            } catch (error) {
+              console.log(error)
+            
+            }
+          }
+  
+
+  
+  
+  }
+
 
   return (
     <>
@@ -541,8 +564,8 @@ const Product = () => {
             </div>
 
             <div className="additional-actions">
-              <Link to={'/wishlist'}>
-                <Button variant="link"><FaHeart /> Add to Wishlist</Button>
+              <Link>
+                <Button variant="link" onClick={()=>addWishlist(productData._id)}><FaHeart /> Add to Wishlist</Button>
               </Link>
             </div>
             <div className="delivery-info">
