@@ -749,7 +749,7 @@ const Checkout = () => {
             <div className="row g-5">
               <div className="col-lg-8">
                 {currentStep === 1 && (
-                  <section className="card shadow-sm mb-4">
+                  <section className=" bg-white p-3 shadow-sm mb-4">
                     <div className="card-header bg-white border-bottom">
                       <h5 className="mb-0 text-primary">1. Shipping Address</h5>
                     </div>
