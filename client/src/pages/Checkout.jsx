@@ -324,14 +324,17 @@
 // export default Checkout;
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../axios";
-import { FaRegTrashAlt, FaLock, FaPlus,FaMinus,FaCreditCard,
-  FaMoneyBillWave } from "react-icons/fa";
+import {
+  FaRegTrashAlt, FaLock, FaPlus, FaMinus, FaCreditCard,
+  FaMoneyBillWave
+} from "react-icons/fa";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import Swal from "sweetalert2";
 import { Modal, Button, Form } from "react-bootstrap";
 import logoPng from "../assets/images/logo.png";
 import LoadingScreen from "../components/loading/LoadingScreen";
 import { useDispatch, useSelector } from 'react-redux';
+import { setUserDetails } from '../redux/actions/userActions';
 
 
 const Checkout = () => {
@@ -340,15 +343,11 @@ const Checkout = () => {
 
   const dispatch = useDispatch();
   const userDetails = useSelector(state => state.userDetails);
-  console.log('userDetails',userDetails?._id);
 
   const [currentStep, setCurrentStep] = useState(1);
-  const [deliveryAddress, setDeliveryAddress] = useState(
-    "Ananthu xyz house yeroor po yeroor Yeroor KOLLAM, KERALA 691312"
-  );
   const [paymentOption, setPaymentOption] = useState("razorpay");
   const [cartData, setCartData] = useState([]);
-  const [filteredCartData,setFilteredCartData] = useState([])
+  const [filteredCartData, setFilteredCartData] = useState([])
 
   const [salePriceTotal, setSalePriceTotal] = useState(0);
   const [proPriceTotal, setProPriceTotal] = useState(0);
@@ -359,39 +358,47 @@ const Checkout = () => {
   const [orderAddress, setOrderAddress] = useState({});
 
   const [loadingIndex, setLoadingIndex] = useState(null);
-  const [loadScreenState, setLoadScreenState] = useState(true); // Loading state
+  const [loadScreenState, setLoadScreenState] = useState(true);
 
   const [couponCode, setCouponCode] = useState('');
 
   const [useCoinDiscount, setUseCoinDiscount] = useState(false);
-const [availableCoins, setAvailableCoins] = useState(100); // Example: User has 100 coins
+  const [availableCoins, setAvailableCoins] = useState();
 
-const coinDiscountAmount = 20; // Fixed discount amount
-const coinDiscount = useCoinDiscount ? coinDiscountAmount : 0;
+  const coinDiscountAmount = 10;
+  const coinDiscount = useCoinDiscount ? coinDiscountAmount : 0;
 
-const handleCoinDiscountToggle = () => {
-  setUseCoinDiscount(!useCoinDiscount);
-};
+  const handleCoinDiscountToggle = () => {
+    if(availableCoins>=20){
+      setUseCoinDiscount(!useCoinDiscount);
+      setAvailableCoins(useCoinDiscount ? availableCoins + 20 : availableCoins - 20)
+    }else{
+      alert('your remaining coin below in 20')
+    }
+  };
 
+  useEffect(() => {
+    setAvailableCoins(userDetails?.wallet)
+  }, [])
 
 
   const handleCouponChange = (e) => {
     setCouponCode(e.target.value);
   };
- 
+
   const applyCoupon = () => {
 
-try {
- const fetchCoupon = async()=>{
-//   const response = await axiosInstance.post('/coupons/validate-coupon',{couponCode,userId: userDetails?._id,subtotal:salePriceTotal});
-// console.log(response?.data)
- }
+    try {
+      const fetchCoupon = async () => {
+        //   const response = await axiosInstance.post('/coupons/validate-coupon',{couponCode,userId: userDetails?._id,subtotal:salePriceTotal});
+        // console.log(response?.data)
+      }
 
- fetchCoupon()
+      fetchCoupon()
 
-} catch (error) {
-  
-}
+    } catch (error) {
+
+    }
 
   };
 
@@ -454,12 +461,12 @@ try {
 
       const items = response?.data?.data?.item;
 
-      const filteredItems = items.filter((obj)=>{
+      const filteredItems = items.filter((obj) => {
 
-        return obj.productId.isAvailable !=false
-  
+        return obj.productId.isAvailable != false
+
       })
-      
+
       setFilteredCartData(filteredItems)
 
       // Calculate the total sale price
@@ -489,7 +496,7 @@ try {
 
   const handleRemoveItem = async (itemId) => {
     let urlQuery = `/user/removeFromCart/${itemId}`;
-  
+
     try {
       const response = await axiosInstance.patch(urlQuery);
       const updatedFilteredCartItems = filteredCartData.filter(
@@ -499,17 +506,17 @@ try {
         (acc, item) => acc + item.productId.price * item.qty,
         0
       );
-  
+
       setFilteredCartData(updatedFilteredCartItems);
-  
+
       // Calculate the total sale price
       const totalSalePrice = calculateTotalSalePrice(updatedFilteredCartItems);
       setSalePriceTotal(totalSalePrice);
-  
+
       // Calculate the total  price
       const totalProPrice = calculateTotalProPrice(updatedFilteredCartItems);
       setProPriceTotal(totalProPrice);
-  
+
       if (updatedFilteredCartItems?.length === 0) {
         navigate("/");
       }
@@ -517,7 +524,7 @@ try {
       console.error("Error removing item from wishlist:", error);
     }
   };
-  
+
 
   const handleQuantityChange = async (item, operation, index) => {
     let QtyApi = item.qty;
@@ -525,9 +532,9 @@ try {
     const updatedFilteredCartData = [...filteredCartData];
     updatedFilteredCartData[index].qty = QtyApi;
     setFilteredCartData(updatedFilteredCartData);
-  
+
     setLoadingIndex(index); // Set loading state
-  
+
     try {
       if (
         item?.qty <= item?.productId?.stock &&
@@ -538,14 +545,14 @@ try {
           qty: QtyApi,
           productId: item?.productId._id,
         });
-      
+
       } else if (item?.qty > 1 && operation === "decrement") {
         QtyApi -= 1;
         const response = await axiosInstance.patch("/user/updateQty", {
           qty: QtyApi,
           productId: item?.productId._id,
         });
-       
+
       }
     } catch (error) {
       // Revert the state change if the API call fails
@@ -558,7 +565,7 @@ try {
       await fetchData();
     }
   };
-  
+
 
   React.useEffect(() => {
     const script = document.createElement("script");
@@ -570,6 +577,12 @@ try {
     };
   }, []);
 
+  const userReloader=async()=>{
+    const response = await axiosInstance.get('/auth/user');
+    
+    dispatch(setUserDetails(response.data.data));
+  }
+
   const handlePaymentSuccess = async () => {
     const orderFormat = {};
 
@@ -577,7 +590,7 @@ try {
       product_id: item.productId._id,
       qty: item.qty,
       price: item.productId.sale_rate,
-      size:item?.size
+      size: item?.size
     }));
 
     // Calculate the total price based on the cart items
@@ -596,10 +609,13 @@ try {
 
     const response = await axiosInstance.post(`/orders`, {
       payment_mode: paymentOption,
-      amount: productsOrderData?.totalPrice,
+      // amount: productsOrderData?.totalPrice,
+      amount: totalAmountToPay,
       address: orderAddress,
       products: productsOrderData,
+      useCoinDiscount
     });
+    console.log('new response-',response);
 
     Swal.fire({
       title: "Success",
@@ -608,15 +624,17 @@ try {
       showConfirmButton: false,
       timer: 3000,
     });
+    userReloader()
     navigate("/order");
   };
-  const totalAmountToPay = salePriceTotal > 200
-    ? salePriceTotal  
-    :salePriceTotal + deliveryCharge - coinDiscount;
-
+  const deliveryChargeTotal = salePriceTotal > 200
+    ? salePriceTotal
+    : salePriceTotal + deliveryCharge;
+  const totalAmountToPay = coinDiscount > 0
+    ? deliveryChargeTotal - coinDiscount : deliveryChargeTotal;
   const placeOrder = async () => {
 
-    
+
     if (paymentOption === "cod") {
       handlePaymentSuccess();
     } else if (paymentOption === "razorpay") {
@@ -697,9 +715,9 @@ try {
   // static
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [showAddressModal, setShowAddressModal] = useState(false);
- 
-  
-  
+
+
+
 
   return (
     <>
@@ -752,11 +770,10 @@ try {
                           {addressDatas.map((address) => (
                             <div key={address._id} className="col-md-6">
                               <div
-                                className={`border rounded p-3 h-100 ${
-                                  selectedAddress === address
+                                className={`border rounded p-3 h-100 ${selectedAddress === address
                                     ? "border-primary"
                                     : ""
-                                }`}
+                                  }`}
                               >
                                 <p className="mb-1">
                                   <strong>
@@ -772,11 +789,10 @@ try {
                                 <p className="mb-1">{address.country}</p>
                                 <p className="mb-3">Phone: {address.mobile}</p>
                                 <button
-                                  className={`btn ${
-                                    orderAddress === address
+                                  className={`btn ${orderAddress === address
                                       ? "btn-primary"
                                       : "btn-outline-primary"
-                                  } w-100`}
+                                    } w-100`}
                                   onClick={() => setOrderAddress(address)}
                                 >
                                   {orderAddress === address
@@ -817,139 +833,138 @@ try {
                   </section>
                 )}
 
-{currentStep === 2 && (
-  <section className="card shadow-sm mb-4">
-    <div className="card-header bg-white border-bottom">
-      <h5 className="mb-0 text-primary">2. Review Items</h5>
-    </div>
-    <div className="card-body">
-      {filteredCartData?.map((product, index) => (
-        <div
-          key={product?._id}
-          className="row mb-4 align-items-center"
-        >
-          <div className="col-md-3">
-            <img
-              src={`${
-                import.meta.env.VITE_API_BASE_URL_LOCALHOST
-              }/uploads/${product?.productId?.image[0]}`}
-              alt={product?.name}
-              className="img-fluid rounded"
-            />
-          </div>
-          <div className="col-md-6">
-            <h6 className="fw-bold mb-1">{product?.productId?.name}</h6>
-            {product?.size && <span className="bg-success-subtle mb-0 px-3">size:{product?.size}</span>}
-            <div className="d-flex align-items-center">
-              <span className="fw-bold me-2">
-                ₹{product?.productId?.sale_rate}
-              </span>
-              <span className="text-muted text-decoration-line-through small me-2">
-                ₹{product?.price}
-              </span>
-              <span className="bg-success-subtle text-success px-2 py-1 rounded-pill">
-                {product?.productId?.discount}% off
-              </span>
-            </div>
-          </div>
+                {currentStep === 2 && (
+                  <section className="card shadow-sm mb-4">
+                    <div className="card-header bg-white border-bottom">
+                      <h5 className="mb-0 text-primary">2. Review Items</h5>
+                    </div>
+                    <div className="card-body">
+                      {filteredCartData?.map((product, index) => (
+                        <div
+                          key={product?._id}
+                          className="row mb-4 align-items-center"
+                        >
+                          <div className="col-md-3">
+                            <img
+                              src={`${import.meta.env.VITE_API_BASE_URL_LOCALHOST
+                                }/uploads/${product?.productId?.image[0]}`}
+                              alt={product?.name}
+                              className="img-fluid rounded"
+                            />
+                          </div>
+                          <div className="col-md-6">
+                            <h6 className="fw-bold mb-1">{product?.productId?.name}</h6>
+                            {product?.size && <span className="bg-success-subtle mb-0 px-3">size:{product?.size}</span>}
+                            <div className="d-flex align-items-center">
+                              <span className="fw-bold me-2">
+                                ₹{product?.productId?.sale_rate}
+                              </span>
+                              <span className="text-muted text-decoration-line-through small me-2">
+                                ₹{product?.price}
+                              </span>
+                              <span className="bg-success-subtle text-success px-2 py-1 rounded-pill">
+                                {product?.productId?.discount}% off
+                              </span>
+                            </div>
+                          </div>
 
-          <div className="col-md-3 mt-4">
-            <div className="input-group">
-              <button
-                className="btn btn-outline-secondary"
-                type="button"
-                onClick={() =>
-                  handleQuantityChange(
-                    product,
-                    "decrement",
-                    index
-                  )
-                }
-                disabled={
-                  product?.qty === 1 || loadingIndex === index
-                }
-              >
-                {loadingIndex === index ? <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> : <FaMinus />}
-              </button>
-              <input
-                type="text"
-                className="form-control text-center"
-                value={product?.qty}
-                readOnly
-              />
-              <button
-                className="btn btn-outline-secondary"
-                type="button"
-                onClick={() =>
-                  handleQuantityChange(
-                    product,
-                    "increment",
-                    index
-                  )
-                }
-                disabled={loadingIndex === index}
-              >
-                {loadingIndex === index ? <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> : <FaPlus />}
-              </button>
-            </div>
+                          <div className="col-md-3 mt-4">
+                            <div className="input-group">
+                              <button
+                                className="btn btn-outline-secondary"
+                                type="button"
+                                onClick={() =>
+                                  handleQuantityChange(
+                                    product,
+                                    "decrement",
+                                    index
+                                  )
+                                }
+                                disabled={
+                                  product?.qty === 1 || loadingIndex === index
+                                }
+                              >
+                                {loadingIndex === index ? <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> : <FaMinus />}
+                              </button>
+                              <input
+                                type="text"
+                                className="form-control text-center"
+                                value={product?.qty}
+                                readOnly
+                              />
+                              <button
+                                className="btn btn-outline-secondary"
+                                type="button"
+                                onClick={() =>
+                                  handleQuantityChange(
+                                    product,
+                                    "increment",
+                                    index
+                                  )
+                                }
+                                disabled={loadingIndex === index}
+                              >
+                                {loadingIndex === index ? <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> : <FaPlus />}
+                              </button>
+                            </div>
 
-            <button
-              className="btn btn-link text-danger mt-2"
-              onClick={() => handleRemoveItem(product?._id)}
-            >
-              <FaRegTrashAlt /> Remove
-            </button>
-          </div>
-        </div>
-      ))}
+                            <button
+                              className="btn btn-link text-danger mt-2"
+                              onClick={() => handleRemoveItem(product?._id)}
+                            >
+                              <FaRegTrashAlt /> Remove
+                            </button>
+                          </div>
+                        </div>
+                      ))}
 
-      {/* New Coupon Section */}
-      <div className="mt-4 mb-4">
-        <h6 className="fw-bold mb-3">Apply Coupon</h6>
-        <div className="row g-2 text-center">
-          <div className="col-md-8 col-lg-6">
-            <div className="input-group">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Enter coupon code"
-                aria-label="Coupon code"
-              />
-              <button className="btn btn-outline-secondary" type="button">
-                Apply
-              </button>
-            </div>
-          </div>
-        </div>
-        <div className="mt-2">
-          <small className="text-muted">Enter a valid coupon code to get discounts on your order.</small>
-        </div>
-      </div>
+                      {/* New Coupon Section */}
+                      <div className="mt-4 mb-4">
+                        <h6 className="fw-bold mb-3">Apply Coupon</h6>
+                        <div className="row g-2 text-center">
+                          <div className="col-md-8 col-lg-6">
+                            <div className="input-group">
+                              <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Enter coupon code"
+                                aria-label="Coupon code"
+                              />
+                              <button className="btn btn-outline-secondary" type="button">
+                                Apply
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="mt-2">
+                          <small className="text-muted">Enter a valid coupon code to get discounts on your order.</small>
+                        </div>
+                      </div>
 
-      <div className="d-flex justify-content-between mt-4">
-        <button
-          className="btn btn-outline-secondary"
-          onClick={() => {
-            window.scrollTo(0, 0);
-            setCurrentStep(1);
-          }}
-        >
-          Back
-        </button>
+                      <div className="d-flex justify-content-between mt-4">
+                        <button
+                          className="btn btn-outline-secondary"
+                          onClick={() => {
+                            window.scrollTo(0, 0);
+                            setCurrentStep(1);
+                          }}
+                        >
+                          Back
+                        </button>
 
-        <button
-          className="btn btn-primary"
-          onClick={() => {
-            window.scrollTo(0, 0);
-            setCurrentStep(3);
-          }}
-        >
-          Continue to Payment
-        </button>
-      </div>
-    </div>
-  </section>
-)}
+                        <button
+                          className="btn btn-primary"
+                          onClick={() => {
+                            window.scrollTo(0, 0);
+                            setCurrentStep(3);
+                          }}
+                        >
+                          Continue to Payment
+                        </button>
+                      </div>
+                    </div>
+                  </section>
+                )}
 
                 {currentStep === 3 && (
                   // <section className="card shadow-sm mb-4">
@@ -1024,21 +1039,21 @@ try {
                   //   </div>
                   // </section>
 
-                      <section className="card shadow-sm mb-4">
-      <div className="card-header bg-white border-bottom">
-        <h5 className="mb-0 text-success">3. Payment Options</h5>
-      </div>
-      <div className="card-body">
-        <div className="form-check mb-3 p-3 border rounded">
-          <input className="form-check-input" type="radio" name="paymentOption" 
-          id="razorpayOption" value="razorpay" checked={paymentOption === 'razorpay'} onChange={() => setPaymentOption('razorpay')} />
-          <label className="form-check-label" htmlFor="razorpayOption">
-            <FaCreditCard className="me-2 text-success" />
-            <span className="fw-bold d-block mb-1">Online Payment</span>
-            <span className="text-muted small">Pay securely with your credit/debit card or net banking</span>
-          </label>
-        </div>
-        {/* <div className="form-check mb-3 p-3 border rounded">
+                  <section className="card shadow-sm mb-4">
+                    <div className="card-header bg-white border-bottom">
+                      <h5 className="mb-0 text-success">3. Payment Options</h5>
+                    </div>
+                    <div className="card-body">
+                      <div className="form-check mb-3 p-3 border rounded">
+                        <input className="form-check-input" type="radio" name="paymentOption"
+                          id="razorpayOption" value="razorpay" checked={paymentOption === 'razorpay'} onChange={() => setPaymentOption('razorpay')} />
+                        <label className="form-check-label" htmlFor="razorpayOption">
+                          <FaCreditCard className="me-2 text-success" />
+                          <span className="fw-bold d-block mb-1">Online Payment</span>
+                          <span className="text-muted small">Pay securely with your credit/debit card or net banking</span>
+                        </label>
+                      </div>
+                      {/* <div className="form-check mb-3 p-3 border rounded">
           <input className="form-check-input" type="radio" name="paymentOption" 
           id="codOption" value="cod" checked={paymentOption === 'cod'} onChange={() => setPaymentOption('cod')} />
           <label className="form-check-label" htmlFor="codOption">
@@ -1047,18 +1062,18 @@ try {
             <span className="text-muted small">Pay when your order is delivered</span>
           </label>
         </div> */}
-        <div className="d-flex justify-content-between mt-4">
-          <button className="btn btn-outline-secondary" onClick={() => setCurrentStep(2)}>Back</button>
-          <button className="btn btn-primary" onClick={placeOrder}>Place Your Order</button>
-        </div>
-      </div>
-                      </section>
+                      <div className="d-flex justify-content-between mt-4">
+                        <button className="btn btn-outline-secondary" onClick={() => setCurrentStep(2)}>Back</button>
+                        <button className="btn btn-primary" onClick={placeOrder}>Place Your Order</button>
+                      </div>
+                    </div>
+                  </section>
                 )}
               </div>
 
               <div className="col-lg-4">
 
-              {/* <div className="card shadow-sm">
+                {/* <div className="card shadow-sm">
                   <div className="card-header bg-white border-bottom">
                     <h5 className="mb-0 text-primary">Add coupon</h5>
                   </div>
@@ -1083,62 +1098,62 @@ try {
                 </div> */}
 
 
-<div className="card shadow">
-  <div className="card-header bg-primary text-white">
-    <h5 className="mb-0">Order Summary</h5>
-  </div>
-  <div className="card-body">
-    <div className="row mb-3">
-      <div className="col-8">Subtotal:</div>
-      <div className="col-4 text-end">₹{proPriceTotal}</div>
-    </div>
-    <div className="row mb-3">
-      <div className="col-8">Product Discount:</div>
-      <div className="col-4 text-end text-success">-₹{proPriceTotal - salePriceTotal}</div>
-    </div>
-    <div className="row mb-3">
-      <div className="col-8">Delivery Charges:</div>
-      <div className="col-4 text-end">
-        {salePriceTotal > 200 ? (
-          <span className="text-success">Free Delivery</span>
-        ) : (
-          <span>₹{deliveryCharge}</span>
-        )}
-      </div>
-    </div>
-    <div className="row mb-3">
-      <div className="col-8">
-        <div className="d-flex align-items-center">
-          <span>Coin Discount:</span>
-          <span className="p-1 rounded bg-success-subtle ms-2">20 coins</span>
-        </div>
-      </div>
-      <div className="col-4 text-end text-success">-₹{coinDiscount}</div>
-    </div>
-    <hr />
-    <div className="row fw-bold">
-      <div className="col-8">Total:</div>
-      <div className="col-4 text-end">₹{totalAmountToPay}</div>
-    </div>
-  </div>
-  <div className="card-footer bg-light">
-    <div className="form-check">
-      <input 
-        className="form-check-input" 
-        type="checkbox" 
-        id="useCoinDiscount"
-        checked={useCoinDiscount}
-        onChange={handleCoinDiscountToggle}
-      />
-      <label className="form-check-label" htmlFor="useCoinDiscount">
-        Use 20 coins for ₹{coinDiscount} discount
-      </label>
-    </div>
-    <small className="text-muted d-block mt-2">
-      You have {availableCoins} coins remaining.
-    </small>
-  </div>
-</div>
+                <div className="card shadow">
+                  <div className="card-header bg-primary text-white">
+                    <h5 className="mb-0">Order Summary</h5>
+                  </div>
+                  <div className="card-body">
+                    <div className="row mb-3">
+                      <div className="col-8">Subtotal:</div>
+                      <div className="col-4 text-end">₹{proPriceTotal}</div>
+                    </div>
+                    <div className="row mb-3">
+                      <div className="col-8">Product Discount:</div>
+                      <div className="col-4 text-end text-success">-₹{proPriceTotal - salePriceTotal}</div>
+                    </div>
+                    <div className="row mb-3">
+                      <div className="col-8">Delivery Charges:</div>
+                      <div className="col-4 text-end">
+                        {salePriceTotal > 200 ? (
+                          <span className="text-success">Free Delivery</span>
+                        ) : (
+                          <span>₹{deliveryCharge}</span>
+                        )}
+                      </div>
+                    </div>
+                    {coinDiscount > 0 && <div className="row mb-3">
+                      <div className="col-8">
+                        <div className="d-flex align-items-center">
+                          <span>Coin Discount:</span>
+                          <span className="p-1 rounded bg-success-subtle ms-2">20 coins</span>
+                        </div>
+                      </div>
+                      <div className="col-4 text-end text-success">-₹{coinDiscount}</div>
+                    </div>}
+                    <hr />
+                    <div className="row fw-bold">
+                      <div className="col-8">Total:</div>
+                      <div className="col-4 text-end">₹{totalAmountToPay}</div>
+                    </div>
+                  </div>
+                  {availableCoins>0 &&<div className="card-footer bg-light">
+                    <div className="form-check">
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        id="useCoinDiscount"
+                        checked={useCoinDiscount}
+                        onChange={handleCoinDiscountToggle}
+                      />
+                      <label className="form-check-label" htmlFor="useCoinDiscount">
+                        Use 20 coins for ₹10 discount
+                      </label>
+                    </div>
+                    <small className="text-muted d-block mt-2">
+                      You have {availableCoins} coins remaining.
+                    </small>
+                  </div>}
+                </div>
               </div>
             </div>
           </main>
