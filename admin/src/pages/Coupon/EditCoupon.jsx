@@ -91,6 +91,20 @@ const EditCoupon = () => {
                   <Grid item xs={12} sm={6}>
                      <Input
                         required
+                        placeholder="Coupon Code"
+                        id="code"
+                        name="code"
+                        label="Coupon code"
+                        value={details?.code || ''}
+                        onChange={handleChange}
+                        fullWidth
+                        autoComplete="code"
+                        variant="outlined"
+                     />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                     <Input
+                        required
                         type='number'
                         placeholder="Discount Percentage"
                         id="discount"
@@ -109,7 +123,7 @@ const EditCoupon = () => {
                      />
                   </Grid> */}
 
-                  <Grid item xs={12} sm={12}>
+                  <Grid item xs={12} sm={6}>
                      <Input
                         placeholder="validity"
                         type='date'

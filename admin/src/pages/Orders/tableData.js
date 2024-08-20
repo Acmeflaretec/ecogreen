@@ -1,70 +1,117 @@
 /* eslint-disable react/prop-types */
-import Box from "components/Box";
-import Typography from "components/Typography";
-import Table from "examples/Tables/Table";
-import { Avatar, Icon } from "@mui/material";
-import Badge from "components/Badge";
-import { Link } from "react-router-dom";
-import { useGetOrders } from "queries/OrderQuery";
+import { useState } from 'react';
+import Box from 'components/Box';
+import { useNavigate } from 'react-router-dom';
 
-function Blogs({ image, name, email }) {
-  return (
-    <Box display="flex" alignItems="center" px={1} py={0.5}>
-      <Box mr={2}>
-        <Avatar src={image} alt={email?.toUpperCase()} size="sm" variant="rounded" />
-      </Box>
-      <Box display="flex" flexDirection="column">
-        <Typography variant="button" fontWeight="medium">
-          {name}
-        </Typography>
-        <Typography variant="caption" color="secondary">
-          {email}
-        </Typography>
-      </Box>
-    </Box>
-  );
-}
-
+import Typography from 'components/Typography';
+import Table from 'examples/Tables/Table';
+import { Select, MenuItem ,Icon, TextField, Button,Pagination } from '@mui/material';
+import Badge from 'components/Badge';
+import { Link } from 'react-router-dom';
+import { useGetOrders, useUpdateOrderStatus } from 'queries/OrderQuery';
 const TableData = () => {
-  const { data, isLoading } = useGetOrders({ pageNo: 1, pageCount: 100 });
+  const navigate = useNavigate()
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(10);
+  const [sortBy, setSortBy] = useState('createdAt');
+  const [order, setOrder] = useState('desc');
+  const [search, setSearch] = useState('');
+
+  const { data, isLoading } = useGetOrders({ page, perPage, sortBy, order, search });
+  const { mutate: updateOrderStatus,isLoading: deleting  } = useUpdateOrderStatus();
+
+  
+
+  const handleStatusChange = (orderId, newStatus) => {
+    updateOrderStatus({ orderId, newStatus });
+  };
+  const handlePageChange = (event, value) => {
+    setPage(value);
+  };
+
   const columns = [
-    { name: "Blogs", align: "left" },
-    { name: "amount", align: "center" },
-    { name: "status", align: "center" },
-    { name: "ordered", align: "center" },
-    { name: "Lastupdated", align: "center" },
-    { name: "action", align: "center" },
-  ]
+    { name: 'User', align: 'left' },
+    { name: 'Ordered', align: 'center' },
+    { name: 'Status', align: 'center' },
+    { name: 'Action', align: 'center' },
+  ];
 
   const rows = data?.data?.map(item => ({
-    Blogs: <Blogs image={`${process.env.REACT_APP_API_URL}/uploads/${item?.image}`} name={item?.mobile} email={item?.email} />,
-    amount: (
+    User: (
+      <>
+         <Typography variant="caption" color="secondary" fontWeight="medium">
+         <Link to={`/orders/editOrder/${item?._id}`} state={{ item }}>
+       <span style={{color:'grey'}} >  {item?.userId?.username ? item?.userId?.username :'user not create user name'} </span>  <br /> 
+         {item?.userId?.email ? item?.userId?.email : "user not create user email"} 
+         </Link>
+    
+      </Typography> <br/>
+
       <Typography variant="caption" color="secondary" fontWeight="medium">
-        {item?.amount}
+        {item._id}
       </Typography>
+      </>
+   
     ),
-    status: (
-      <Badge variant="gradient" badgeContent={item?.status} color={item?.status ? "success" : 'secondary'} size="xs" container />
+   
+    Status: (
+      <Select
+        value={item?.status}
+      onChange={(e) => handleStatusChange(item._id, e.target.value)}
+      >
+        {['Pending', 'Placed', 'Shipped', 'Out for delivery', 'Delivered', 'Delayed', 'Canceled'].map(status => (
+          <MenuItem key={status} value={status}>
+            {status}
+          </MenuItem>
+        ))}
+      </Select>
     ),
-    ordered: (
+    Ordered: (
       <Typography variant="caption" color="secondary" fontWeight="medium">
         {new Date(item?.createdAt).toDateString()}
       </Typography>
     ),
-    Lastupdated: (
-      <Typography variant="caption" color="secondary" fontWeight="medium">
-        {new Date(item?.updatedAt).toDateString()}
-      </Typography>
+    Action: (
+      <Link to={`/orders/editOrder/${item?._id}`} state={{ item }}>
+      <Icon sx={{ cursor: "pointer", fontWeight: "bold" }} fontSize="small">
+        more_vert
+      </Icon>
+    </Link>
     ),
-    action: (
-      <Link to={`/orders/editOrder/${item?._id}`}>
-        <Icon sx={{ cursor: "pointer", fontWeight: "bold" }} fontSize="small">
-          more_vert
-        </Icon>
-      </Link>
-    ),
-  }))
-  return isLoading ? <Typography fontSize={14} sx={{ paddingX: 5 }}>loading...</Typography> : <Table columns={columns} rows={rows} />
+  }));
+
+  return (
+    <>
+      <Box display="flex" alignItems="center" justifyContent="space-between" py={2}>
+        <TextField
+          placeholder="Search..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          variant="outlined"
+          size="small"
+          style={{marginLeft:'5px'}}
+        />
+        <Box>
+          <Button onClick={() => setOrder(order === 'asc' ? 'desc' : 'asc')}>
+            Sort by {sortBy} ({order})
+          </Button>
+        </Box>
+      </Box>
+      {isLoading ? (
+        <Typography fontSize={14} sx={{ paddingX: 5 }}>loading...</Typography>
+      ) : (
+        <Table columns={columns} rows={rows} />
+      )}
+      <Box style={{display:'flex',justifyContent:'center', Margin:'10px'}}>
+        <Pagination
+          count={Math.ceil((data?.totalDocs || 0) / perPage)}
+          page={page}
+          onChange={handlePageChange}
+        />
+      </Box>
+    </>
+  );
 };
 
 export default TableData;
+

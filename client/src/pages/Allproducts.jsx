@@ -484,13 +484,13 @@ setLesserThan(`&priceGreaterThan=${value[1]}`)
                 <FaHeart /> Wishlist
               </Button>
             </Link>
-            <Link >
+            <Link to={`/product?productId=${item?._id}`} >
             <Button 
             
             variant="outline-primary" 
             size="sm" 
             className="flex-grow-1 me-2"
-            ><FaShare /> Share</Button>
+            > Details</Button>
             </Link>
 
 

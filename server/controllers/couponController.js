@@ -94,12 +94,12 @@ const getCoinCoupons =async (req, res) =>{
 
 const addCoupon = async (req, res) => {
   try {
-    const { name, validity, discount, minValue, maxValue } = req.body;   
+    const { name,code, validity, discount, minValue, maxValue } = req.body;   
 
 
 
 
-    const isExisting = await Coupon.findOne({ name: name });
+    const isExisting = await Coupon.findOne({ code: code });
     if (isExisting) {
 
       res.status(400).json({ message: "coupon already Exist" });
@@ -107,6 +107,7 @@ const addCoupon = async (req, res) => {
     } else {
       const newCoupon = new Coupon({
         name,
+        code,
         validity: new Date(validity),
         discount,
         minValue,
@@ -131,7 +132,7 @@ const addCoupon = async (req, res) => {
 
 
 const updateCoupon = async (req, res) => {
-  const { _id, name, validity, discount, minValue, maxValue } = req.body;
+  const { _id, name,code, validity, discount, minValue, maxValue } = req.body;
 
   try {
     const data = await Coupon.findById(_id);
@@ -140,7 +141,7 @@ const updateCoupon = async (req, res) => {
     }
 
     await Coupon.updateOne({ _id }, {
-      $set: { name, validity: new Date(validity), discount, minValue, maxValue }
+      $set: { name,code, validity: new Date(validity), discount, minValue, maxValue }
     })
     res.status(200).json({ data, message: 'Coupon updated successfully' });
   } catch (error) {

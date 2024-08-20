@@ -43,7 +43,7 @@ const AddCoupon = () => {
       //   return toast.error("image is required")
       // }
 
-      const requiredFields = ['name', 'discount', 'validity', 'minValue', 'maxValue'];
+      const requiredFields = ['name','code','discount', 'validity', 'minValue', 'maxValue'];
       for (const field of requiredFields) {
         if (!data[field]) {
           return toast.error(`${field} is required`);
@@ -58,7 +58,7 @@ const AddCoupon = () => {
       // typeof (data.image) == 'object' && formData.append("image", data.image, data?.image?.name);
       addCategory(formData)
         .then((res) => {
-          toast.success(res?.message ?? "category added");
+          toast.success(res?.message ?? "Coupon added");
           navigate('/coupons')
         })
         .catch((err) => {
@@ -81,11 +81,25 @@ const AddCoupon = () => {
               placeholder="Coupon Name"
               id="name"
               name="name"
-              label="Category Name"
+              label="Coupon Name"
               value={data?.name || ''}
               onChange={handleChange}
               fullWidth
               autoComplete="name"
+              variant="outlined"
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Input
+              required
+              placeholder="Coupon Code"
+              id="code"
+              name="code"
+              label="Coupon code"
+              value={data?.code || ''}
+              onChange={handleChange}
+              fullWidth
+              autoComplete="code"
               variant="outlined"
             />
           </Grid>
@@ -106,7 +120,7 @@ const AddCoupon = () => {
             />
           </Grid>
 
-          <Grid item xs={12} sm={12}>
+          <Grid item xs={12} sm={6}>
             <Input
             type='date'
               required
