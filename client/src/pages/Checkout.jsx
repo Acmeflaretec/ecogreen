@@ -366,6 +366,11 @@ const Checkout = () => {
   const [useCoinDiscount, setUseCoinDiscount] = useState(false);
 const [availableCoins, setAvailableCoins] = useState(100); // Example: User has 100 coins
 
+
+const [appliedCoupon, setAppliedCoupon] = useState('');
+const [discount, setDiscount] = useState(0);
+const [showCouponModal, setShowCouponModal] = useState(false);
+
 const coinDiscountAmount = 20; // Fixed discount amount
 const coinDiscount = useCoinDiscount ? coinDiscountAmount : 0;
 
@@ -375,24 +380,29 @@ const handleCoinDiscountToggle = () => {
 
 
 
+
+
+
+
   const handleCouponChange = (e) => {
     setCouponCode(e.target.value);
   };
  
-  const applyCoupon = () => {
-
-try {
- const fetchCoupon = async()=>{
-//   const response = await axiosInstance.post('/coupons/validate-coupon',{couponCode,userId: userDetails?._id,subtotal:salePriceTotal});
-// console.log(response?.data)
- }
-
- fetchCoupon()
-
-} catch (error) {
-  
-}
-
+  const applyCoupon = (couponCode) => {
+    // In a real application, you would validate the coupon code with the backend
+    // For this example, we'll use a simple switch statement
+    switch (couponCode) {
+      case 'SAVE10':
+        setDiscount(99.99 * 0.1); // 10% off
+        break;
+      case 'FREESHIP':
+        setDiscount(5); // Assuming $5 shipping cost
+        break;
+      default:
+        setDiscount(0);
+    }
+    setAppliedCoupon(couponCode);
+    setShowCouponModal(false);
   };
 
   const fetchAddress = async (urlQ) => {
@@ -731,7 +741,7 @@ try {
             <div className="row g-5">
               <div className="col-lg-8">
                 {currentStep === 1 && (
-                  <section className="card shadow-sm mb-4">
+                  <section className=" bg-white p-3 shadow-sm mb-4">
                     <div className="card-header bg-white border-bottom">
                       <h5 className="mb-0 text-primary">1. Shipping Address</h5>
                     </div>
@@ -818,7 +828,7 @@ try {
                 )}
 
 {currentStep === 2 && (
-  <section className="card shadow-sm mb-4">
+  <section className="bg-white p-3 shadow-sm mb-4">
     <div className="card-header bg-white border-bottom">
       <h5 className="mb-0 text-primary">2. Review Items</h5>
     </div>
@@ -902,29 +912,7 @@ try {
           </div>
         </div>
       ))}
-
-      {/* New Coupon Section */}
-      <div className="mt-4 mb-4">
-        <h6 className="fw-bold mb-3">Apply Coupon</h6>
-        <div className="row g-2 text-center">
-          <div className="col-md-8 col-lg-6">
-            <div className="input-group">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Enter coupon code"
-                aria-label="Coupon code"
-              />
-              <button className="btn btn-outline-secondary" type="button">
-                Apply
-              </button>
-            </div>
-          </div>
-        </div>
-        <div className="mt-2">
-          <small className="text-muted">Enter a valid coupon code to get discounts on your order.</small>
-        </div>
-      </div>
+ 
 
       <div className="d-flex justify-content-between mt-4">
         <button
@@ -1023,36 +1011,154 @@ try {
                   //     </div>
                   //   </div>
                   // </section>
-
-                      <section className="card shadow-sm mb-4">
+                  <section className="bg-white p-3 shadow-sm mb-4">
       <div className="card-header bg-white border-bottom">
         <h5 className="mb-0 text-success">3. Payment Options</h5>
       </div>
       <div className="card-body">
+        {/* Product Summary */}
+        <div className="mb-3 p-3 border rounded">
+          <h6 className="fw-bold mb-3">Order Summary</h6>
+          <div className="d-flex align-items-center mb-3">
+            <img
+              src="product-image-url.jpg"
+              alt="Product Name"
+              className="img-fluid rounded me-3"
+              style={{ width: '60px', height: '60px' }}
+            />
+            <div className="flex-grow-1">
+              <h6 className="mb-1">Product Name</h6>
+              <span className="text-muted small">Quantity: 1</span>
+            </div>
+            <div>
+              <span className="fw-bold">$99.99</span>
+            </div>
+          </div>
+          {discount > 0 && (
+            <div className="d-flex justify-content-between">
+              <span>Discount:</span>
+              <span className="text-success">-${discount.toFixed(2)}</span>
+            </div>
+          )}
+          <div className="d-flex justify-content-between mt-2">
+            <span className="fw-bold">Total:</span>
+            <span className="fw-bold">${(99.99 - discount).toFixed(2)}</span>
+          </div>
+        </div>
+
+        {/* Coupon Section */}
+        <div className="mb-3 p-3 border rounded">
+          <h6 className="fw-bold mb-3">Apply Coupon</h6>
+          <div className="input-group mb-2">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Enter coupon code"
+              value={appliedCoupon}
+              onChange={(e) => setAppliedCoupon(e.target.value)}
+            />
+            <button
+              className="btn btn-outline-primary"
+              onClick={() => applyCoupon(appliedCoupon)}
+            >
+              Apply
+            </button>
+            <button
+              className="btn btn-outline-secondary"
+              onClick={() => setShowCouponModal(true)}
+            >
+              Browse Coupons
+            </button>
+          </div>
+          {discount > 0 && (
+            <div className="text-success mt-2">
+              Coupon applied! You saved ${discount.toFixed(2)}
+            </div>
+          )}
+          <small className="text-muted">
+            You can apply a coupon code or browse available coupons.
+          </small>
+        </div>
+
+        {/* Payment Options */}
         <div className="form-check mb-3 p-3 border rounded">
-          <input className="form-check-input" type="radio" name="paymentOption" 
-          id="razorpayOption" value="razorpay" checked={paymentOption === 'razorpay'} onChange={() => setPaymentOption('razorpay')} />
+          <input
+            className="form-check-input"
+            type="radio"
+            name="paymentOption"
+            id="razorpayOption"
+            value="razorpay"
+            checked={paymentOption === 'razorpay'}
+            onChange={() => setPaymentOption('razorpay')}
+          />
           <label className="form-check-label" htmlFor="razorpayOption">
             <FaCreditCard className="me-2 text-success" />
             <span className="fw-bold d-block mb-1">Online Payment</span>
-            <span className="text-muted small">Pay securely with your credit/debit card or net banking</span>
+            <span className="text-muted small">
+              Pay securely with your credit/debit card or net banking
+            </span>
           </label>
         </div>
-        {/* <div className="form-check mb-3 p-3 border rounded">
-          <input className="form-check-input" type="radio" name="paymentOption" 
-          id="codOption" value="cod" checked={paymentOption === 'cod'} onChange={() => setPaymentOption('cod')} />
-          <label className="form-check-label" htmlFor="codOption">
-            <FaMoneyBillWave className="me-2 text-success" />
-            <span className="fw-bold d-block mb-1">Cash on Delivery</span>
-            <span className="text-muted small">Pay when your order is delivered</span>
-          </label>
-        </div> */}
+
         <div className="d-flex justify-content-between mt-4">
-          <button className="btn btn-outline-secondary" onClick={() => setCurrentStep(2)}>Back</button>
-          <button className="btn btn-primary" onClick={placeOrder}>Place Your Order</button>
+          <button
+            className="btn btn-outline-secondary"
+            onClick={() => setCurrentStep(2)}
+          >
+            Back
+          </button>
+          <button className="btn btn-primary" onClick={placeOrder}>
+            Place Your Order
+          </button>
         </div>
       </div>
-                      </section>
+
+      {/* Coupon Modal */}
+      {showCouponModal && (
+        <div className="modal show d-block" role="dialog">
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Available Coupons</h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={() => setShowCouponModal(false)}
+                ></button>
+              </div>
+              <div className="modal-body">
+                <div className="list-group">
+                  <button
+                    className="list-group-item list-group-item-action"
+                    onClick={() => applyCoupon('SAVE10')}
+                  >
+                    <span className=" bg-success-subtle p-1 rounded-1 me-2">SAVE10</span>
+                    <span>10% off on your order</span>
+                  </button>
+                  <button
+                    className="list-group-item list-group-item-action"
+                    onClick={() => applyCoupon('FREESHIP')}
+                  >
+                    <span className="bg-success-subtle p-1 rounded-1  me-2">FREESHIP</span>
+                    <span>Free shipping on orders over $50</span>
+                  </button>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => setShowCouponModal(false)}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </section>
+                
                 )}
               </div>
 
