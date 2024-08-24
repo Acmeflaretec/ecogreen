@@ -24,7 +24,7 @@ function MiddleNav({notification}) {
       try {
 
         const response = await axiosInstance.get(urlQuery);
-        console.log('response?.data?.data',response?.data?.data);
+        // console.log('response?.data?.data',response?.data?.data);
         
         setCartData(response?.data?.data?.item?.length)
 

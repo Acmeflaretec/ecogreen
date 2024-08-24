@@ -10,8 +10,10 @@ import Footer from '../components/Footer';
 import MiddleNav from '../components/MiddleNav';
 import './Allproducts.css';
 import { useNavigate,useLocation } from 'react-router-dom'; 
+import { useDispatch, useSelector } from 'react-redux';
 
 const Allproducts = () => {
+  const userDetails = useSelector(state => state.userDetails);
   const { search } = useLocation();
   const searchParams = new URLSearchParams(search);
   const initialCategory = searchParams.get('categoryQuery') || ''; // Make sure to provide a fallback value if the parameter is not found
@@ -54,7 +56,7 @@ const fetchProducts=async(pageNumber = 1)=>{
   // limit: productsPerPage,
 
  const response= await axiosInstance.get(url+`&page=${pageNumber}&limit=${productsPerPage}`);
- console.log('fprods ',response?.data?.data)
+//  console.log('fprods ',response?.data?.data)
  setProductsList(response?.data?.data)
  setTotalProducts(response?.data?.total);
 
@@ -493,18 +495,18 @@ setLesserThan(`&priceGreaterThan=${value[1]}`)
                 variant="outline-primary" 
                 size="sm" 
                 className="flex-grow-1 me-2"
-                onClick={() => addToWishlist(item.id)}
+                onClick={() => addToWishlist(item._id)}
               >
                 <FaHeart /> Wishlist
               </Button>
             </Link>
-            <Link >
+            <Link to={`/product?productId=${item?._id}`} >
             <Button 
             
             variant="outline-primary" 
             size="sm" 
             className="flex-grow-1 me-2"
-            ><FaShare /> Share</Button>
+            > Details</Button>
             </Link>
 
 

@@ -12,19 +12,105 @@ const getOrders = async (req, res) => {
     return res.status(500).json({ message: err?.message ?? 'Something went wrong' })
   }
 };
+// const getAdminOrders = async (req, res) => {
+//   try {
+//     const { page = 1, perPage = 10, sortBy = 'createdAt', order = 'desc', search = '' } = req.query;
+//     const query = search ? { name: { $regex: search, $options: 'i' } } : {};
+
+//     const options = {
+//       page: parseInt(page, 10),
+//       limit: parseInt(perPage, 10),
+//       sort: { [sortBy]: order === 'desc' ? -1 : 1 }
+//     };
+
+
+//     // const data = await Order.find().sort({ createdAt: -1 })
+//     const data = await Order.paginate(query, options)
+//       .populate('userId', 'username email')
+//       .populate('address', 'firstname lastname address_line_1 address_line_2 zip mobile city state')
+//       .populate('products.item.product_id', 'name category price image');
+
+//       console.log('order datas:-',data);
+      
+
+//     res.status(200).json({ data });
+//   } catch (error) {
+//     console.log(error);
+//     return res.status(500).json({ message: error?.message ?? 'Something went wrong' });
+//   }
+// };
+
+
+// const getAdminOrders = async (req, res) => {
+//   try {
+//     const { page = 1, perPage = 10, sortBy = 'createdAt', order = 'desc', search = '' } = req.query;
+//     const query = search ? { userId: { $regex: search, $options: 'i' } } : {};
+
+//     const options = {
+//       page: parseInt(page, 10),
+//       limit: parseInt(perPage, 10),
+//       sort: { [sortBy]: order === 'desc' ? -1 : 1 },
+//       populate: [
+//         { path: 'userId', select: 'username email' },
+//         { path: 'address', select: 'firstname lastname address_line_1 address_line_2 zip mobile city state' },
+//         { path: 'products.item.product_id', select: 'name category price image' },
+//       ],
+//     };
+
+//     const data = await Order.paginate(query, options);
+//     console.log('s data',{data});
+    
+
+//     res.status(200).json(data);
+//   } catch (error) {
+//     console.log(error);
+//     return res.status(500).json({ message: error?.message ?? 'Something went wrong' });
+//   }
+// };
+
 const getAdminOrders = async (req, res) => {
   try {
-    const data = await Order.find().sort({ createdAt: -1 })
-      .populate('userId', 'username email')
-      .populate('address', 'firstname lastname address_line_1 address_line_2 zip mobile city state')
-      .populate('products.item.product_id', 'name category price image');
+    const { page = 1, perPage = 10, sortBy = 'createdAt', order = 'desc', search = '' } = req.query;
 
-    res.status(200).json({ data });
+    const query = {};
+
+    const options = {
+      page: parseInt(page, 10),
+      limit: parseInt(perPage, 10),
+      sort: { [sortBy]: order === 'desc' ? -1 : 1 },
+      populate: [
+        { path: 'userId', select: 'username email' },
+        { path: 'address', select: 'firstname lastname address_line_1 address_line_2 zip mobile city state' },
+        { path: 'products.item.product_id', select: 'name category price image' },
+      ],
+    };
+    
+    const result = await Order.paginate(query, options);
+
+    let filteredData = result.docs;
+
+    if (search) {
+      const searchLowerCase = search.toLowerCase();
+      filteredData = filteredData.filter(order =>
+        (order.userId.username && order.userId.username.toLowerCase().includes(searchLowerCase)) ||
+        (order.userId.email && order.userId.email.toLowerCase().includes(searchLowerCase))
+      );
+    }
+
+
+    res.status(200).json({
+      data: filteredData,
+      totalDocs: filteredData.length,
+      totalResults: result.totalDocs, 
+      page: result.page,
+      totalPages: result.totalPages,
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: error?.message ?? 'Something went wrong' });
   }
 };
+
 
 const getUserOrders = async (req, res) => {
   try {
@@ -58,7 +144,9 @@ const getOrderById = async (req, res) => {
 const createOrder = async (req, res) => {
   const { _id } = req?.decoded
 
-  const {  payment_mode, amount, address, products } = req?.body
+  const {  payment_mode, amount, address, products,useCoinDiscount } = req?.body
+  console.log('useCoinDiscount',useCoinDiscount);
+  
 
   console.log('addrr',address)
   try {
@@ -69,6 +157,9 @@ const createOrder = async (req, res) => {
 const user = await User.findById(_id);
 user.cart.item = []; // Clear the cart items
 user.cart.totalPrice = 0; // Reset total price to zero
+if(useCoinDiscount){
+  user.wallet = user.wallet-20; 
+}
 await user.save(); // Save the user with cleared cart
 
 for (const item of products.item) {
@@ -79,6 +170,7 @@ for (const item of products.item) {
     product.stock -= item.qty;
     await product.save();
   }
+  
 }
 
     res.status(201).json({ data, message: 'Order placed successfully' });
@@ -100,7 +192,7 @@ const updateOrder = async (req, res) => {
   }
 }
 const getReviewOrders = async (req, res) => {
-  try {
+  try {   
     const { userId, productId } = req.params;
     console.log(' userId, productId', userId, productId);
 

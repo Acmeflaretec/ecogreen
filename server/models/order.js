@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const orderSchema = new mongoose.Schema({
     userId: {
@@ -115,5 +116,5 @@ orderSchema.methods.addToOrders = function (product) {
     return this.save()
 }
 
-
+orderSchema.plugin(mongoosePaginate);
 module.exports = mongoose.model('Orders', orderSchema)

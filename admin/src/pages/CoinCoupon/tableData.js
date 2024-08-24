@@ -68,6 +68,7 @@ const TableData = () => {
 
   const columns = [
     { name: "coupon", align: "left" },
+    { name: "code", align: "center" },
     // { name: "status", align: "center" },
     { name: "createdon", align: "center" },
     { name: "validity", align: "center" },
@@ -94,6 +95,11 @@ const TableData = () => {
     //     {item?.status ? 'Active' : 'In-Active'}
     //   </Button>
     // ),
+    code: (
+      <Typography variant="caption" color="secondary" fontWeight="medium">
+        {item?.code}
+      </Typography>
+    ),
     createdon: (
       <Typography variant="caption" color="secondary" fontWeight="medium">
         {new Date(item?.createdAt).toDateString()}

@@ -177,6 +177,7 @@ const TableData = () => {
 
   const columns = [
     { name: "coupon", align: "left" },
+    { name: "code", align: "center" },
     { name: "status", align: "center" },
     { name: "createdon", align: "center" },
     { name: "validity", align: "center" },
@@ -192,6 +193,11 @@ const TableData = () => {
         name={item?.name}
         desc={item?.description}
       />
+    ),
+    code: (
+      <Typography variant="caption" color="secondary" fontWeight="medium">
+        {item?.code}
+      </Typography>
     ),
     status: (
       <Button

@@ -43,7 +43,7 @@ const AddCoupon = () => {
       //   return toast.error("image is required")
       // }
 
-      const requiredFields = ['name', 'discount', 'validity', 'minValue', 'maxValue'];
+      const requiredFields = ['name','code','discount', 'validity', 'minValue', 'maxValue'];
       for (const field of requiredFields) {
         if (!data[field]) {
           return toast.error(`${field} is required`);
@@ -89,6 +89,20 @@ const AddCoupon = () => {
               variant="outlined"
             />
           </Grid>
+          <Grid item xs={12} sm={6}>
+            <Input
+              required
+              placeholder="Coupon Code"
+              id="code"
+              name="code"
+              label="Coupon code"
+              value={data?.code || ''}
+              onChange={handleChange}
+              fullWidth
+              autoComplete="code"
+              variant="outlined"
+            />
+          </Grid>
 
           <Grid item xs={12} sm={6}>
             <Input
@@ -106,7 +120,7 @@ const AddCoupon = () => {
             />
           </Grid>
 
-          <Grid item xs={12} sm={12}>
+          <Grid item xs={12} sm={6}>
             <Input
             type='date'
               required
