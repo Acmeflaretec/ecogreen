@@ -18,6 +18,11 @@ import ProfileInfo from './pages/ProfileInfo';
 import Register from './pages/Register';
 import SingleOrder from './pages/SingleOrder';
 import Wishlist from './pages/Wishlist';
+import PrivacyPolicy from './pages/policies/PrivacyPolicy';
+import CancellationRefunds from './pages/policies/CancellationRefunds';
+import ReturnPolicy from './pages/policies/ReturnPolicy';
+import StorePolicy from './pages/policies/StorePolicy';
+import TermsOfService from './pages/policies/TermsOfServicce';
 
 
 import { useEffect } from 'react';
@@ -69,6 +74,11 @@ function App() {
       <Route path='/manageaddress' element={<ManageAddress/>}/>
       <Route path='/order' element={<Orders/>}/>
       <Route path='/ordertrack/:orderId' element={<SingleOrder/>}/>
+      <Route path="/privacypolicy" element={<PrivacyPolicy />} />
+      <Route path="/cancellation" element={<CancellationRefunds />} />
+      <Route path="/returnpolicy" element={<ReturnPolicy />} />
+      <Route path="/storepolicy" element={<StorePolicy />} />
+      <Route path="/termsofservice" element={<TermsOfService />} />
       <Route path='*' element={<PageNotFound/>}/>
      </Routes>
  
