@@ -15,12 +15,12 @@ const Login = () => {
     const [controller, dispatch] = useController();
     const [data, setData] = useState({})
     const handleLogin = () => {
-        // if (process.env.REACT_APP_USERNAME === data?.email && process.env.REACT_APP_PASSWORD === data?.password) {
+        if (process.env.REACT_APP_USERNAME === data?.email && process.env.REACT_APP_PASSWORD === data?.password) {
             toast.success('Login Successfull')
             setAuth(dispatch, true)
-        // } else {
-        //     toast.error('Invalid username or password')
-        // }
+        } else {
+            toast.error('Invalid username or password')
+        }
     }
     const handleChange = (e) => {
         setData(prev => ({ ...prev, [e.target.name]: e.target.value }));
