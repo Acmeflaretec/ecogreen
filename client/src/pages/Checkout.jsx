@@ -1,327 +1,3 @@
-// import React, { useState, useEffect } from 'react';
-// import { FaRegTrashAlt, FaLock, FaPlus, FaCreditCard, FaMoneyBillWave } from 'react-icons/fa';
-// import { Link, useNavigate } from 'react-router-dom';
-// import Swal from 'sweetalert2';
-// import { Modal, Button, Form } from 'react-bootstrap';
-
-// const Checkout = () => {
-//   const navigate = useNavigate();
-//   const [currentStep, setCurrentStep] = useState(1);
-//   const [addresses, setAddresses] = useState([]);
-//   const [selectedAddress, setSelectedAddress] = useState(null);
-//   const [paymentOption, setPaymentOption] = useState('razorpay');
-//   const [showAddressModal, setShowAddressModal] = useState(false);
-//   const [newAddress, setNewAddress] = useState({
-//     name: '',
-//     street: '',
-//     city: '',
-//     state: '',
-//     pincode: '',
-//     phone: ''
-//   });
-//   const [products, setProducts] = useState([
-//     {
-//       id: 1,
-//       name: 'wireless earphones',
-//       image: 'https://img.freepik.com/free-photo/wireless-earbuds-with-neon-cyberpunk-style-lighting_23-2151074301.jpg?ga=GA1.1.1794837574.1691059421&semt=ais_user',
-//       price: 1999,
-//       quantity: 1,
-//     }
-//   ]);
-
-//   useEffect(() => {
-//     // Simulate fetching addresses from an API
-//     const fetchAddresses = async () => {
-//       // Simulated API call
-//       const response = await new Promise(resolve => setTimeout(() => resolve([
-//         { id: 1, name: 'John Doe', street: '123 Main St', city: 'Anytown', state: 'State', pincode: '12345', phone: '555-1234' },
-//         { id: 2, name: 'Jane Smith', street: '456 Oak Ave', city: 'Othertown', state: 'State', pincode: '67890', phone: '555-5678' }
-//       ]), 1000));
-//       setAddresses(response);
-//     };
-//     fetchAddresses();
-//   }, []);
-
-//   const handleQuantityChange = (id, newQuantity) => {
-//     setProducts(prevProducts =>
-//       prevProducts.map(product =>
-//         product.id === id ? { ...product, quantity: Math.max(1, newQuantity) } : product
-//       )
-//     );
-//   };
-
-//   const calculateSubtotal = () => {
-//     return products.reduce((total, product) => total + product.price * product.quantity, 0);
-//   };
-
-//   const calculateTotalPrice = () => {
-//     const subtotal = calculateSubtotal();
-//     const deliveryFee = 100;
-//     const tax = 0.1 * subtotal;
-//     return subtotal + deliveryFee + tax;
-//   };
-
-//   const removeProduct = (id) => {
-//     setProducts(prevProducts =>
-//       prevProducts.filter(product => product.id !== id)
-//     );
-//   };
-
-//   const placeOrder = () => {
-//     Swal.fire({
-//       title: 'Order Placed Successfully',
-//       text: 'Thank you for your purchase!',
-//       icon: 'success',
-//       showConfirmButton: false,
-//       timer: 3000
-//     });
-//     navigate('/');
-//   };
-
-//   const handleAddressChange = (e) => {
-//     setNewAddress({ ...newAddress, [e.target.name]: e.target.value });
-//   };
-
-//   const handleAddressSubmit = (e) => {
-//     e.preventDefault();
-//     const addressWithId = { ...newAddress, id: Date.now() };
-//     setAddresses([...addresses, addressWithId]);
-//     setSelectedAddress(addressWithId);
-//     setShowAddressModal(false);
-//     setNewAddress({ name: '', street: '', city: '', state: '', pincode: '', phone: '' });
-//   };
-
-//   const renderProgressBar = () => (
-//     <div className="progress mb-4" style={{height: "8px"}}>
-//       <div 
-//         className="progress-bar bg-success" 
-//         role="progressbar" 
-//         style={{ width: `${(currentStep / 3) * 100}%` }} 
-//         aria-valuenow={(currentStep / 3) * 100} 
-//         aria-valuemin="0" 
-//         aria-valuemax="100"
-//       ></div>
-//     </div>
-//   );
-
-//   const renderAddressSection = () => (
-//     <section className="card shadow-sm mb-4">
-//       <div className="card-header bg-white border-bottom">
-//         <h5 className="mb-0 text-success">1. Shipping Address</h5>
-//       </div>
-//       <div className="card-body">
-//         {addresses.length === 0 ? (
-//           <div className="text-center py-5">
-//             <FaPlus className="text-muted mb-3" size={48} />
-//             <h5 className="mb-3">No addresses found</h5>
-//             <button className="btn btn-success" onClick={() => setShowAddressModal(true)}>
-//               Add New Address
-//             </button>
-//           </div>
-//         ) : (
-//           <div className="row g-3">
-//             {addresses.map(address => (
-//               <div key={address.id} className="col-md-6">
-//                 <div className={`border rounded p-3 h-100 ${selectedAddress === address ? 'border-success' : ''}`}>
-//                   <p className="mb-1"><strong>{address.name}</strong></p>
-//                   <p className="mb-1">{address.street}</p>
-//                   <p className="mb-1">{address.city}, {address.state} {address.pincode}</p>
-//                   <p className="mb-3">Phone: {address.phone}</p>
-//                   <button 
-//                     className={`btn ${selectedAddress === address ? 'btn-success' : 'btn-outline-success'} w-100`}
-//                     onClick={() => setSelectedAddress(address)}
-//                   >
-//                     {selectedAddress === address ? 'Selected' : 'Select This Address'}
-//                   </button>
-//                 </div>
-//               </div>
-//             ))}
-//             <div className="col-md-6">
-//               <div className="border rounded p-3 h-100 d-flex align-items-center justify-content-center">
-//                 <button className="btn btn-outline-success" onClick={() => setShowAddressModal(true)}>
-//                   <FaPlus className="me-2" />
-//                   Add New Address
-//                 </button>
-//               </div>
-//             </div>
-//           </div>
-//         )}
-//         {selectedAddress && (
-//           <div className="mt-4 text-end">
-//             <button className="btn btn-success" onClick={() => setCurrentStep(2)}>Continue to Review</button>
-//           </div>
-//         )}
-//       </div>
-//     </section>
-//   );
-
-//   const renderReviewSection = () => (
-//     <section className="card shadow-sm mb-4">
-//       <div className="card-header bg-white border-bottom">
-//         <h5 className="mb-0 text-success">2. Review Items and Shipping</h5>
-//       </div>
-//       <div className="card-body">
-//         {products.map(product => (
-//           <div key={product.id} className="row mb-4 align-items-center">
-//             <div className="col-md-3">
-//               <img src={product.image} alt={product.name} className="img-fluid rounded" />
-//             </div>
-//             <div className="col-md-6">
-//               <h6 className="fw-bold mb-1">{product.name}</h6>
-//               <div className="d-flex align-items-center">
-//                 <span className="fw-bold me-2">₹{product.price}</span>
-//                 <span className="text-muted text-decoration-line-through small me-2">₹999</span>
-//                 <span className="bg-success-subtle text-success px-2 py-1 rounded-pill">70% off</span>
-//               </div>
-//             </div>
-//             <div className="col-md-3">
-//               <div className="input-group">
-//                 <button className="btn btn-outline-secondary" type="button" onClick={() => handleQuantityChange(product.id, product.quantity - 1)} disabled={product.quantity === 1}>-</button>
-//                 <input type="text" className="form-control text-center" value={product.quantity} readOnly />
-//                 <button className="btn btn-outline-secondary" type="button" onClick={() => handleQuantityChange(product.id, product.quantity + 1)}>+</button>
-//               </div>
-//               <button className="btn btn-link text-danger mt-2" onClick={() => removeProduct(product.id)}>
-//                 <FaRegTrashAlt /> Remove
-//               </button>
-//             </div>
-//           </div>
-//         ))}
-//         <div className="d-flex justify-content-between mt-4">
-//           <button className="btn btn-outline-secondary" onClick={() => setCurrentStep(1)}>Back</button>
-//           <button className="btn btn-success" onClick={() => setCurrentStep(3)}>Continue to Payment</button>
-//         </div>
-//       </div>
-//     </section>
-//   );
-
-//   const renderPaymentSection = () => (
-//     <section className="card shadow-sm mb-4">
-//       <div className="card-header bg-white border-bottom">
-//         <h5 className="mb-0 text-success">3. Payment Options</h5>
-//       </div>
-//       <div className="card-body">
-//         <div className="form-check mb-3 p-3 border rounded">
-//           <input className="form-check-input" type="radio" name="paymentOption" id="razorpayOption" value="razorpay" checked={paymentOption === 'razorpay'} onChange={() => setPaymentOption('razorpay')} />
-//           <label className="form-check-label" htmlFor="razorpayOption">
-//             <FaCreditCard className="me-2 text-success" />
-//             <span className="fw-bold d-block mb-1">Online Payment</span>
-//             <span className="text-muted small">Pay securely with your credit/debit card or net banking</span>
-//           </label>
-//         </div>
-//         <div className="form-check mb-3 p-3 border rounded">
-//           <input className="form-check-input" type="radio" name="paymentOption" id="codOption" value="cod" checked={paymentOption === 'cod'} onChange={() => setPaymentOption('cod')} />
-//           <label className="form-check-label" htmlFor="codOption">
-//             <FaMoneyBillWave className="me-2 text-success" />
-//             <span className="fw-bold d-block mb-1">Cash on Delivery</span>
-//             <span className="text-muted small">Pay when your order is delivered</span>
-//           </label>
-//         </div>
-//         <div className="d-flex justify-content-between mt-4">
-//           <button className="btn btn-outline-secondary" onClick={() => setCurrentStep(2)}>Back</button>
-//           <button className="btn btn-success" onClick={placeOrder}>Place Your Order</button>
-//         </div>
-//       </div>
-//     </section>
-//   );
-
-//   const renderOrderSummary = () => (
-//     <div className="card shadow-sm">
-//       <div className="card-header bg-white border-bottom">
-//         <h5 className="mb-0 text-success">Order Summary</h5>
-//       </div>
-//       <div className="card-body">
-//         <div className="d-flex justify-content-between mb-2">
-//           <span>Subtotal:</span>
-//           <span>₹{calculateSubtotal().toFixed(2)}</span>
-//         </div>
-//         <div className="d-flex justify-content-between mb-2">
-//           <span>Delivery Fee:</span>
-//           <span>₹100.00</span>
-//         </div>
-//         <div className="d-flex justify-content-between mb-2">
-//           <span>Tax:</span>
-//           <span>₹{(0.1 * calculateSubtotal()).toFixed(2)}</span>
-//         </div>
-//         <hr />
-//         <div className="d-flex justify-content-between fw-bold">
-//           <span>Total:</span>
-//           <span>₹{calculateTotalPrice().toFixed(2)}</span>
-//         </div>
-//       </div>
-//     </div>
-//   );
-
-//   return (
-//     <div className="bg-light min-vh-100">
-//       <header className="bg-white shadow-sm">
-//         <div className="container py-3">
-//           <div className="d-flex justify-content-between align-items-center">
-//             <Link to="/" className="text-decoration-none">
-//               <img src="logo.png" className="img-fluid" width={120} alt="Logo" />
-//             </Link>
-//             <div className="text-success">
-//               <FaLock className="me-2" />
-//               <span className="fw-bold">Secure Checkout</span>
-//             </div>
-//           </div>
-//         </div>
-//       </header>
-
-//       <main className="container my-5">
-//         {renderProgressBar()}
-//         <div className="row g-5">
-//           <div className="col-lg-8">
-//             {currentStep === 1 && renderAddressSection()}
-//             {currentStep === 2 && renderReviewSection()}
-//             {currentStep === 3 && renderPaymentSection()}
-//           </div>
-//           <div className="col-lg-4">
-//             {renderOrderSummary()}
-//           </div>
-//         </div>
-//       </main>
-
-//       <Modal show={showAddressModal} onHide={() => setShowAddressModal(false)}>
-//         <Modal.Header closeButton>
-//           <Modal.Title>Add New Address</Modal.Title>
-//         </Modal.Header>
-//         <Modal.Body>
-//           <Form onSubmit={handleAddressSubmit}>
-//             <Form.Group className="mb-3">
-//               <Form.Label>Full Name</Form.Label>
-//               <Form.Control type="text" name="name" value={newAddress.name} onChange={handleAddressChange} required />
-//             </Form.Group>
-//             <Form.Group className="mb-3">
-//               <Form.Label>Street Address</Form.Label>
-//               <Form.Control type="text" name="street" value={newAddress.street} onChange={handleAddressChange} required />
-//             </Form.Group>
-//             <Form.Group className="mb-3">
-//               <Form.Label>City</Form.Label>
-//               <Form.Control type="text" name="city" value={newAddress.city} onChange={handleAddressChange} required />
-//             </Form.Group>
-//             <Form.Group className="mb-3">
-//               <Form.Label>State</Form.Label>
-//               <Form.Control type="text" name="state" value={newAddress.state} onChange={handleAddressChange} required />
-//             </Form.Group>
-//             <Form.Group className="mb-3">
-//               <Form.Label>Pincode</Form.Label>
-//               <Form.Control type="text" name="pincode" value={newAddress.pincode} onChange={handleAddressChange} required />
-//             </Form.Group>
-//             <Form.Group className="mb-3">
-//               <Form.Label>Phone Number</Form.Label>
-//               <Form.Control type="tel" name="phone" value={newAddress.phone} onChange={handleAddressChange} required />
-//             </Form.Group>
-//             <Button variant="success" type="submit">
-//               Add Address
-//             </Button>
-//           </Form>
-//         </Modal.Body>
-//       </Modal>
-//     </div>
-//   );
-// };
-
-// export default Checkout;
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../axios";
 import {
@@ -360,17 +36,19 @@ const Checkout = () => {
   const [loadingIndex, setLoadingIndex] = useState(null);
   const [loadScreenState, setLoadScreenState] = useState(true);
 
-  const [couponCode, setCouponCode] = useState('');
-
   const [useCoinDiscount, setUseCoinDiscount] = useState(false);
   const [availableCoins, setAvailableCoins] = useState();
 
-  const [appliedCoupon, setAppliedCoupon] = useState('');
-  const [discount, setDiscount] = useState(0);
-  const [showCouponModal, setShowCouponModal] = useState(false);
-
   const coinDiscountAmount = 10;
   const coinDiscount = useCoinDiscount ? coinDiscountAmount : 0;
+
+
+  const [coupons, setCoupons] = useState([]);
+  const [coinCoupons, setCoinCoupons] = useState([]);
+  const [appliedCoupon, setAppliedCoupon] = useState('');
+  const [appliedCouponDetails, setAppliedCouponDetails] = useState('');
+  const [discount, setDiscount] = useState(0);
+  const [showCouponModal, setShowCouponModal] = useState(false);
 
   const handleCoinDiscountToggle = () => {
     if (availableCoins >= 20) {
@@ -386,26 +64,8 @@ const Checkout = () => {
   }, [])
 
 
-  const handleCouponChange = (e) => {
-    setCouponCode(e.target.value);
-  };
 
-  const applyCoupon = (couponCode) => {
-    // In a real application, you would validate the coupon code with the backend
-    // For this example, we'll use a simple switch statement
-    switch (couponCode) {
-      case 'SAVE10':
-        setDiscount(99.99 * 0.1); // 10% off
-        break;
-      case 'FREESHIP':
-        setDiscount(5); // Assuming $5 shipping cost
-        break;
-      default:
-        setDiscount(0);
-    }
-    setAppliedCoupon(couponCode);
-    setShowCouponModal(false);
-  };
+
 
   const fetchAddress = async (urlQ) => {
     try {
@@ -618,9 +278,9 @@ const Checkout = () => {
       amount: totalAmountToPay,
       address: orderAddress,
       products: productsOrderData,
-      useCoinDiscount
+      useCoinDiscount,
+      couponId:appliedCouponDetails._id,
     });
-    console.log('new response-', response);
 
     Swal.fire({
       title: "Success",
@@ -632,11 +292,18 @@ const Checkout = () => {
     userReloader()
     navigate("/order");
   };
+ 
+
   const deliveryChargeTotal = salePriceTotal > 200
     ? salePriceTotal
     : salePriceTotal + deliveryCharge;
-  const totalAmountToPay = coinDiscount > 0
+  const totalAmountIcludedCoinDiscount = coinDiscount > 0
     ? deliveryChargeTotal - coinDiscount : deliveryChargeTotal;
+    const maximumDiscountPrice = (appliedCouponDetails?.maxValue < ((totalAmountIcludedCoinDiscount * discount) / 100)) ? appliedCouponDetails?.maxValue : ((totalAmountIcludedCoinDiscount * discount) / 100);
+  const totalAmountToPay = discount > 0
+    ? totalAmountIcludedCoinDiscount - maximumDiscountPrice : totalAmountIcludedCoinDiscount;
+
+
   const placeOrder = async () => {
 
 
@@ -694,8 +361,7 @@ const Checkout = () => {
 
   const handleChangeAddressCheckout = (e) => {
     const { name, value } = e.target;
-    console.log(e.target.name, ":", e.target.value);
-
+   
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
@@ -721,7 +387,87 @@ const Checkout = () => {
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [showAddressModal, setShowAddressModal] = useState(false);
 
+  useEffect(() => {
+    fetchCoupons();
+    if (userDetails && userDetails?.wallet >= 2000) {
+      fetchCoinCoupons();
+    }
+  }, [userDetails]);
 
+  const fetchCoupons = async () => {
+    try {
+      const { data } = await axiosInstance.get('/coupons');
+      setCoupons(data.data);
+    } catch (error) {
+      console.error('Failed to fetch coupons', error);
+    }
+  };
+
+  const fetchCoinCoupons = async () => {
+    try {
+      const { data } = await axiosInstance.get('/coupons/coincoupon');
+      setCoinCoupons(data.data);
+    } catch (error) {
+      console.error('Failed to fetch coin coupons', error);
+    }
+  };
+
+  const applyCoupon = async (couponCode) => {
+    setDiscount(0)
+
+
+    try {
+      let useCoupon;
+      if (couponCode) {
+        if (couponCode === 'coincoupon1000') {
+          if (availableCoins >= 2000) {
+            useCoupon = coinCoupons?.map((coupon) => {
+              setAppliedCoupon(coupon.code);
+              setAppliedCouponDetails(coupon);
+              return coupon
+            })
+          } else {
+            alert('To use this coupon, you must have at least 2,000 coins in your wallet.')
+          }
+        } else {
+          useCoupon = coupons?.filter((coupon) => {
+            
+            if (coupon.code === couponCode) {
+              setAppliedCoupon(coupon?.code);
+              setAppliedCouponDetails(coupon);
+              return coupon
+            }
+            //  else {
+              //   alert('your coupon code is not existed')
+              // }
+              
+            })
+          useCoupon[0] ? '': alert('your coupon code is not existed')
+        }
+        if (useCoupon) {
+          const couponId = useCoupon[0]?._id;
+
+          const { data } = await axiosInstance.post('/coupons/validate-coupon', {
+            couponId,
+            userDetails,
+            totalAmountToPay,
+          });
+
+          if (data.valid) {
+            setDiscount(data.discount);
+            // setAppliedCoupon(couponId);
+          } else {
+            alert(data.message);
+          }
+        }
+      } else {
+
+      }
+
+    } catch (error) {
+      console.error('Failed to apply coupon', error);
+    }
+  };
 
 
   return (
@@ -838,41 +584,40 @@ const Checkout = () => {
                   </section>
                 )}
 
-{currentStep === 2 && (
-  <section className="bg-white p-3 shadow-sm mb-4">
-    <div className="card-header bg-white border-bottom">
-      <h5 className="mb-0 text-primary">2. Review Items</h5>
-    </div>
-    <div className="card-body">
-      {filteredCartData?.map((product, index) => (
-        <div
-          key={product?._id}
-          className="row mb-4 align-items-center"
-        >
-          <div className="col-md-3">
-            <img
-              src={`${
-                import.meta.env.VITE_API_BASE_URL_LOCALHOST
-              }/uploads/${product?.productId?.image[0]}`}
-              alt={product?.name}
-              className="img-fluid rounded"
-            />
-          </div>
-          <div className="col-md-6">
-            <h6 className="fw-bold mb-1">{product?.productId?.name}</h6>
-            {product?.size && <span className="bg-success-subtle mb-0 px-3">size:{product?.size}</span>}
-            <div className="d-flex align-items-center">
-              <span className="fw-bold me-2">
-                ₹{product?.productId?.sale_rate}
-              </span>
-              <span className="text-muted text-decoration-line-through small me-2">
-                ₹{product?.price}
-              </span>
-              <span className="bg-success-subtle text-success px-2 py-1 rounded-pill">
-                {product?.productId?.discount}% off
-              </span>
-            </div>
-          </div>
+                {currentStep === 2 && (
+                  <section className="bg-white p-3 shadow-sm mb-4">
+                    <div className="card-header bg-white border-bottom">
+                      <h5 className="mb-0 text-primary">2. Review Items</h5>
+                    </div>
+                    <div className="card-body">
+                      {filteredCartData?.map((product, index) => (
+                        <div
+                          key={product?._id}
+                          className="row mb-4 align-items-center"
+                        >
+                          <div className="col-md-3">
+                            <img
+                              src={`${import.meta.env.VITE_API_BASE_URL_LOCALHOST
+                                }/uploads/${product?.productId?.image[0]}`}
+                              alt={product?.name}
+                              className="img-fluid rounded"
+                            />
+                          </div>
+                          <div className="col-md-6">
+                            <h6 className="fw-bold mb-1">{product?.productId?.name}</h6>
+                            {product?.size && <span className="bg-success-subtle mb-0 px-3">size:{product?.size}</span>}
+                            <div className="d-flex align-items-center">
+                              <span className="fw-bold me-2">
+                                ₹{product?.productId?.sale_rate}
+                              </span>
+                              <span className="text-muted text-decoration-line-through small me-2">
+                                ₹{product?.price}
+                              </span>
+                              <span className="bg-success-subtle text-success px-2 py-1 rounded-pill">
+                                {product?.productId?.discount}% off
+                              </span>
+                            </div>
+                          </div>
 
                           <div className="col-md-3 mt-4">
                             <div className="input-group">
@@ -950,113 +695,13 @@ const Checkout = () => {
                 )}
 
                 {currentStep === 3 && (
-                  // <section className="card shadow-sm mb-4">
-                  //   <div className="card-header bg-white border-bottom">
-                  //     <h5 className="mb-0 text-primary">3. Payment Options</h5>
-                  //   </div>
-                  //   <div className="card-body">
-                  //     <div className="form-check mb-3 p-3 border rounded">
-                  //       <input
-                  //         className="form-check-input"
-                  //         type="radio"
-                  //         name="paymentOption"
-                  //         id="razorpayOption"
-                  //         value="razorpay"
-                  //         checked={paymentOption === "razorpay"}
-                  //         onChange={() => setPaymentOption("razorpay")}
-                  //       />
-                  //       <label
-                  //         className="form-check-label"
-                  //         htmlFor="razorpayOption"
-                  //       >
-                  //         <span className="fw-bold d-block mb-1">
-                  //           Online Payment
-                  //         </span>
-                  //         <span className="text-muted small">
-                  //           Pay securely with your credit/debit card or net
-                  //           banking
-                  //         </span>
-                  //       </label>
-                  //     </div>
-                  //     <div className="form-check mb-3 p-3 border rounded">
-                  //       <input
-                  //         className="form-check-input"
-                  //         type="radio"
-                  //         disabled
-                  //         name="paymentOption"
-                  //         id="codOption"
-                  //         value="cod"
-                  //         checked={paymentOption === "cod"}
-                  //         onChange={() => setPaymentOption("cod")}
-                  //       />
-                  //       <label className="form-check-label" htmlFor="codOption">
-                  //         <span className="text-danger">
-                  //           *** not available ***
-                  //         </span>{" "}
-                  //         <br />
-                  //         <span className="fw-bold d-block mb-1">
-                  //           Cash on Delivery
-                  //         </span>
-                  //         <span className="text-muted small">
-                  //           Pay when your order is delivered
-                  //         </span>
-                  //       </label>
-                  //     </div>
-                  //     <div className="d-flex justify-content-between mt-4">
-                  //       <button
-                  //         className="btn btn-outline-secondary"
-                  //         onClick={() => {
-                  //           window.scrollTo(0, 0);
-                  //           setCurrentStep(2);
-                  //         }}
-                  //       >
-                  //         Back
-                  //       </button>
-                  //       <button
-                  //         className="btn btn-primary"
-                  //         onClick={placeOrder}
-                  //       >
-                  //         Place Your Order
-                  //       </button>
-                  //     </div>
-                  //   </div>
-                  // </section>
+
 
                   <section className="bg-white p-3 shadow-sm mb-4">
                     <div className="card-header bg-white border-bottom">
                       <h5 className="mb-0 text-success">3. Payment Options</h5>
                     </div>
                     <div className="card-body">
-                      {/* Product Summary */}
-                      <div className="mb-3 p-3 border rounded">
-                        <h6 className="fw-bold mb-3">Order Summary</h6>
-                        <div className="d-flex align-items-center mb-3">
-                          <img
-                            src="product-image-url.jpg"
-                            alt="Product Name"
-                            className="img-fluid rounded me-3"
-                            style={{ width: '60px', height: '60px' }}
-                          />
-                          <div className="flex-grow-1">
-                            <h6 className="mb-1">Product Name</h6>
-                            <span className="text-muted small">Quantity: 1</span>
-                          </div>
-                          <div>
-                            <span className="fw-bold">$99.99</span>
-                          </div>
-                        </div>
-                        {discount > 0 && (
-                          <div className="d-flex justify-content-between">
-                            <span>Discount:</span>
-                            <span className="text-success">-${discount.toFixed(2)}</span>
-                          </div>
-                        )}
-                        <div className="d-flex justify-content-between mt-2">
-                          <span className="fw-bold">Total:</span>
-                          <span className="fw-bold">${(99.99 - discount).toFixed(2)}</span>
-                        </div>
-                      </div>
-
                       {/* Coupon Section */}
                       <div className="mb-3 p-3 border rounded">
                         <h6 className="fw-bold mb-3">Apply Coupon</h6>
@@ -1083,7 +728,7 @@ const Checkout = () => {
                         </div>
                         {discount > 0 && (
                           <div className="text-success mt-2">
-                            Coupon applied! You saved ${discount.toFixed(2)}
+                            Coupon applied! You saved ₹{maximumDiscountPrice.toFixed(2)}
                           </div>
                         )}
                         <small className="text-muted">
@@ -1124,7 +769,6 @@ const Checkout = () => {
                       </div>
                     </div>
 
-                    {/* Coupon Modal */}
                     {showCouponModal && (
                       <div className="modal show d-block" role="dialog">
                         <div className="modal-dialog modal-dialog-centered">
@@ -1139,20 +783,36 @@ const Checkout = () => {
                             </div>
                             <div className="modal-body">
                               <div className="list-group">
-                                <button
-                                  className="list-group-item list-group-item-action"
-                                  onClick={() => applyCoupon('SAVE10')}
-                                >
-                                  <span className=" bg-success-subtle p-1 rounded-1 me-2">SAVE10</span>
-                                  <span>10% off on your order</span>
-                                </button>
-                                <button
-                                  className="list-group-item list-group-item-action"
-                                  onClick={() => applyCoupon('FREESHIP')}
-                                >
-                                  <span className="bg-success-subtle p-1 rounded-1  me-2">FREESHIP</span>
-                                  <span>Free shipping on orders over $50</span>
-                                </button>
+                                {coupons.map((coupon) => (
+                                  <button
+                                    key={coupon._id}
+                                    className="list-group-item list-group-item-action"
+                                    onClick={() => {
+                                      setAppliedCoupon(coupon.code);
+                                      // setAppliedCouponDetails(coupon);
+                                      // applyCoupon(coupon.code);
+                                      setShowCouponModal(false);
+                                    }}
+                                  >
+                                    <span className=" bg-success-subtle p-1 rounded-1 me-2">{coupon.code}</span>
+                                    <span>{coupon.discount}% off on your order</span>
+                                  </button>
+                                ))}
+                                {coinCoupons?.map((coupon) => (
+                                  <button
+                                    key={coupon._id}
+                                    className="list-group-item list-group-item-action"
+                                    onClick={() => {
+                                      setAppliedCoupon(coupon.code);
+                                      // setAppliedCouponDetails(coupon);
+                                      // applyCoupon(coupon.code);
+                                      setShowCouponModal(false);
+                                    }}
+                                  >
+                                    <span className="bg-success-subtle p-1 rounded-1 me-2">{coupon.code}</span>
+                                    <span>{coupon.discount}% off using your coins</span>
+                                  </button>
+                                ))}
                               </div>
                             </div>
                             <div className="modal-footer">
@@ -1174,29 +834,7 @@ const Checkout = () => {
 
               <div className="col-lg-4">
 
-                {/* <div className="card shadow-sm">
-                  <div className="card-header bg-white border-bottom">
-                    <h5 className="mb-0 text-primary">Add coupon</h5>
-                  </div>
-                  <div className="card-body">
-                  <div className="input-group mb-3">
-    <input
-      type="text"
-      className="form-control"
-      placeholder="Enter Coupon Code"
-      aria-label="Enter Coupon Code"
-      aria-describedby="apply-coupon-button"
-      value={couponCode}
-      onChange={handleCouponChange}
-    />
-    <button className="btn btn-outline-primary" type="button" id="apply-coupon-button" onClick={applyCoupon}>
-      Apply Coupon
-    </button>
-  </div>
 
-
-                  </div>
-                </div> */}
 
 
                 <div className="card shadow">
@@ -1206,22 +844,22 @@ const Checkout = () => {
                   <div className="card-body">
                     <div className="row mb-3">
                       <div className="col-8">Subtotal:</div>
-                      <div className="col-4 text-end">₹{proPriceTotal}</div>
+                      <div className="col-4 text-end">₹{proPriceTotal.toFixed(2)}</div>
                     </div>
                     <div className="row mb-3">
                       <div className="col-8">Product Discount:</div>
-                      <div className="col-4 text-end text-success">-₹{proPriceTotal - salePriceTotal}</div>
+                      <div className="col-4 text-end text-success">-₹{(proPriceTotal - salePriceTotal).toFixed(2)}</div>
                     </div>
-                    <div className="row mb-3">
-                      <div className="col-8">Delivery Charges:</div>
-                      <div className="col-4 text-end">
-                        {salePriceTotal > 200 ? (
-                          <span className="text-success">Free Delivery</span>
-                        ) : (
-                          <span>₹{deliveryCharge}</span>
-                        )}
+                    
+                    {maximumDiscountPrice > 0 && <div className="row mb-3">
+                      <div className="col-8">
+                        <div className="d-flex align-items-center">
+                          <span>Coupon Discount:</span>
+                          
+                        </div>
                       </div>
-                    </div>
+                      <div className="col-4 text-end text-success">-₹{maximumDiscountPrice.toFixed(2)}</div>
+                    </div>}
                     {coinDiscount > 0 && <div className="row mb-3">
                       <div className="col-8">
                         <div className="d-flex align-items-center">
@@ -1229,12 +867,22 @@ const Checkout = () => {
                           <span className="p-1 rounded bg-success-subtle ms-2">20 coins</span>
                         </div>
                       </div>
-                      <div className="col-4 text-end text-success">-₹{coinDiscount}</div>
+                      <div className="col-4 text-end text-success">-₹{coinDiscount.toFixed(2)}</div>
                     </div>}
+                    <div className="row mb-3">
+                      <div className="col-8">Delivery Charges:</div>
+                      <div className="col-4 text-end">
+                        {salePriceTotal > 200 ? (
+                          <span className="text-success">Free Delivery</span>
+                        ) : (
+                          <span>₹{deliveryCharge.toFixed(2)}</span>
+                        )}
+                      </div>
+                    </div>
                     <hr />
                     <div className="row fw-bold">
                       <div className="col-8">Total:</div>
-                      <div className="col-4 text-end">₹{totalAmountToPay}</div>
+                      <div className="col-4 text-end">₹{totalAmountToPay.toFixed(2)}</div>
                     </div>
                   </div>
                   {availableCoins > 0 && <div className="card-footer bg-light">

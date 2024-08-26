@@ -4,75 +4,7 @@ const User = require('../models/user')
 const fs = require('fs');
 
 const getCoupons = async (req, res) => {
-  // try {
-  //   const { page = 1, limit = 6, sortField, sortOrder, search, category,
-  //     priceGreaterThan, priceLessThan, priceMin, priceMax, sortDiscount, sortDiscountGreaterThan } = req.query;
-
-
-  //   const pageNumber = parseInt(page, 10) || 1;
-  //   const limitNumber = parseInt(limit, 10) || 10;
-
-  //   const query = {};
-
-
-  //   if (search) {
-  //     const searchRegex = new RegExp(search, 'i');
-  //     query.$or = [
-  //       { name: searchRegex },
-  //       { brand: searchRegex }
-
-  //     ];
-  //   }
-
-
-  //   if (category) {
-  //     query.category = category;
-  //   }
-
-  //   // Sorting
-  //   const sortOptions = {};
-  //   if (sortField && sortOrder) {
-  //     sortOptions[sortField] = sortOrder === 'asc' ? 1 : -1;
-  //   }
-
-  //   // Price greater than functionality
-  //   if (priceGreaterThan) {
-  //     query.sale_rate = { $gt: parseInt(priceGreaterThan) };
-  //   }
-
-  //   // Price less than functionality
-  //   if (priceLessThan) {
-  //     query.sale_rate = { $lt: parseInt(priceLessThan) };
-  //   }
-
-  //   // Price range functionality
-  //   if (priceMin && priceMax) {
-  //     query.sale_rate = { $gte: parseInt(priceMin), $lte: parseInt(priceMax) };
-  //   }
-
-  //   if (sortDiscount) {
-  //     query.discount = parseInt(sortDiscount);
-  //   }
-
-  //   // Sort by discount greater than functionality
-  //   if (sortDiscountGreaterThan) {
-  //     query.discount = { $gt: parseInt(sortDiscountGreaterThan) };
-  //   }
-
-  //   // Find Coupons based on the constructed query
-  //   const totalCoupons = await Coupon.countDocuments(query);
-  //   const coupons = await Coupon.find(query)
-  //     .collation({ locale: 'en' }) // Enable case-insensitive search
-  //     .sort(sortOptions)
-  //     .skip((pageNumber - 1) * limitNumber)
-  //     .limit(limitNumber);
-  //   res.status(200).json({ data: coupons })
-  // } catch (error) {
-  //   console.log(error);
-  //   res.status(400).json({ message: error?.message ?? "Something went wrong !" });
-  // }
-
-
+ 
   try {
     const today = new Date();
     const coupons = await Coupon.find({ coincoupon: false}).sort({ createdAt: -1 });
@@ -86,7 +18,7 @@ const getCoinCoupons =async (req, res) =>{
   try {
     const today = new Date();
     const coupons = await Coupon.find({ coincoupon: true});
-    res.status(200).json({ data: coupons })
+    res.status(200).json({ data: coupons })       
   } catch (error) {
     res.status(400).json({ message: error?.message ?? "Something went wrong !" });
   }
@@ -191,7 +123,7 @@ const getCouponById = async (req, res) => {
       return res.status(404).json({ message: 'coupon not found' });
     }
     res.status(200).json({ data: coupon });
-  } catch (error) {
+  } catch (error) {        
     console.log(error);
     return res.status(500).json({ message: err?.message ?? 'Something went wrong' })
   }
@@ -205,34 +137,23 @@ const getClientCoupons = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-}
-// const validateCoupon = async(req,res) => {
-//   const { code } = req.body;
-//   try {
-//     const coupon = await Coupon.findOne({ code, status: true });
-//     if (coupon) {
-//       res.json({ valid: true, discount: coupon.discount });
-//     } else {
-//       res.json({ valid: false, message: 'Invalid or expired coupon.' });
-//     }
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// }
+}   
 const validateCoupon = async (req, res) => {
-  const { couponId, userId, subtotal } = req.body;
-  console.log('couponId, userId, subtotal',couponId, userId, subtotal);  
-  const id=userId?._id 
+  console.log('validateCoupon');  
+  const {  couponId,userDetails,totalAmountToPay } = req.body;
+  console.log('couponId, userId, subtotal',couponId,userDetails,totalAmountToPay );  
+  const id=userDetails?._id 
   const coupon = await Coupon.findOne({ _id: couponId, status: true });
   try {
-    if (userId) {
+    if (userDetails) {   
       console.log('userid und');
       const user = await User.findById({_id:id});
-      console.log("user undonn nokkunnu-",user);
+      // console.log("user undonn nokkunnu-",user);
       if (user.coupons.includes(couponId)) {  
+        console.log("just check coupon alredy used");
         res.json({ valid: false, message: 'This coupon alredy used' });   
       } else {
-        if (subtotal < coupon.minValue) {
+        if (totalAmountToPay < coupon.minValue) {         
           res.json({ valid: false, message: `Coupon can be applied only to orders above ${coupon.minValue}` });
         } else {
 
@@ -240,12 +161,7 @@ const validateCoupon = async (req, res) => {
         }
       }
     } else {
-      if (subtotal < coupon.minValue) {
-        res.json({ valid: false, message: `Coupon can be applied only to orders above ${coupon.minValue}` });
-      } else {
-
-        res.json({ valid: true, discount: coupon.discount });
-      }
+      res.json({ valid: false, message: 'user is not login' });
     }
   } catch (error) {
     res.status(500).json({ message: error.message });

@@ -34,15 +34,15 @@ Coupon.propTypes = {
 };
 
 const TableData = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const { data, isLoading } = useGetCoinCoupen({ pageNo: 1, pageCount: 100 });
-  const { mutateAsync: UpdateCouponStatus, isLoadings } = useUpdateCouponStatus();
+  // const { mutateAsync: UpdateCouponStatus, isLoadings } = useUpdateCouponStatus();
 
-  const [coupons, setCoupons] = useState([]);
+  const [coupon, setCoupon] = useState([]);
 
   useEffect(() => {
     if (data?.data) {
-      setCoupons(data.data);
+      setCoupon(data.data);
     }
   }, [data]);
 
@@ -78,7 +78,7 @@ const TableData = () => {
     { name: "action", align: "center" },
   ];
 
-  const rows = coupons.map((item, index) => ({
+  const rows = coupon.map((item, index) => ({
     coupon: (
       <Coupon
       id={item?._id}
