@@ -220,7 +220,7 @@ function ProfileInfo() {
         if (profile.coins >= 2000) {
           const response = await axiosInstance.get('/coupons/coincoupon');
           
-          setProfile(prev => ({ ...prev, giftCoupon: response.data.data[0].name }));
+          setProfile(prev => ({ ...prev, giftCoupon: response.data.data[0].code }));
         }
       } catch (error) {
         console.log('errr', error);

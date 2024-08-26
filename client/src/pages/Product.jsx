@@ -193,7 +193,7 @@
 //           {/* <Col lg={5} md={6} xs={12} className="product-gallery">
 //             <div className="main-image-container">
 //               <Image
-              
+
 //               src={product.images[mainImage]} fluid className="main-image" />
 
 //             </div>
@@ -350,6 +350,7 @@ import Footer from '../components/Footer';
 import './Product.css';
 import Review from '../components/Review';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Modal } from 'react-bootstrap'; 
 
 const Product = () => {
   const location = useLocation();
@@ -438,31 +439,122 @@ const Product = () => {
 
   const addWishlist = async (proId) => {
 
-    if(!userDetails){
+    if (!userDetails) {
       navigate('/login')
-      
-          }else{
-  
-  
-            try {
-              
-              const response = await axiosInstance.patch(`/user/addToWishlist/${proId}`);
-             
-            } catch (error) {
-              console.log(error)
-            
-            }
-          }
-  
 
-  
-  
+    } else {
+
+
+      try {
+
+        const response = await axiosInstance.patch(`/user/addToWishlist/${proId}`);
+
+      } catch (error) {
+        console.log(error)
+
+      }
+    }
   }
+
+
+  const [showCountryModal, setShowCountryModal] = useState(false);
+const [selectedCountry, setSelectedCountry] = useState('');
+const [countryError, setCountryError] = useState('');
+
+const handleCountryCheck = (action) => {
+  if (productData?.countries?.includes(selectedCountry)) {
+    setCountryError('');
+    setShowCountryModal(false);
+
+    if (action === 'addToCart') {
+      addCartData(productId);
+    } else if (action === 'buyNow') {
+      handleBuyNow(productId);
+    }
+  } else {
+    setCountryError('This product is not available in the selected country.');
+  }
+};
+
+const handleAddToCartClick = () => {
+  if (productData?.countries?.length) {
+    setShowCountryModal(true);
+  } else {
+    addCartData(productId);
+  }
+};
+
+const handleBuyNowClick = () => {
+  
+  if (productData?.countries?.length) {
+    setShowCountryModal(true);
+  } else {
+    handleBuyNow(productId);
+  }
+};
+
+
+ 
+
+const CountryModal = ({ show, onHide, onSelect, error, clearError }) => (
+  <Modal
+    show={show}
+    onHide={() => {
+      clearError();
+      onHide();
+    }}
+  >
+    <Modal.Header closeButton>
+      <Modal.Title>Select Country</Modal.Title>
+    </Modal.Header>
+    <Modal.Body>
+      <Form>
+        <Form.Group controlId="countrySelect">
+          <Form.Label>Country</Form.Label>
+          <Form.Control
+            as="select"
+            value={selectedCountry}
+            onChange={(e) => setSelectedCountry(e.target.value)}
+            // onClick={(e) => {
+            //   clearError()
+            // }}
+          >
+            <option value="">Select a country</option>
+            <option value="Baharin">Baharin</option>
+            <option value="Uae">Uae</option>
+            <option value="Kuwait">Kuwait</option>
+            <option value="India">India</option>
+            <option value="Qatar">Qatar</option>
+            <option value="Oman">Oman</option>
+          </Form.Control>
+        </Form.Group>
+        {error && <p className="text-danger">{error}</p>}
+      </Form>
+    </Modal.Body>
+    <Modal.Footer>
+      <Button
+        variant="secondary"
+        onClick={() => {
+          clearError();
+          onHide();
+        }}
+      >
+        Cancel
+      </Button>
+      <Button variant="primary" onClick={onSelect}>
+        Confirm
+      </Button>
+    </Modal.Footer>
+  </Modal>
+);
+
+
+
 
 
   return (
     <>
-      <MiddleNav notification={notif}/>
+      <MiddleNav notification={notif} />
       <Container fluid className="product-container">
         <Row className="product-main">
           <Col lg={5} md={6} xs={12} className="product-gallery">
@@ -530,8 +622,9 @@ const Product = () => {
                 <Button
                   variant="warning"
                   className="add-to-cart-btn"
-                  onClick={() => addCartData(productId)}
-                  disabled={loading[productId] || productData?.sizes?.length && !selectedSize || productData?.sizes?.length&&!isInStock}
+                  // onClick={() => addCartData(productId)}
+                  onClick={handleAddToCartClick}
+                  disabled={loading[productId] || productData?.sizes?.length && !selectedSize || productData?.sizes?.length && !isInStock}
                 >
                   {loading[productId] ? (
                     <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -539,6 +632,9 @@ const Product = () => {
                     <>
                       <FaShoppingCart /> Add to Cart
                     </>
+                    // <Button variant="warning" className="add-to-cart-btn" onClick={handleAddToCartClick}>
+                    //   <FaShoppingCart /> Add to Cart
+                    // </Button>
                   )}
                 </Button>
               ) : (
@@ -550,8 +646,9 @@ const Product = () => {
               <Button
                 variant="danger"
                 className="buy-now-btn"
-                onClick={() => handleBuyNow(productId)}
-                disabled={productData?.sizes?.length&&!selectedSize || productData?.sizes?.length&&!isInStock}
+                // onClick={() => handleBuyNow(productId)}
+                onClick={handleBuyNowClick}
+                disabled={productData?.sizes?.length && !selectedSize || productData?.sizes?.length && !isInStock}
               >
                 {buyNowLoading[productId] ? (
                   <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -559,13 +656,16 @@ const Product = () => {
                   <>
                     <FaBolt /> Buy Now
                   </>
+                  // <Button variant="danger" className="buy-now-btn" onClick={handleBuyNowClick}>
+                  //   <FaBolt /> Buy Now
+                  // </Button>
                 )}
               </Button>
             </div>
 
             <div className="additional-actions">
               <Link>
-                <Button variant="link" onClick={()=>addWishlist(productData._id)}><FaHeart /> Add to Wishlist</Button>
+                <Button variant="link" onClick={() => addWishlist(productData._id)}><FaHeart /> Add to Wishlist</Button>
               </Link>
             </div>
             <div className="delivery-info">
@@ -598,6 +698,17 @@ const Product = () => {
           <Review productId={productId} />
         </Row>
       </Container>
+
+
+
+      {/* Country Selection Modal */}
+    <CountryModal
+      show={showCountryModal}
+      onHide={() => setShowCountryModal(false)}
+      onSelect={() => handleCountryCheck('addToCart')}
+      error={countryError}
+      clearError={() => setCountryError('')}
+    />
       <Footer />
     </>
   );

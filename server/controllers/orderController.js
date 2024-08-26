@@ -144,8 +144,8 @@ const getOrderById = async (req, res) => {
 const createOrder = async (req, res) => {
   const { _id } = req?.decoded
 
-  const {  payment_mode, amount, address, products,useCoinDiscount } = req?.body
-  console.log('useCoinDiscount',useCoinDiscount);
+  const {  payment_mode, amount, address, products,useCoinDiscount,couponId } = req?.body
+  console.log('useCoinDiscount,couponId',useCoinDiscount,couponId);
   
 
   console.log('addrr',address)
@@ -159,6 +159,13 @@ user.cart.item = []; // Clear the cart items
 user.cart.totalPrice = 0; // Reset total price to zero
 if(useCoinDiscount){
   user.wallet = user.wallet-20; 
+}
+if (couponId) {
+  if (user.coupons.includes(couponId)) {
+    return res.status(400).json({ message: "Coupon already used" });
+  } else {
+    user.coupons.push(couponId);
+  }
 }
 await user.save(); // Save the user with cleared cart
 
