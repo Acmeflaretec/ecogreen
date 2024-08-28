@@ -80,7 +80,6 @@ function Banner() {
                src={`${import.meta.env.VITE_API_BASE_URL_LOCALHOST}/uploads/${slide?.image}`}
                 alt={slide.title}
                 className="banner-image"
-                style={{height:'60vh',objectFit:'cover'}}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}

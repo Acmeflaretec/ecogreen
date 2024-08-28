@@ -1,6 +1,6 @@
 .banner-carousel {
   width: 100%;
-  margin: 0 ;
+  margin: 0;
   padding: 0;
   overflow: hidden;
 }
@@ -11,8 +11,9 @@
 
 .banner-image {
   width: 100%;
-  height: auto;
+  height: 60vh; /* Allows the height to adjust based on the image's aspect ratio */
   object-fit: cover;
+  object-position: center; /* Centers the image within the container */
 }
 
 /* Customize Slick Slider Dots */
@@ -32,7 +33,8 @@
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .banner-image {
-    height: 200px;
-    object-fit: cover;
+   object-fit: contain;
+   height: auto;
+   object-position: center;
   }
 }
