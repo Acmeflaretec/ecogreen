@@ -462,10 +462,11 @@ setLesserThan(`&priceGreaterThan=${value[1]}`)
           <div className="product-image-container">
             <Card.Img variant="top"
                src={`${import.meta.env.VITE_API_BASE_URL_LOCALHOST}/uploads/${item?.image[0]}`}
+              // src='test.jpg'
                alt={item.name} className="product-image" />
-            {item.freeDelivery && <span bg="success" className="position-absolute top-0 start-0 m-2"><FaTruck /> Free Delivery</span>}
+            {item.freeDelivery && <span bg="success" className="position-absolute top-0 start-0 m-2 text-success"><FaTruck /> Free Delivery</span>}
             {/* {item.ecoFriendly && <span bg="info" className="position-absolute top-0 end-0 m-2"><FaLeaf /> Eco-Friendly</span>} */}
-            <span bg="danger" className="position-absolute bottom-0 end-0 m-2"><FaPercent /> {item.discount}% OFF</span>
+            <span bg="primary" className="position-absolute top-0 end-0 m-2 text-primary"><FaPercent /> {item.discount}% OFF</span>
           </div>
           <Card.Body className="p-4">
             <Card.Title className="product-title h5 mb-2 text-dark">{item?.name}</Card.Title>

@@ -43,6 +43,7 @@ function FeaturedProducts({ title, tagName }) {
     <div className="productCard mt-5 mb-5">
       <img
         src={`${import.meta.env.VITE_API_BASE_URL_LOCALHOST}/uploads/${product?.image[0]}`}
+        // src='test.jpg'
         alt={product?.name}
         className="product-image"
       />
