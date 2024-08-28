@@ -314,7 +314,7 @@ const Checkout = () => {
         key: "rzp_test_wNhVz81BFxrIrL",
         amount: parseInt(totalAmountToPay) * 100, // amount in paisa
         currency: "INR",
-        name: "Ecogreen",
+        name: "twitkart",
         description: "Purchase course",
         handler: function (response) {
           handlePaymentSuccess();

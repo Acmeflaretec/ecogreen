@@ -19,12 +19,13 @@ function Footer() {
             </p>
           </Col>
           <Col lg={4} md={6} className="footer-section">
-            <h5 className="footer-title">Customer Service</h5>
+            <h5 className="footer-title">Policies</h5>
             <p className="footer-text">
-              <Link to="/contact" className="footer-link">Contact Us</Link><br />
-              <Link to="/shipping-returns" className="footer-link">Shipping & Returns</Link><br />
-              <Link to="/size-guide" className="footer-link">Size Guide</Link><br />
-              <Link to="/faq" className="footer-link">FAQ</Link>
+              <Link to="/cancellation" className="footer-link">Cancellation Policy</Link><br />
+              <Link to="/privacypolicy" className="footer-link">Privacy Policy</Link><br />
+              <Link to="/storepolicy" className="footer-link">Store Policy</Link><br />
+              <Link to="/termsofservice" className="footer-link">Terms of service</Link><br />
+              <Link to="/returnpolicy" className="footer-link">Return Policy</Link>
             </p>
           </Col>
          
@@ -48,7 +49,7 @@ function Footer() {
         <Container>
           <Row className="align-items-center">
             <Col md={6} className="text-center text-md-start">
-              <p className="mb-0">&copy; {new Date().getFullYear()} Eco Green. All rights reserved.</p>
+              <p className="mb-0">&copy; {new Date().getFullYear()} Twitkart. All rights reserved.</p>
             </Col>
            
           </Row>
