@@ -36,7 +36,7 @@ const AddProduct = () => {
   //   console.log('category',category);
   // }, [category])
   const handleSubmit = () => {
-    console.log(details);
+    
     try {
       // if (!details?.name) {
       //   return toast.error("name is required")

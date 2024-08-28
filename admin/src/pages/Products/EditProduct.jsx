@@ -244,6 +244,7 @@ const EditProduct = () => {
   };
 
   const handleSubmit = () => {
+    console.log("123456",details);
     try {
       const formData = new FormData();
       const image = details?.image?.filter((image) => typeof (image) === 'string');
