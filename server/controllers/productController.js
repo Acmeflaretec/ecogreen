@@ -173,18 +173,20 @@ const addProduct = async (req, res) => {
   try {
     console.log(req.files);
     const { name, subheading, category, brand, price, stock, discount, sale_rate, description, countries, feature, spec, sizes, sizeQuantity } = req?.body
-    // console.log('feature,spec,sizes', feature, spec, sizes, sizeQuantity)
+    // console.log('feature,spec,sizes',spec,  sizes, sizeQuantity)
 
     const sizesArray = Array.isArray(sizes) ? sizes : [sizes];
+    
     const quantityArray = Array.isArray(sizeQuantity) ? sizeQuantity : [sizeQuantity];
-
+    
     const sizesInside = sizesArray.map((sizes, index) => ({
       sizes,
       quantity: quantityArray[index]
-    }));
+    }));  
+    const sizeValue = sizesInside[0]?.sizes ? sizesInside : undefined;  
     if (req.files.length != 0) {
       const product = new Product({
-        name, subheading, category, brand, price, stock, discount, sale_rate, description, feature, spec, sizes: sizesInside,
+        name, subheading, category, brand, price, stock, discount, sale_rate, description, feature, spec, sizes: sizeValue,
         image: req.files.map((x) => x.filename),
         countries: JSON.parse(countries)
       });
@@ -208,20 +210,27 @@ const addProduct = async (req, res) => {
 const updateProduct = async (req, res) => {
   try {
     const { _id, name, subheading, brand, price, stock, discount, sale_rate, description, image, countries, tags, isAvailable, feature, spec, sizes, sizeQuantity } = req?.body
+    console.log('sizes12',sizes);
+    
     const sizesArray = Array.isArray(sizes) ? sizes : [sizes];
+    console.log('sizesArray',sizesArray);
     const quantityArray = Array.isArray(sizeQuantity) ? sizeQuantity : [sizeQuantity];
-
+    console.log('quantityArray',quantityArray);
+    
     const sizesInside = sizesArray.map((sizes, index) => ({
       sizes,
       quantity: quantityArray[index]
     }));
+    console.log('sizesInside',sizesInside);
+    const sizeValue = sizesInside[0]?.sizes ? sizesInside : undefined;  
+    console.log('sizeValue',sizeValue);
 
     const images = JSON.parse(image) ?? []
     if (req?.files?.length != 0) {
       req?.files?.map((x) => images.push(x.filename))
     }
     await Product.updateOne({ _id }, {
-      $set: { name, subheading, brand, price, stock, discount, sale_rate, description, isAvailable, feature, spec, sizes: sizesInside, image: images, countries: JSON.parse(countries), tags: JSON.parse(tags) }
+      $set: { name, subheading, brand, price, stock, discount, sale_rate, description, isAvailable, feature, spec, sizes: sizeValue, image: images, countries: JSON.parse(countries), tags: JSON.parse(tags) }
     })
     res.status(200).json({ message: "Product updated successfully !" });
   } catch (error) {
@@ -253,4 +262,4 @@ module.exports = {
   getTaggedProducts,
   getTagList,
 
-}
+}  
