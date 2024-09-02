@@ -664,12 +664,13 @@ const CountryModal = ({ show, onHide, onSelect, error, clearError }) => (
                 )}
               </Button>
             </div>
-{/* 
-            <div className="additional-actions">
+
+            {/* <div className="additional-actions">
               <Link>
                 <Button variant="link" onClick={() => addWishlist(productData._id)}><FaHeart /> Add to Wishlist</Button>
               </Link>
             </div> */}
+            
             <div className="delivery-info">
               <p><FaTruck /> Free Delivery</p>
               <p><FaShieldAlt /> 30-Day Return Policy</p>

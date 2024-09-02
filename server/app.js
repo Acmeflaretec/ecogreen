@@ -6,7 +6,7 @@ const path = require('path')
 const dotenv = require('dotenv');
 dotenv.config();  
 
-const app = express();
+const app = express();   
 // app.use(cors());
 const corsOptions = {   
   origin: [process.env.ADMIN_PORT_LOCAL,process.env.CLIENT_PORT_LOCAL],
@@ -22,7 +22,7 @@ morgan.token("custom-date", (req, res) => {
 app.use(
   morgan(
     ":custom-date :method :url :status :res[content-length] - :response-time ms"
-  )
+  )    
 );
 console.log(morgan);
 app.use('/api',router);

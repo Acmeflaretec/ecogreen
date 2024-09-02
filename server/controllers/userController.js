@@ -37,10 +37,11 @@ const updateQty = async (req, res) => {
 };
 
 const addToCart = async (req, res) => {
+  console.log('addToCart starting');
+      
   try {
     const { _id } = req?.decoded
     const { size } = req.body
-    console.log('new size',size);
     
     const productId = req?.params?.id
     const userData =await User.findById({ _id })
@@ -68,11 +69,13 @@ const removeFromCart = async (req, res) => {
 }
 
 const addToWishlist = async (req, res) => {
+  console.log('addToWishlist');
+  
   try {
     const { _id } = req?.decoded
     const productId = req?.params?.id
     const userData = await User.findById({ _id })
-    const productData = await Product.findById({ _id:productId })
+    const productData = await Product.findById({ _id:productId })     
     userData.addToWishlist(productData)
     res.status(201).json({ message: 'Product added to wishlist' });
   } catch (error) {
@@ -94,32 +97,32 @@ const removeFromWishlist = async (req, res) => {
   }
 }
 
-const getWishLists = async (req, res) => {
-  const { _id } = req?.decoded
-  if (_id) {
+// const getWishLists = async (req, res) => {
+//   const { _id } = req?.decoded
+//   if (_id) {
 
-   try {
-     const userWishlist = await User.getWishlistWithProductsByUserId(_id);
+//    try {
+//      const userWishlist = await User.getWishlistWithProductsByUserId(_id);
      
-     if (userWishlist) {
-         res.status(200).json({ data: userWishlist });
-     } else {
-         res.status(404).json({ data:[] });
-     }
- } catch (error) {
-   console.log('wish err,', error)
-     console.error(error);
-     res.status(500).json({ message: 'Internal Server Error' });
- }
+//      if (userWishlist) {
+//          res.status(200).json({ data: userWishlist });
+//      } else {
+//          res.status(404).json({ data:[] });
+//      }
+//  } catch (error) {
+//    console.log('wish err,', error)
+//      console.error(error);
+//      res.status(500).json({ message: 'Internal Server Error' });
+//  }
 
-  }else{
+//   }else{
 
-   return res.status(404).json({ data: [] });
+//    return res.status(404).json({ data: [] });
 
-  }
+//   }
 
 
-};
+// };
 
 const getCartDetailsByUserId = async (req, res) => {
   const { _id } = req?.decoded
@@ -171,6 +174,37 @@ const updateUserProfile = async (req, res) => {
   }
 };
 
+const getWishLists = async (req, res) => {
+  console.log('getWishLists');
+  
+  const { _id } = req?.decoded
+  if (_id) {
+
+    try {
+      const userWishlist = await User.getWishlistWithProductsByUserId(_id);    
+      console.log('userWishlist',userWishlist);
+      
+
+      if (userWishlist) {
+        res.status(200).json({ data: userWishlist });
+      } else {
+        res.status(404).json({ data: [] });
+      }
+    } catch (error) {
+      console.log('wish err,', error)
+      console.error(error);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+
+  } else {
+
+    return res.status(404).json({ data: [] });
+
+  }
+
+
+};
+
 
 module.exports = {
     getUser,
@@ -183,5 +217,6 @@ module.exports = {
     getWishLists,
     updateUserProfile,
     getCartDetailsByUserId,
+    getWishLists
     
   }
