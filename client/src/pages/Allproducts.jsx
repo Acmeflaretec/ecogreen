@@ -11,6 +11,7 @@ import MiddleNav from '../components/MiddleNav';
 import './Allproducts.css';
 import { useNavigate,useLocation } from 'react-router-dom'; 
 import { useDispatch, useSelector } from 'react-redux';
+import Swal from 'sweetalert2';
 
 const Allproducts = () => {
   const userDetails = useSelector(state => state.userDetails);
@@ -339,23 +340,28 @@ setLesserThan(`&priceGreaterThan=${value[1]}`)
     setProducts(filteredProducts);
   };
 
-  const addToWishlist = async (proId) => {
-    if(!userDetails){
-      navigate('/login')
-      
-          }else{
-  
-  
-            try {
-              
-              const response = await axiosInstance.patch(`/user/addToWishlist/${proId}`);
-             
-            } catch (error) {
-              console.log(error)
-            
-            }
-          }
+
+  const addWishlist = async (proId) => {
+    if (!userDetails) {
+      navigate('/login');
+    } else {
+      try {
+        const response = await axiosInstance.patch(`/user/addToWishlist/${proId}`);
+       
+        Swal.fire({
+          title: "Success",
+          text: "Product added to wishlist",
+          icon: "success",
+          showConfirmButton: false,
+          timer: 3000,
+        });
+      } catch (error) {
+        console.error('Error adding to wishlist:', error);
+      }
+    }
   };
+
+
 
   const addToCart = (productId) => {
     console.log(`Added product ${productId} to cart`);
@@ -496,7 +502,7 @@ setLesserThan(`&priceGreaterThan=${value[1]}`)
                 variant="outline-primary" 
                 size="sm" 
                 className="flex-grow-1 me-2"
-                onClick={() => addToWishlist(item._id)}
+                onClick={() => addWishlist(item._id)}
               >
                 <FaHeart /> Wishlist
               </Button>

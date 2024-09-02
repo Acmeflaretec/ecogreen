@@ -43,7 +43,6 @@ function FeaturedProducts({ title, tagName }) {
     <div className="productCard mt-5 mb-5">
       <img
         src={`${import.meta.env.VITE_API_BASE_URL_LOCALHOST}/uploads/${product?.image[0]}`}
-        // src='test.jpg'
         alt={product?.name}
         className="product-image"
       />
@@ -77,6 +76,10 @@ function FeaturedProducts({ title, tagName }) {
         pagination={{ clickable: true }}
         autoplay={{ delay: 5000, disableOnInteraction: false }}
         breakpoints={{
+          320: {   // Mobile devices
+            slidesPerView: 2,  // Show 2 products on mobile screens
+            spaceBetween: 10,
+          },
           480: {
             slidesPerView: 2,
             spaceBetween: 15,

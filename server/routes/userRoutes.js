@@ -1,9 +1,7 @@
 const { Router } = require('express');
 const router = Router();
 const authorization = require("../middlewares/authorization");
-const { getUser, addToCart, removeFromCart, addToWishlist, removeFromWishlist, updateQty, getUsers,
-  getCartDetailsByUserId,updateUserProfile
- } = require('../controllers/userController');
+const { getUser, addToCart, removeFromCart, addToWishlist, removeFromWishlist, updateQty, getUsers,getCartDetailsByUserId,updateUserProfile,getWishLists} = require('../controllers/userController');
 
 router.use(authorization)
 router.get('/', getUser);
@@ -14,6 +12,7 @@ router.patch('/addToCart/:id', addToCart);
 router.patch('/removeFromCart/:id', removeFromCart);
 router.patch('/addToWishlist/:id', addToWishlist);
 router.patch('/removeFromWishlist/:id', removeFromWishlist);
+router.get('/getwishlist',authorization, getWishLists);
 
 router.get('/getcarts', authorization,getCartDetailsByUserId); 
 
