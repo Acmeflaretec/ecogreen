@@ -670,7 +670,7 @@ const CountryModal = ({ show, onHide, onSelect, error, clearError }) => (
                 <Button variant="link" onClick={() => addWishlist(productData._id)}><FaHeart /> Add to Wishlist</Button>
               </Link>
             </div> */}
-            </div> */}
+            
             <div className="delivery-info">
               <p><FaTruck /> Free Delivery</p>
               <p><FaShieldAlt /> 30-Day Return Policy</p>

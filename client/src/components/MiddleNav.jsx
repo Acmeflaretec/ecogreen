@@ -14,7 +14,6 @@ function MiddleNav({notification}) {
   const userDetails = useSelector(state => state.userDetails);
   const [cartData, setCartData] = useState([])
   const [wishListData,setWishListData] = useState()
-  const [wishListData,setWishListData] = useState()
   // console.log('userDetails',userDetails);
   let urlQuery = '';
   useEffect(() => {

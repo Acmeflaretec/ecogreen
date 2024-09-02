@@ -376,6 +376,13 @@ const Allproducts = () => {
         const response = await axiosInstance.patch(`/user/addToWishlist/${proId}`);
         await fetchWishlist();
         setNotif(prev => !prev);
+        // Swal.fire({
+        //   title: "Success",
+        //   text: "Product added to wishlist",
+        //   icon: "success",
+        //   showConfirmButton: false,
+        //   timer: 3000,
+        // });
       } catch (error) {
         console.error('Error adding to wishlist:', error);
       }
