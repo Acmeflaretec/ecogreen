@@ -5,11 +5,11 @@ import axiosInstance from '../axios';
 import { Link } from 'react-router-dom';
 import { Container, Row, Col, Card, Button, Form, Pagination, Badge, Offcanvas } from 'react-bootstrap';
 import { motion } from 'framer-motion';
-import { FaHeart,FaShare, FaShoppingCart, FaStar, FaFilter, FaTruck, FaLeaf, FaPercent, FaSearch } from 'react-icons/fa';
+import { FaHeart, FaShare, FaShoppingCart, FaStar, FaFilter, FaTruck, FaLeaf, FaPercent, FaSearch } from 'react-icons/fa';
 import Footer from '../components/Footer';
 import MiddleNav from '../components/MiddleNav';
 import './Allproducts.css';
-import { useNavigate,useLocation } from 'react-router-dom'; 
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 const Allproducts = () => {
@@ -18,90 +18,95 @@ const Allproducts = () => {
   const searchParams = new URLSearchParams(search);
   const initialCategory = searchParams.get('categoryQuery') || ''; // Make sure to provide a fallback value if the parameter is not found
   const initialSearch = searchParams.get('search') || ''; // Make sure to provide a fallback value if the parameter is not found
-  const [sorted,setSorted]=useState('')
+  const [sorted, setSorted] = useState('')
 
   const [totalProducts, setTotalProducts] = useState(0);
   const productsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
-const [ratingChange,setRatingChange] = useState('')
+  const [ratingChange, setRatingChange] = useState('')
   const [category, setCategory] = useState('category=' + initialCategory);
   const [searchQuery, setsearchQuery] = useState('&search=' + initialSearch);
+  const [wishlistItems, setWishlistItems] = useState([]);
+  const [notif, setNotif] = useState(true);
   const navigate = useNavigate()
-const [lesserThan,setLesserThan] = useState('')
-  const [productsList,setProductsList] = useState([])
-const [ratedBy,setRatedBy] = useState(0)
-  const [categoryList,setCategoryList] = useState([])
-  const [url,setUrl]= useState('/products/client?'+category+searchQuery+sorted+ratingChange+lesserThan)
+  const [lesserThan, setLesserThan] = useState('')
+  const [productsList, setProductsList] = useState([])
+  const [ratedBy, setRatedBy] = useState(0)
+  const [categoryList, setCategoryList] = useState([])
+  const [url, setUrl] = useState('/products/client?' + category + searchQuery + sorted + ratingChange + lesserThan)
   const [filtersM, setFiltersM] = useState({
     categories: [],
   });
 
 
 
-const fetchCategory = async()=>{
-  try {
-    const response = await axiosInstance.get('/category');
-    setCategoryList(response?.data?.data);
-  } catch (error) {
-    console.error('Error fetching categories:', error);
+  const fetchCategory = async () => {
+    try {
+      const response = await axiosInstance.get('/category');
+      setCategoryList(response?.data?.data);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
   }
-}
-useState(()=>{
-  fetchCategory()
-},[])
+  useState(() => {
+    fetchCategory()
+  }, [])
 
 
-const fetchProducts=async(pageNumber = 1)=>{
-  // page: pageNumber,
-  // limit: productsPerPage,
+  const fetchProducts = async (pageNumber = 1) => {
+    // page: pageNumber,
+    // limit: productsPerPage,
 
- const response= await axiosInstance.get(url+`&page=${pageNumber}&limit=${productsPerPage}`);
-//  console.log('fprods ',response?.data?.data)
- setProductsList(response?.data?.data)
- setTotalProducts(response?.data?.total);
+    const response = await axiosInstance.get(url + `&page=${pageNumber}&limit=${productsPerPage}`);
+    //  console.log('fprods ',response?.data?.data)
+    setProductsList(response?.data?.data)
+    setTotalProducts(response?.data?.total);
 
-}
+    const wishlistResponse = await axiosInstance.get('/user/getwishlist');
+      setWishlistItems(wishlistResponse?.data?.data);
 
-
-useEffect(()=>{
-fetchProducts(currentPage)
-},[url,category,sorted,currentPage,ratingChange,lesserThan])
+  }
 
 
-//pagination
-const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
-// for category
-const handleFilterChangeM = (filterType, selectedValues) => {
-  setRatedBy(0)
-  setRatingChange(``)
-setCategory('category='+selectedValues[0])
-setUrl('/products/client?'+'category='+selectedValues[0]+searchQuery+sorted+ratingChange+lesserThan)
-  setFiltersM((prevFilters) => ({
-    ...prevFilters,
-    [filterType]: selectedValues,
-  }));
-
-};
-//filter category name for product
-const filterCategoryName = (catId) => {
-  const filteredCategory = categoryList?.filter((obj) => obj._id === catId);
-  return filteredCategory?.length > 0 ? filteredCategory[0].name : 'Unknown Category';
-};
+  useEffect(() => {
+    fetchProducts(currentPage)
+  }, [url, category, sorted, currentPage, ratingChange, lesserThan])
 
 
-const handleRatingChange =async ( filterType, selectedValues) => {
-  setRatedBy(selectedValues)
-if (selectedValues===0){
+  //pagination
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  setUrl('/products/client?'+category+searchQuery+sorted+lesserThan)
+  // for category
+  const handleFilterChangeM = (filterType, selectedValues) => {
+    setRatedBy(0)
+    setRatingChange(``)
+    setCategory('category=' + selectedValues[0])
+    setUrl('/products/client?' + 'category=' + selectedValues[0] + searchQuery + sorted + ratingChange + lesserThan)
+    setFiltersM((prevFilters) => ({
+      ...prevFilters,
+      [filterType]: selectedValues,
+    }));
 
-}else{
+  };
+  //filter category name for product
+  const filterCategoryName = (catId) => {
+    const filteredCategory = categoryList?.filter((obj) => obj._id === catId);
+    return filteredCategory?.length > 0 ? filteredCategory[0].name : 'Unknown Category';
+  };
 
-  setUrl('/products/client?'+category+searchQuery+`&rating=${selectedValues}`+sorted+lesserThan)
-  setRatingChange(`&rating=${selectedValues}`)
-}
-}
+
+  const handleRatingChange = async (filterType, selectedValues) => {
+    setRatedBy(selectedValues)
+    if (selectedValues === 0) {
+
+      setUrl('/products/client?' + category + searchQuery + sorted + lesserThan)
+
+    } else {
+
+      setUrl('/products/client?' + category + searchQuery + `&rating=${selectedValues}` + sorted + lesserThan)
+      setRatingChange(`&rating=${selectedValues}`)
+    }
+  }
 
 
 
@@ -204,7 +209,7 @@ if (selectedValues===0){
       ecoFriendly: true,
       inStock: true
     }
-];
+  ];
 
 
   const [products, setProducts] = useState([]);
@@ -237,36 +242,36 @@ if (selectedValues===0){
 
   // const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  const handleSort =async (e) => {
+  const handleSort = async (e) => {
     e.preventDefault()
     setSortBy(e.target.value);
- 
+
     const sortedProducts = [...products];
     switch (e.target.value) {
       case 'price-low-high':
-        setUrl('/products/client?'+category+searchQuery+'&sortField=sale_rate&sortOrder=asc'+ratingChange+lesserThan)
+        setUrl('/products/client?' + category + searchQuery + '&sortField=sale_rate&sortOrder=asc' + ratingChange + lesserThan)
         setSorted('&sortField=sale_rate&sortOrder=asc')
         //setUrl('/products/client?'+category+'&sortField=sale_rate&sortOrder=asc&')
         sortedProducts.sort((a, b) => a.price - b.price);
         break;
       case 'price-high-low':
-        setUrl('/products/client?'+category+searchQuery+'&sortField=sale_rate&sortOrder=desc'+ratingChange+lesserThan)
+        setUrl('/products/client?' + category + searchQuery + '&sortField=sale_rate&sortOrder=desc' + ratingChange + lesserThan)
         setSorted('&sortField=sale_rate&sortOrder=desc')
-      //  setUrl('/products/client?'+category+'&sortField=sale_rate&sortOrder=desc&')
+        //  setUrl('/products/client?'+category+'&sortField=sale_rate&sortOrder=desc&')
         sortedProducts.sort((a, b) => b.price - a.price);
         break;
       case 'rating':
-        setUrl('/products/client?'+category+searchQuery+'&sortField=rating&sortOrder=desc'+ratingChange+lesserThan)
+        setUrl('/products/client?' + category + searchQuery + '&sortField=rating&sortOrder=desc' + ratingChange + lesserThan)
         setSorted('&sortField=rating&sortOrder=desc')
 
-     //   setUrl('/products/client?'+category+'&sortField=rating&sortOrder=desc&')
+        //   setUrl('/products/client?'+category+'&sortField=rating&sortOrder=desc&')
         sortedProducts.sort((a, b) => b.rating - a.rating);
         break;
       case 'newest':
-        setUrl('/products/client?'+category+searchQuery+'&sortField=createdAt&sortOrder=desc'+ratingChange+lesserThan)
+        setUrl('/products/client?' + category + searchQuery + '&sortField=createdAt&sortOrder=desc' + ratingChange + lesserThan)
         setSorted('&sortField=createdAt&sortOrder=desc')
 
-       // setUrl('/products/client?'+category+'&sortField=createdAt&sortOrder=desc&')
+        // setUrl('/products/client?'+category+'&sortField=createdAt&sortOrder=desc&')
         sortedProducts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         break;
       default:
@@ -284,9 +289,9 @@ if (selectedValues===0){
       [filterName]: value
     }));
 
-console.log('less than',value[1])
-setUrl('/products/client?'+category+searchQuery+`&priceGreaterThan=${value[1]}`+sorted+ratingChange)
-setLesserThan(`&priceGreaterThan=${value[1]}`)
+    console.log('less than', value[1])
+    setUrl('/products/client?' + category + searchQuery + `&priceGreaterThan=${value[1]}` + sorted + ratingChange)
+    setLesserThan(`&priceGreaterThan=${value[1]}`)
   };
 
 
@@ -339,51 +344,82 @@ setLesserThan(`&priceGreaterThan=${value[1]}`)
     setProducts(filteredProducts);
   };
 
-  const addToWishlist = async (proId) => {
-    if(!userDetails){
-      navigate('/login')
-      
-          }else{
-  
-  
-            try {
-              
-              const response = await axiosInstance.patch(`/user/addToWishlist/${proId}`);
-             
-            } catch (error) {
-              console.log(error)
-            
-            }
-          }
+
+  const isInWishlist = (productId) => {
+    if (wishlistItems === undefined) {
+      return null;
+    }
+    return wishlistItems.some((item) => item?._id === productId);
+  };
+  const fetchWishlist = async () => {
+    try {
+      const wishlistResponse = await axiosInstance.get('/user/getwishlist');
+      setWishlistItems(wishlistResponse?.data?.data);
+    } catch (error) {
+      console.error('Error fetching wishlist:', error);
+    }
   };
 
-  const addToCart = (productId) => {
-    console.log(`Added product ${productId} to cart`);
+
+  const addToWishlist = async (proId) => {
+
+    if (!userDetails) {
+      navigate('/login')
+      console.log('addToWishlist');
+
+    } else {
+
+
+      try {
+
+        const response = await axiosInstance.patch(`/user/addToWishlist/${proId}`);
+        await fetchWishlist();
+        setNotif(prev => !prev);
+      } catch (error) {
+        console.error('Error adding to wishlist:', error);
+      }
+    }
   };
+  const removeWishlist = async (proId) => {
+    if (!userDetails) {
+      navigate('/login');
+    } else {
+      try {
+        const response = await axiosInstance.patch(`/user/removeFromWishlist/${proId}`);
+        await fetchWishlist();
+        setNotif(prev => !prev);
+      } catch (error) {
+        console.error('Error removing from wishlist:', error);
+      }
+    }
+  };
+  // const addToCart = (productId) => {
+  //   console.log(`Added product ${productId} to cart`);
+  // };
 
   const FilterSidebar = () => (
     <Card className="filter-sidebar">
-  <Card.Header>
-    <h5><FaFilter /> Filters</h5>
-  </Card.Header>
-  <Card.Body>
+      <Card.Header>
+        <h5><FaFilter /> Filters</h5>
+      </Card.Header>
+      <Card.Body>
 
-    <Form>
-      <Form.Group className="mb-3">
-        <Form.Label>Price Range</Form.Label>
-        <Form.Range 
-          min={500} 
-          max={50000} 
-          step={10} 
-          value={filters.priceRange[1]} 
-          onChange={(e) => handleFilterChangeLesserThan('priceRange', [0, parseInt(e.target.value)])}
-        />
-        <div className="d-flex justify-content-between">
-          <span>₹500</span>
-          <span>₹{filters.priceRange[1]}</span>
-        </div>
-      </Form.Group>
-      {/* <Form.Group className="mb-3">
+        <Form>
+          <Form.Group className="mb-3">
+            <Form.Label>Price Range</Form.Label>
+            <Form.Range
+              min={500}
+              max={50000}
+              step={10}
+              value={filters.priceRange[1]}
+              onChange={(e) => handleFilterChangeLesserThan('priceRange', [0, parseInt(e.target.value)])}
+            />
+            <div className="d-flex justify-content-between">
+              <span>₹500</span>
+              <span>₹{filters.priceRange[1]}</span>
+            </div>
+          </Form.Group>
+          {/* <Form.Group className="mb-3">
         <Form.Check 
           type="checkbox" 
           label="Free Delivery" 
@@ -391,19 +427,19 @@ setLesserThan(`&priceGreaterThan=${value[1]}`)
           onChange={(e) => handleFilterChange('freeDelivery', e.target.checked)}
         />
       </Form.Group> */}
-      <Form.Group className="mb-3">
-        <Form.Label>Minimum Rating</Form.Label>
-        <Form.Select 
-          value={ratedBy}
-          onChange={(e) => handleRatingChange('rating', parseInt(e.target.value))}
-        >
-          <option value={0}>All Ratings</option>
-          <option value={4}>4★ & above</option>
-          <option value={3}>3★ & above</option>
-          <option value={2}>2★ & above</option>
-        </Form.Select>
-      </Form.Group>
-      {/* <Form.Group className="mb-3">
+          <Form.Group className="mb-3">
+            <Form.Label>Minimum Rating</Form.Label>
+            <Form.Select
+              value={ratedBy}
+              onChange={(e) => handleRatingChange('rating', parseInt(e.target.value))}
+            >
+              <option value={0}>All Ratings</option>
+              <option value={4}>4★ & above</option>
+              <option value={3}>3★ & above</option>
+              <option value={2}>2★ & above</option>
+            </Form.Select>
+          </Form.Group>
+          {/* <Form.Group className="mb-3">
         <Form.Check 
           type="checkbox" 
           label="Eco-Friendly" 
@@ -411,7 +447,7 @@ setLesserThan(`&priceGreaterThan=${value[1]}`)
           onChange={(e) => handleFilterChange('ecoFriendly', e.target.checked)}
         />
       </Form.Group> */}
-      {/* <Form.Group className="mb-3">
+          {/* <Form.Group className="mb-3">
         <Form.Check 
           type="checkbox" 
           label="In Stock" 
@@ -419,19 +455,19 @@ setLesserThan(`&priceGreaterThan=${value[1]}`)
           onChange={(e) => handleFilterChange('inStock', e.target.checked)}
         />
       </Form.Group> */}
-      <Form.Group className="mb-3">
-      <Form.Label>Categories</Form.Label>
-      <Form.Select
-        multiple
-        value={filtersM.categories}
-        onChange={(e) => handleFilterChangeM('categories', Array.from(e.target.selectedOptions, option => option.value))}
-      >
-        {categoryList?.map((obj) => (
-          <option key={obj._id} value={obj._id}>{obj.name}</option>
-        ))}
-      </Form.Select>
-    </Form.Group>
-      {/* <Form.Group className="mb-3">
+          <Form.Group className="mb-3">
+            <Form.Label>Categories</Form.Label>
+            <Form.Select
+              multiple
+              value={filtersM.categories}
+              onChange={(e) => handleFilterChangeM('categories', Array.from(e.target.selectedOptions, option => option.value))}
+            >
+              {categoryList?.map((obj) => (
+                <option key={obj._id} value={obj._id}>{obj.name}</option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+          {/* <Form.Group className="mb-3">
         <Form.Label>Brands</Form.Label>
         <Form.Select 
           multiple 
@@ -445,9 +481,9 @@ setLesserThan(`&priceGreaterThan=${value[1]}`)
           <option value="Bose">Bose</option>
         </Form.Select>
       </Form.Group> */}
-    </Form>
-  </Card.Body>
-</Card>
+        </Form>
+      </Card.Body>
+    </Card>
 
   );
 
@@ -461,12 +497,12 @@ setLesserThan(`&priceGreaterThan=${value[1]}`)
         <Link to={`/product?productId=${item?._id}`} className="text-decoration-none">
           <div className="product-image-container">
             <Card.Img variant="top"
-               src={`${import.meta.env.VITE_API_BASE_URL_LOCALHOST}/uploads/${item?.image[0]}`}
+              src={`${import.meta.env.VITE_API_BASE_URL_LOCALHOST}/uploads/${item?.image[0]}`}
               // src='product.jpg'
-               alt={item.name} className="product-image" />
-            {item.freeDelivery && <span bg="success" style={{backgroundColor:'rgba(0, 0, 0, 0.8) '}} className="position-absolute top-0 start-0 m-2 text-white"><FaTruck /> Free Delivery</span>}
+              alt={item.name} className="product-image" />
+            {item.freeDelivery && <span bg="success" style={{ backgroundColor: 'rgba(0, 0, 0, 0.8) ' }} className="position-absolute top-0 start-0 m-2 text-white"><FaTruck /> Free Delivery</span>}
             {/* {item.ecoFriendly && <span bg="info" className="position-absolute top-0 end-0 m-2"><FaLeaf /> Eco-Friendly</span>} */}
-            <span bg="primary" className="position-absolute top-0 end-0 m-2 text-white" style={{backgroundColor:'rgba(0, 0, 0, 0.8) '}}><FaPercent /> {item.discount}% OFF</span>
+            <span bg="primary" className="position-absolute top-0 end-0 m-2 text-white" style={{ backgroundColor: 'rgba(0, 0, 0, 0.8) ' }}><FaPercent /> {item.discount}% OFF</span>
           </div>
           <Card.Body className="p-4">
             <Card.Title className="product-title h5 mb-2 text-dark">{item?.name}</Card.Title>
@@ -491,23 +527,27 @@ setLesserThan(`&priceGreaterThan=${value[1]}`)
         </Link>
         <Card.Footer className="bg-white border-top-0 p-4">
           <div className="d-flex justify-content-between">
-            <Link>
-              <Button 
-                variant="outline-primary" 
-                size="sm" 
-                className="flex-grow-1 me-2"
-                onClick={() => addToWishlist(item._id)}
-              >
-                <FaHeart /> Wishlist
-              </Button>
-            </Link>
+            {!isInWishlist(item?._id) ? <Button
+              variant="outline-primary"
+              size="sm"
+              // className="flex-grow-1 me-2"
+              className="btn btn-outline-success btn-sm"
+              onClick={() => addToWishlist(item._id)}
+            >
+              <FaHeart /> Wishlist
+            </Button> :
+              <button className="btn btn-outline-danger btn-sm" onClick={() => removeWishlist(item?._id)}>
+                <i className="fa-solid fa-heart"></i>
+              </button>
+            }
+
             <Link to={`/product?productId=${item?._id}`} >
-            <Button 
-            
-            variant="outline-primary" 
-            size="sm" 
-            className="flex-grow-1 me-2"
-            > Details</Button>
+              <Button
+
+                variant="outline-primary"
+                size="sm"
+                className="flex-grow-1 me-2"
+              > Details</Button>
             </Link>
 
 
@@ -528,12 +568,12 @@ setLesserThan(`&priceGreaterThan=${value[1]}`)
 
   return (
     <>
-      <MiddleNav />
+      <MiddleNav notification={notif}/>
       <Container fluid className="py-5 bg-light">
         <Row>
           <Col lg={3} className="d-none d-lg-block">
             <FilterSidebar />
-            </Col>
+          </Col>
           <Col lg={9}>
             <Row className="mb-4 align-items-center">
               <Col>
@@ -541,8 +581,8 @@ setLesserThan(`&priceGreaterThan=${value[1]}`)
                 <p className="lead text-muted mb-0">{productsList.length} results found</p>
               </Col>
               <Col xs="auto" className="d-flex align-items-center">
-                <Button 
-                  variant="outline-primary" 
+                <Button
+                  variant="outline-primary"
                   className="me-2 d-lg-none"
                   onClick={() => setShowFilters(true)}
                 >
@@ -565,16 +605,16 @@ setLesserThan(`&priceGreaterThan=${value[1]}`)
               ))}
             </Row>
             <Pagination className="justify-content-center mt-5">
-        {[...Array(Math.ceil(totalProducts / productsPerPage))].map((_, index) => (
-          <Pagination.Item
-            key={index + 1}
-            active={index + 1 === currentPage}
-            onClick={() => paginate(index + 1)}
-          >
-            {index + 1}
-          </Pagination.Item>
-        ))}
-      </Pagination>
+              {[...Array(Math.ceil(totalProducts / productsPerPage))].map((_, index) => (
+                <Pagination.Item
+                  key={index + 1}
+                  active={index + 1 === currentPage}
+                  onClick={() => paginate(index + 1)}
+                >
+                  {index + 1}
+                </Pagination.Item>
+              ))}
+            </Pagination>
           </Col>
         </Row>
       </Container>

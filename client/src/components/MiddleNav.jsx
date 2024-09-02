@@ -13,6 +13,7 @@ function MiddleNav({notification}) {
   const dispatch = useDispatch();
   const userDetails = useSelector(state => state.userDetails);
   const [cartData, setCartData] = useState([])
+  const [wishListData,setWishListData] = useState()
   // console.log('userDetails',userDetails);
   let urlQuery = '';
   useEffect(() => {
@@ -34,6 +35,32 @@ function MiddleNav({notification}) {
     }
 
     fetchData()
+  }, [notification])
+
+  useEffect(() => {
+
+
+
+    const fetchData = async () => {
+
+      try {
+
+        const response = await axiosInstance.get(`/user/getwishlist`);
+        console.log('getwishlist',response?.data);
+        
+        setWishListData(response?.data?.data?.length)
+
+
+      } catch (error) {
+        console.log(error)
+      }
+
+    }
+
+
+    fetchData()
+
+
   }, [notification])
 
 
@@ -73,6 +100,10 @@ function MiddleNav({notification}) {
             <i className="fas fa-shopping-cart"></i>
             {cartData > 0 && <span className="badge">{cartData}</span>}
           </Link>
+          <Link to={userDetails? '/wishlist' :'/login'} className="nav-icon-link" title="Wishlist">
+              <i className="fas fa-heart"></i>
+              {wishListData > 0 && <span className="badge">{wishListData}</span>}
+            </Link>
           {userDetails ? (
             <div className="dropdown">
               <button className="profile-icon btn btn-secondary" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">

@@ -311,8 +311,8 @@ const Checkout = () => {
       handlePaymentSuccess();
     } else if (paymentOption === "razorpay") {
       const options = {
-        key: "rzp_test_wNhVz81BFxrIrL",
-        amount: parseInt(totalAmountToPay) * 100, // amount in paisa
+        key: import.meta.env.VITE_API_BASE_RAZORPAY_KEY,
+        amount: parseInt(totalAmountToPay) * 100, 
         currency: "INR",
         name: "twitkart",
         description: "Purchase course",
