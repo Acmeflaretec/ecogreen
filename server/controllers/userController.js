@@ -97,32 +97,32 @@ const removeFromWishlist = async (req, res) => {
   }
 }
 
-const getWishLists = async (req, res) => {
-  const { _id } = req?.decoded
-  if (_id) {
+// const getWishLists = async (req, res) => {
+//   const { _id } = req?.decoded
+//   if (_id) {
 
-   try {
-     const userWishlist = await User.getWishlistWithProductsByUserId(_id);
+//    try {
+//      const userWishlist = await User.getWishlistWithProductsByUserId(_id);
      
-     if (userWishlist) {
-         res.status(200).json({ data: userWishlist });
-     } else {
-         res.status(404).json({ data:[] });
-     }
- } catch (error) {
-   console.log('wish err,', error)
-     console.error(error);
-     res.status(500).json({ message: 'Internal Server Error' });
- }
+//      if (userWishlist) {
+//          res.status(200).json({ data: userWishlist });
+//      } else {
+//          res.status(404).json({ data:[] });
+//      }
+//  } catch (error) {
+//    console.log('wish err,', error)
+//      console.error(error);
+//      res.status(500).json({ message: 'Internal Server Error' });
+//  }
 
-  }else{
+//   }else{
 
-   return res.status(404).json({ data: [] });
+//    return res.status(404).json({ data: [] });
 
-  }
+//   }
 
 
-};
+// };
 
 const getCartDetailsByUserId = async (req, res) => {
   const { _id } = req?.decoded
