@@ -40,22 +40,18 @@ function FeaturedProducts({ title, tagName }) {
   };
 
   const ProductCard = ({ product }) => (
-    <div className="productCard mt-5 mb-5">
-      <img
-        src={`${import.meta.env.VITE_API_BASE_URL_LOCALHOST}/uploads/${product?.image[0]}`}
-        // src='test.jpg'
-        alt={product?.name}
-        className="product-image"
-      />
-      <h3 className="product-name">{product?.name}</h3>
-      <div className="product-rating">{renderStars(product?.rating)}</div>
-      <p className="product-price">₹ {product?.sale_rate.toFixed(2)}</p>
-      <Link to={`/product?productId=${product._id}`}>
-        <button className='btn btn-primary w-100'>
-          Buy now
-        </button>
-      </Link>
-    </div>
+    <Link to={`/product?productId=${product._id}`}>
+      <div className="productCard mt-5 mb-5">
+        <img
+          src={`${import.meta.env.VITE_API_BASE_URL_LOCALHOST}/uploads/${product?.image[0]}`}
+          alt={product?.name}
+          className="product-image"
+        />
+        <h3 className="product-name">{product?.name}</h3>
+        {/* <div className="product-rating">{renderStars(product?.rating)}</div> */}
+        <p className="product-price">₹ {product?.sale_rate.toFixed(2)}</p>   
+      </div>
+    </Link>
   );
 
   if (loading) {
@@ -77,6 +73,10 @@ function FeaturedProducts({ title, tagName }) {
         pagination={{ clickable: true }}
         autoplay={{ delay: 5000, disableOnInteraction: false }}
         breakpoints={{
+          320: {   // Mobile devices
+            slidesPerView: 2,  // Show 2 products on mobile screens
+            spaceBetween: 10,
+          },
           480: {
             slidesPerView: 2,
             spaceBetween: 15,

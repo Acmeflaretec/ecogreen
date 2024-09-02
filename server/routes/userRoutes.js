@@ -15,6 +15,7 @@ router.patch('/removeFromCart/:id', removeFromCart);
 router.patch('/addToWishlist/:id', addToWishlist);
 router.patch('/removeFromWishlist/:id', removeFromWishlist);
 router.get('/getwishlist',authorization, getWishLists);
+router.get('/getwishlist',authorization, getWishLists);
 
 router.get('/getcarts', authorization,getCartDetailsByUserId); 
 

@@ -351,6 +351,7 @@ import './Product.css';
 import Review from '../components/Review';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Modal } from 'react-bootstrap'; 
+import Swal from 'sweetalert2';
 
 const Product = () => {
   const location = useLocation();
@@ -438,23 +439,24 @@ const Product = () => {
   };
 
   const addWishlist = async (proId) => {
-
     if (!userDetails) {
-      navigate('/login')
-
+      navigate('/login');
     } else {
-
-
       try {
-
         const response = await axiosInstance.patch(`/user/addToWishlist/${proId}`);
-
+       
+        Swal.fire({
+          title: "Success",
+          text: "Product added to wishlist",
+          icon: "success",
+          showConfirmButton: false,
+          timer: 3000,
+        });
       } catch (error) {
-        console.log(error)
-
+        console.error('Error adding to wishlist:', error);
       }
     }
-  }
+  };
 
 
   const [showCountryModal, setShowCountryModal] = useState(false);
@@ -667,6 +669,7 @@ const CountryModal = ({ show, onHide, onSelect, error, clearError }) => (
               <Link>
                 <Button variant="link" onClick={() => addWishlist(productData._id)}><FaHeart /> Add to Wishlist</Button>
               </Link>
+            </div> */}
             </div> */}
             <div className="delivery-info">
               <p><FaTruck /> Free Delivery</p>

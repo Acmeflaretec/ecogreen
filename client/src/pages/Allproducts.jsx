@@ -11,6 +11,7 @@ import MiddleNav from '../components/MiddleNav';
 import './Allproducts.css';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import Swal from 'sweetalert2';
 
 const Allproducts = () => {
   const userDetails = useSelector(state => state.userDetails);

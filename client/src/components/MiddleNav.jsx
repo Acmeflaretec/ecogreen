@@ -14,6 +14,7 @@ function MiddleNav({notification}) {
   const userDetails = useSelector(state => state.userDetails);
   const [cartData, setCartData] = useState([])
   const [wishListData,setWishListData] = useState()
+  const [wishListData,setWishListData] = useState()
   // console.log('userDetails',userDetails);
   let urlQuery = '';
   useEffect(() => {
@@ -96,6 +97,12 @@ function MiddleNav({notification}) {
             <i className="fas fa-shopping-cart"></i>
             {cartItemCount > 0 && <span className="badge">{cartItemCount}</span>}
           </Link> */}
+             <Link to={userDetails? '/wishlist' :'/login'} className="nav-icon-link" title="Wishlist">
+              <i className="fas fa-heart"></i>
+              {wishListData > 0 && <span className="badge">{wishListData}</span>}
+            </Link>
+
+
           <Link to={userDetails ? '/cart' : '/login'} className="nav-icon-link" title="Cart">
             <i className="fas fa-shopping-cart"></i>
             {cartData > 0 && <span className="badge">{cartData}</span>}
